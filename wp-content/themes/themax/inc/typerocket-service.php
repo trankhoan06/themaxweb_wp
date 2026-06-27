@@ -17,8 +17,14 @@ add_action('edit_form_after_title', function($post) {
         echo $form->image('service_img_mobile')->setLabel("Image Mobile");
         echo endBox();
 
+        echo beginBox("Service Section Text", true);
+        echo $form->text('service_main_subtitle')->setLabel("Main Subtitle (e.g. OUR SERVICES)");
+        echo $form->textarea('service_main_title')->setLabel("Main Title");
+        echo $form->text('service_main_desc')->setLabel("Main Description (e.g. OUR PROCESS...)");
+        echo endBox();
+
         echo beginBox("Service Cards", true);
-        echo $form->repeater('service_cards')->setLabel("Service Items")->setFields([
+        echo $form->repeater('home_services')->setLabel("Service Items")->setFields([
             $form->text('title')->setLabel("Title (e.g. Strategy)"),
             $form->text('desc')->setLabel("Description"),
             $form->text('subtitle')->setLabel("Subtitle (e.g. MARKETING CAMPAIGN)"),

@@ -48,7 +48,13 @@
                     </svg>
                 </a>
                 <div class="header_title block_arrow txt_medium txt_16 middle">
-                    Digital Marketing Agency
+                    <?php 
+                        if (is_front_page() || is_home()) {
+                            echo 'Digital Marketing Agency';
+                        } else {
+                            echo esc_html(get_the_title());
+                        }
+                    ?>
                 </div>
                 <div class="header_menu">
                     <div class="header_menu_inner">

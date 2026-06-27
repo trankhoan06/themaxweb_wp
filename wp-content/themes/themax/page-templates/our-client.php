@@ -17,8 +17,9 @@ get_header();
         <section class="casestudy_hero">
             <div class="container">
                 <div class="casestudy_hero_inner grid">
-                    <h1 class="casestudy_hero_title heading h1 cl_linear"><?php echo nl2br(esc_html(tr_posts_field('client_hero_title') ?: "We know what to do\nfor your client.")); ?></h1>
-                    <div class="casestudy_hero_des txt_18"><?php echo nl2br(esc_html(tr_posts_field('client_hero_desc') ?: "Our expertise is focused on\nhelping you reach new heights.")); ?></div>
+                    <h1 class="casestudy_hero_title heading h1 cl_linear"><?php echo nl2br(esc_html(tr_posts_field('client_hero_title') )); ?></h1>
+                    <div class="casestudy_hero_des txt_18"><?php echo nl2br(esc_html(tr_posts_field('client_hero_desc') )); ?></div>
+                    <div class="casestudy_hero_subtitle cl_red heading h6 middle txt_uppercase"><?php echo esc_html(tr_posts_field('client_hero_subtitle') ); ?></div>
                 </div>
                 <div class="casestudy_hero_bg svg_full">
                     <svg width="883" height="806" viewBox="0 0 883 806" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -62,134 +63,85 @@ get_header();
                 </div>
             </div>
         </section>
-        <section class="home_clients pa_container">
+        <section class="home_clients">
             <div class="container">
                 <!-- <div class="home_clients_bg img_full">
                 <img src="<?php echo get_template_directory_uri(); ?>/images/pattern-blur.webp" alt="">
             </div> -->
                 <div class="home_clients_tab">
                     <?php 
-                        $tab1_name = esc_html(tr_posts_field('tab1_name') ?: 'Real Estate Clients');
-                        $tab2_name = esc_html(tr_posts_field('tab2_name') ?: 'Real Estate Projects');
-                        $tab3_name = esc_html(tr_posts_field('tab3_name') ?: 'Web & Mobile App');
+                        for ($i = 1; $i <= 6; $i++) {
+                            $tab_name = tr_posts_field('tab' . $i . '_name');
+                            if ($i === 1 && !$tab_name) $tab_name = 'Real Estate Clients';
+                            if ($i === 2 && !$tab_name) $tab_name = 'Real Estate Projects';
+                            if ($i === 3 && !$tab_name) $tab_name = 'Web & Mobile App';
+                            if (!$tab_name) continue;
+                            
+                            $active_class = ($i === 1) ? 'active' : '';
                     ?>
-                    <div class="home_clients_tab_item hover_txt txt_16 txt_medium active" data-tabs="tab1">
+                    <div class="home_clients_tab_item hover_txt txt_16 txt_medium <?php echo $active_class; ?>" data-tabs="tab<?php echo $i; ?>">
                         <div class="hover_txt_grid">
-                            <span class="init"><?php echo $tab1_name; ?></span>
-                            <span class="active"><?php echo $tab1_name; ?></span>
+                            <span class="init"><?php echo esc_html($tab_name); ?></span>
+                            <span class="active"><?php echo esc_html($tab_name); ?></span>
                         </div>
                     </div>
-                    <div class="home_clients_tab_item hover_txt txt_16 txt_medium" data-tabs="tab2">
-                        <div class="hover_txt_grid">
-                            <span class="init"><?php echo $tab2_name; ?></span>
-                            <span class="active"><?php echo $tab2_name; ?></span>
-                        </div>
-                    </div>
-                    <div class="home_clients_tab_item hover_txt txt_16 txt_medium" data-tabs="tab3">
-                        <div class="hover_txt_grid">
-                            <span class="init"><?php echo $tab3_name; ?></span>
-                            <span class="active"><?php echo $tab3_name; ?></span>
-                        </div>
-                    </div>
+                    <?php } ?>
                 </div>
                 <div class="home_clients_content">
-                    <div class="home_clients_content_item" data-tabs="tab1">
+                    <?php 
+                        for ($i = 1; $i <= 6; $i++) {
+                            $tab_name = tr_posts_field('tab' . $i . '_name');
+                            if ($i === 1 && !$tab_name) $tab_name = 'Real Estate Clients';
+                            if ($i === 2 && !$tab_name) $tab_name = 'Real Estate Projects';
+                            if ($i === 3 && !$tab_name) $tab_name = 'Web & Mobile App';
+                            if (!$tab_name) continue;
+
+                            $tab_logos = tr_posts_field('tab' . $i . '_logos');
+                    ?>
+                    <div class="home_clients_content_item" data-tabs="tab<?php echo $i; ?>">
 <?php
-$tab1_gallery = tr_posts_field('tab1_gallery');
-if (is_array($tab1_gallery) && !empty($tab1_gallery)) :
-    $images = explode(',', $tab1_gallery[0]);
-    foreach ($images as $img_id) :
+if (is_array($tab_logos) && !empty($tab_logos)) :
+    foreach ($tab_logos as $item) :
+        $img_id = $item['logo'] ?? '';
+        $link = $item['link'] ?? '';
         $img_url = wp_get_attachment_image_url($img_id, 'full');
         if ($img_url) :
 ?>
                         <div class="home_clients_content_item_img">
+                            <?php if ($link) : ?>
+                            <a href="<?php echo esc_url($link); ?>" target="_blank" class="home_clients_content_item_inner img_full" style="display:block;">
+                            <?php else : ?>
                             <div class="home_clients_content_item_inner img_full">
+                            <?php endif; ?>
                                 <img src="<?php echo esc_url($img_url); ?>" alt="">
-                            </div>
+                            <?php if ($link) : ?></a><?php else : ?></div><?php endif; ?>
                         </div>
 <?php
         endif;
     endforeach;
-else:
+endif;
 ?>
-                        <div class="home_clients_content_item_img"><div class="home_clients_content_item_inner img_full"><img src="<?php echo get_template_directory_uri(); ?>/images/icon_tab.svg" alt=""></div></div>
-                        <div class="home_clients_content_item_img"><div class="home_clients_content_item_inner img_full"><img src="<?php echo get_template_directory_uri(); ?>/images/icon_tab.svg" alt=""></div></div>
-                        <div class="home_clients_content_item_img"><div class="home_clients_content_item_inner img_full"><img src="<?php echo get_template_directory_uri(); ?>/images/icon_tab.svg" alt=""></div></div>
-                        <div class="home_clients_content_item_img"><div class="home_clients_content_item_inner img_full"><img src="<?php echo get_template_directory_uri(); ?>/images/icon_tab.svg" alt=""></div></div>
-<?php endif; ?>
                     </div>
-                    
-                    <div class="home_clients_content_item" data-tabs="tab2">
-<?php
-$tab2_gallery = tr_posts_field('tab2_gallery');
-if (is_array($tab2_gallery) && !empty($tab2_gallery)) :
-    $images = explode(',', $tab2_gallery[0]);
-    foreach ($images as $img_id) :
-        $img_url = wp_get_attachment_image_url($img_id, 'full');
-        if ($img_url) :
-?>
-                        <div class="home_clients_content_item_img">
-                            <div class="home_clients_content_item_inner img_full">
-                                <img src="<?php echo esc_url($img_url); ?>" alt="">
-                            </div>
-                        </div>
-<?php
-        endif;
-    endforeach;
-else:
-?>
-                        <div class="home_clients_content_item_img"><div class="home_clients_content_item_inner img_full"><img src="<?php echo get_template_directory_uri(); ?>/images/icon_tab" alt=""></div></div>
-                        <div class="home_clients_content_item_img"><div class="home_clients_content_item_inner img_full"><img src="<?php echo get_template_directory_uri(); ?>/images/icon_tab" alt=""></div></div>
-                        <div class="home_clients_content_item_img"><div class="home_clients_content_item_inner img_full"><img src="<?php echo get_template_directory_uri(); ?>/images/icon_tab" alt=""></div></div>
-                        <div class="home_clients_content_item_img"><div class="home_clients_content_item_inner img_full"><img src="<?php echo get_template_directory_uri(); ?>/images/icon_tab" alt=""></div></div>
-<?php endif; ?>
-                    </div>
-                    
-                    <div class="home_clients_content_item" data-tabs="tab3">
-<?php
-$tab3_gallery = tr_posts_field('tab3_gallery');
-if (is_array($tab3_gallery) && !empty($tab3_gallery)) :
-    $images = explode(',', $tab3_gallery[0]);
-    foreach ($images as $img_id) :
-        $img_url = wp_get_attachment_image_url($img_id, 'full');
-        if ($img_url) :
-?>
-                        <div class="home_clients_content_item_img">
-                            <div class="home_clients_content_item_inner img_full">
-                                <img src="<?php echo esc_url($img_url); ?>" alt="">
-                            </div>
-                        </div>
-<?php
-        endif;
-    endforeach;
-else:
-?>
-                        <div class="home_clients_content_item_img"><div class="home_clients_content_item_inner img_full"><img src="<?php echo get_template_directory_uri(); ?>/images/icon_tab" alt=""></div></div>
-                        <div class="home_clients_content_item_img"><div class="home_clients_content_item_inner img_full"><img src="<?php echo get_template_directory_uri(); ?>/images/icon_tab" alt=""></div></div>
-                        <div class="home_clients_content_item_img"><div class="home_clients_content_item_inner img_full"><img src="<?php echo get_template_directory_uri(); ?>/images/icon_tab" alt=""></div></div>
-                        <div class="home_clients_content_item_img"><div class="home_clients_content_item_inner img_full"><img src="<?php echo get_template_directory_uri(); ?>/images/icon_tab" alt=""></div></div>
-<?php endif; ?>
-                    </div>
+                    <?php } ?>
                 </div>
                 <div class="home_clients_tab bottom middle">
-                    <div class="home_clients_tab_item hover_txt txt_16 txt_medium active" data-tabs="tab1">
+                    <?php 
+                        for ($i = 1; $i <= 6; $i++) {
+                            $tab_name = tr_posts_field('tab' . $i . '_name');
+                            if ($i === 1 && !$tab_name) $tab_name = 'Real Estate Clients';
+                            if ($i === 2 && !$tab_name) $tab_name = 'Real Estate Projects';
+                            if ($i === 3 && !$tab_name) $tab_name = 'Web & Mobile App';
+                            if (!$tab_name) continue;
+                            
+                            $active_class = ($i === 1) ? 'active' : '';
+                    ?>
+                    <div class="home_clients_tab_item hover_txt txt_16 txt_medium <?php echo $active_class; ?>" data-tabs="tab<?php echo $i; ?>">
                         <div class="hover_txt_grid">
-                            <span class="init"><?php echo $tab1_name; ?></span>
-                            <span class="active"><?php echo $tab1_name; ?></span>
+                            <span class="init"><?php echo esc_html($tab_name); ?></span>
+                            <span class="active"><?php echo esc_html($tab_name); ?></span>
                         </div>
                     </div>
-                    <div class="home_clients_tab_item hover_txt txt_16 txt_medium" data-tabs="tab2">
-                        <div class="hover_txt_grid">
-                            <span class="init"><?php echo $tab2_name; ?></span>
-                            <span class="active"><?php echo $tab2_name; ?></span>
-                        </div>
-                    </div>
-                    <div class="home_clients_tab_item hover_txt txt_16 txt_medium" data-tabs="tab3">
-                        <div class="hover_txt_grid">
-                            <span class="init"><?php echo $tab3_name; ?></span>
-                            <span class="active"><?php echo $tab3_name; ?></span>
-                        </div>
-                    </div>
+                    <?php } ?>
                 </div>
                 <!-- <div class="home_clients_button button_hover txt_uppercase hover_txt txt_14 txt_medium">
                 <div class="hover_txt_grid">
@@ -251,9 +203,9 @@ else:
             <div class="about_cta_inner_overlay"></div>
             <div class="container grid">
                 <div class=" about_cta_inner_content h2 h5_mb heading cl_linear">
-                    <?php echo nl2br(esc_html(tr_posts_field('client_cta_text1') ?: "Have a Project in Mind,\nStart your project")); ?> 
-                    <span class=" middle"><?php echo esc_html(tr_posts_field('client_cta_text2') ?: 'Now'); ?></span> 
-                    <span class="cl_red middle"><?php echo esc_html(tr_posts_field('client_cta_text3') ?: 'Tell Us'); ?></span>
+                    <?php echo nl2br(esc_html(tr_posts_field('client_cta_text1') )); ?> 
+                    <span class=" middle"><?php echo esc_html(tr_posts_field('client_cta_text2') ); ?></span> 
+                    <span class="cl_red middle"><?php echo esc_html(tr_posts_field('client_cta_text3') ); ?></span>
                     <div class="about_cta_inner_content_icon svg_full">
                         <svg width="21" height="30" viewBox="0 0 21 30" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path

@@ -7,6 +7,7 @@ add_action('edit_form_after_title', function($post) {
 
         echo beginBox("Hero & Form", true);
         echo $form->textarea('contact_hero_title')->setLabel("Hero Title");
+        echo $form->text('contact_hero_subtitle')->setLabel("Hero Subtitle");
         echo $form->text('contact_hero_name')->setLabel("Contact Name");
         echo $form->text('contact_hero_tel')->setLabel("Contact Telephone");
         echo $form->textarea('contact_form_shortcode')->setLabel("Form Shortcode (e.g. Contact Form 7 shortcode). If empty, shows default HTML form.");

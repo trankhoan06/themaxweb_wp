@@ -43,7 +43,7 @@
 
 .contact_hero_content {
     grid-column: 1/6;
-    margin-top: 8rem;
+    margin-top: 7rem;
 }
 
 .contact_hero_content_info_name {
@@ -86,6 +86,10 @@
     color: #929292;
 }
 
+.contact_hero_content_title {
+    margin-bottom: 4rem;
+}
+
 @media only screen and (max-width:991px) {
     .contact_hero_content {
         grid-column: 1/6;
@@ -115,6 +119,10 @@
         margin-top: 0;
     }
 
+    .contact_hero_content_subtitle {
+        margin-bottom: 2.4rem;
+    }
+
     .contact_hero_form {
         grid-column: 1/5;
         grid-row: 2/3;
@@ -142,7 +150,7 @@
 
     .contact_hero_content_title {
         width: 30rem;
-        margin-bottom: 4.8rem;
+        margin-bottom: 3.2rem;
     }
 
     .contact_form_input {

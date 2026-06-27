@@ -17,7 +17,7 @@ get_header();
         <section class="home_hero">
             <div class="home_hero_inner">
                 <?php 
-                $home_banner_video = tr_posts_field('home_banner_video') ?: get_template_directory_uri() . '/images/video_button.mp4';
+                $home_banner_video = tr_posts_field('home_banner_video') ;
                 ?>
                 <video src="<?php echo esc_url($home_banner_video); ?>" autoplay loop muted playsinline></video>
             </div>
@@ -108,7 +108,7 @@ $specialize_icon_center_url = $specialize_icon_center ? wp_get_attachment_image_
 $specialize_icon_bottom = tr_posts_field('specialize_icon_bottom');
 $specialize_icon_bottom_url = $specialize_icon_bottom ? wp_get_attachment_image_url($specialize_icon_bottom, 'full') : get_template_directory_uri() . '/images/ic_sol2.svg';
 $specialize_title = tr_posts_field('specialize_title');
-$specialize_subtitle = tr_posts_field('specialize_subtitle') ?: "The Max specializes in<br>the real estate industry.";
+$specialize_subtitle = tr_posts_field('specialize_subtitle') ;
 ?>
                 <div class="home_specialize_bg img_full">
                     <img src="<?php echo esc_url($specialize_bg_url); ?>" alt="">
@@ -243,7 +243,7 @@ if (is_array($services) && !empty($services)) :
                                     <div class="home_services_img img_fullfill right_full">
                                         <?php 
                                         $img_id = $srv['image'] ?? 0;
-                                        $img_url = wp_get_attachment_image_url($img_id, 'full') ?: get_template_directory_uri() . '/images/home_service.jpg'; 
+                                        $img_url = wp_get_attachment_image_url($img_id, 'full') ; 
                                         ?>
                                         <img src="<?php echo esc_url($img_url); ?>" alt="">
                                     </div>
@@ -552,7 +552,7 @@ if (is_array($cases) && !empty($cases)) :
                         </div>
                         <div class="home_case_content_item_img_outer">
                             <div class="home_case_content_item_img img_full">
-                                <?php $img_url = wp_get_attachment_image_url($case_item['image'] ?? 0, 'full') ?: get_template_directory_uri() . '/images/case.webp'; ?>
+                                <?php $img_url = wp_get_attachment_image_url($case_item['image'] ?? 0, 'full') ; ?>
                                 <img src="<?php echo esc_url($img_url); ?>" alt="">
                             </div>
                         </div>
@@ -872,7 +872,7 @@ foreach($tabs as $tab_id => $field_name) :
 ?>
                         <div class="home_clients_content_item_img">
                             <div class="home_clients_content_item_inner img_full">
-                                <?php $img_url = wp_get_attachment_image_url($c['logo'] ?? 0, 'full') ?: get_template_directory_uri() . '/images/icon_tab.svg'; ?>
+                                <?php $img_url = wp_get_attachment_image_url($c['logo'] ?? 0, 'full') ; ?>
                                 <img src="<?php echo esc_url($img_url); ?>" alt="">
                             </div>
                         </div>

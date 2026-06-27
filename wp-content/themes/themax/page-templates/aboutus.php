@@ -50,19 +50,23 @@ get_header();
             <div class="about_hero_content grid">
                 <div class="about_hero_content_left">
                     <div class="about_hero_content_txt txt_18">
-                        <?php echo wp_kses_post(tr_posts_field('about_hero_desc') ?: 'TheMax is a <span class="cl_red txt_medium"> Digital Marketing Agency </span> in Saigon with a team boasting over 10 years of experience in content creation, digital tool development, and communication campaign implementation for real estate projects.'); ?>
+                        <?php echo wp_kses_post((tr_posts_field('about_hero_desc') ?? '') ); ?>
                     </div>
                 </div>
                 <div class="about_hero_content_right">
-                    <div class="about_hero_content_right_name txt_40 cl_white">Digital
-                        Marketing</div>
-                    <div class="about_hero_content_right_name txt_40 cl_red txt_uppercase">Agency</div>
-                    <div class="about_hero_content_right_name txt_24 cl_white">Specializing<br>
-                        in real estate</div>
+                    <div class="about_hero_content_right_name txt_40 cl_white">
+                        <?php echo nl2br(esc_html(tr_posts_field('about_hero_title1') ?? '')); ?>
+                    </div>
+                    <div class="about_hero_content_right_name txt_40 cl_red txt_uppercase">
+                        <?php echo esc_html(tr_posts_field('about_hero_title2') ?? ''); ?>
+                    </div>
+                    <div class="about_hero_content_right_name txt_24 cl_white">
+                        <?php echo nl2br(esc_html(tr_posts_field('about_hero_title3') ?? '')); ?>
+                    </div>
                 </div>
             </div>
             <div class="about_hero_bg svg_full">
-                <svg width="883" height="806" viewBox="0 0 883 806" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg width="883" height="806" viewBox="0 0 883 806" fill="none" xmlns="hyttp://www.w3.org/2000/svg">
                     <g opacity="0.5" filter="url(#filter0_d_368_2651)">
                         <path
                             d="M288.603 0.5L556.76 395.47L285.328 797.5H4.94043L276.185 395.749L276.374 395.469L276.185 395.188L8.21777 0.5H288.603Z"
@@ -105,7 +109,7 @@ get_header();
         <div class="container grid">
             <div class="about_impressive_left">
                 <div class="about_impressive_left_subtitle block_arrow txt_16 txt_uppercase">
-                    <?php echo esc_html(tr_posts_field('about_impr_subtitle') ?: 'IMPRESSIVE NUMBERS'); ?>
+                    <?php echo esc_html((tr_posts_field('about_impr_subtitle') ?? '') ); ?>
                 </div>
                 <div class="about_impressive_left_img img_full left_full">
                     <img src="<?php echo get_template_directory_uri(); ?>/images/bg_pattern.webp" alt="">
@@ -113,14 +117,14 @@ get_header();
             </div>
             <div class="about_impressive_right">
                 <div class="about_impressive_right_title heading h2 h4_mb cl_white">
-                    <?php echo esc_html(tr_posts_field('about_impr_title') ?: 'We have completed hundreds of design and communication projects for real estate developer.'); ?>
+                    <?php echo esc_html((tr_posts_field('about_impr_title') ?? '') ); ?>
                 </div>
                 <div class="about_impressive_right_des txt_16">
-                    <?php echo nl2br(esc_html(tr_posts_field('about_impr_desc') ?: 'Such as: Nam Long, Phu Long, Phu My Hung, Khang Dien, Dat Xanh, TTC Land, Novaland, GamudaLand, SP Setia (Malaysia), DKRH…')); ?>
+                    <?php echo nl2br(esc_html((tr_posts_field('about_impr_desc') ?? '') )); ?>
                 </div>
                 <div class="about_impressive_right_list">
                     <?php
-                    $impr_list = tr_posts_field('about_impr_list');
+                    $impr_list = (tr_posts_field('about_impr_list') ?? '');
                     if (is_array($impr_list) && !empty($impr_list)):
                         foreach ($impr_list as $impr_item):
                             ?>
@@ -134,24 +138,7 @@ get_header();
                             </div>
                             <?php
                         endforeach;
-                    else:
-                        ?>
-                        <div class="about_impressive_right_list_item">
-                            <div class="about_impressive_right_list_item_num cl_red heading h1 h1_mb">10+</div>
-                            <div class="about_impressive_right_list_item_des txt_18 txt_medium">Years of experience
-                            </div>
-                        </div>
-                        <div class="about_impressive_right_list_item">
-                            <div class="about_impressive_right_list_item_num cl_red heading h1 h1_mb">100+</div>
-                            <div class="about_impressive_right_list_item_des txt_18 txt_medium">Completed projects
-                            </div>
-                        </div>
-                        <div class="about_impressive_right_list_item">
-                            <div class="about_impressive_right_list_item_num cl_red heading h1 h1_mb">1000+</div>
-                            <div class="about_impressive_right_list_item_des txt_18 txt_medium">Media publications
-                            </div>
-                        </div>
-                    <?php endif; ?>
+                    endif; ?>
                 </div>
             </div>
 
@@ -159,8 +146,8 @@ get_header();
     </section>
     <section class="about_company">
         <?php
-        $comp_desk = wp_get_attachment_image_url(tr_posts_field('about_company_img_desktop'), 'full') ?: get_template_directory_uri() . '/images/company.webp';
-        $comp_mob = wp_get_attachment_image_url(tr_posts_field('about_company_img_mobile'), 'full') ?: get_template_directory_uri() . '/images/company_mb.webp';
+        $comp_desk = wp_get_attachment_image_url((tr_posts_field('about_company_img_desktop') ?? ''), 'full') ?: get_template_directory_uri() . '/images/company.webp';
+        $comp_mob = wp_get_attachment_image_url((tr_posts_field('about_company_img_mobile') ?? ''), 'full') ?: get_template_directory_uri() . '/images/company_mb.webp';
         ?>
         <div class="about_company_inner middle" style="background-image: url('<?php echo esc_url($comp_desk); ?>');">
         </div>
@@ -171,10 +158,10 @@ get_header();
     <section class="about_best">
         <div class="container">
             <div class="about_best_subtitle block_arrow txt_16">
-                <?php echo esc_html(tr_posts_field('about_best_subtitle') ?: 'WHAT WE DO BEST'); ?>
+                <?php echo esc_html((tr_posts_field('about_best_subtitle') ?? '') ); ?>
             </div>
             <div class="about_best_title h2 h4_mb heading cl_linear">
-                <?php echo wp_kses_post(tr_posts_field('about_best_title') ?: 'We <span class="cl_linear_red txt_uppercase">MAXIMIZE ONLINE POWER</span><br> for your brand\'s with comprehensive<br> digital marketing services.'); ?>
+                <?php echo wp_kses_post((tr_posts_field('about_best_title') ?? '') ); ?>
             </div>
             <div class="about_best_inner grid">
                 <div class="about_best_left svg_full">
@@ -200,10 +187,10 @@ get_header();
                 </div>
                 <div class="about_best_right txt_18">
                     <div class="about_best_right_des">
-                        <?php echo esc_html(tr_posts_field('about_best_desc') ?: 'THEMAX provides a complete digital service package from marketing strategy development, content creation, CGI animation, project introduction films, VR360 web development, UI/UX website design, landing page design, web application and mobile application development… to planning and implementing digital marketing campaigns.'); ?>
+                        <?php echo esc_html((tr_posts_field('about_best_desc') ?? '') ); ?>
                     </div>
                     <div class="about_best_right_cap cl_red txt_medium">
-                        <?php echo esc_html(tr_posts_field('about_best_cap') ?: 'We are Digital Marketing specializing in real estate industry.'); ?>
+                        <?php echo esc_html((tr_posts_field('about_best_cap') ?? '') ); ?>
                     </div>
                 </div>
             </div>
@@ -257,13 +244,13 @@ get_header();
                     </div>
                     <div class="about_team_title_wrap">
                         <div class="about_team_subtitle txt_uppercase txt_16 block_arrow txt_medium">
-                            <?php echo esc_html(tr_posts_field('about_team_subtitle') ?: 'THE TEAM'); ?>
+                            <?php echo esc_html((tr_posts_field('about_team_subtitle') ?? '') ); ?>
                         </div>
                         <div class="about_team_title txt_center h2 h4_mb heading cl_linear">
-                            <?php echo nl2br(esc_html(tr_posts_field('about_team_title') ?: 'We take pride in cultivating a fun, creative, and inspiring work environment.')); ?>
+                            <?php echo nl2br(esc_html((tr_posts_field('about_team_title') ?? '') )); ?>
                         </div>
                         <div class="about_team_des txt_center txt_16">
-                            <?php echo nl2br(esc_html(tr_posts_field('about_team_desc') ?: "Step into our vibrant Vietnam office to meet a dynamic team of thinkers\nand creators, always ready to push the boundaries of digital growth.")); ?>
+                            <?php echo nl2br(esc_html((tr_posts_field('about_team_desc') ?? '') )); ?>
                         </div>
                     </div>
 
@@ -276,50 +263,32 @@ get_header();
                             <div class="about_team_content_main">
                                 <div class="about_team_content_inner grid">
                                     <?php
-                                    $team_list = tr_posts_field('about_team_list');
+                                    $team_list = (tr_posts_field('about_team_list') ?? '');
                                     if (is_array($team_list) && !empty($team_list)):
                                         foreach ($team_list as $team_item):
-                                            ?>
-                                            <div class="about_team_content_item item_line">
-                                                <div class="about_team_content_item_icon img_full">
-                                                    <?php $icon_url = wp_get_attachment_image_url($team_item['icon'] ?? 0, 'full') ?: get_template_directory_uri() . '/images/icon-careers.svg'; ?>
-                                                    <img src="<?php echo esc_url($icon_url); ?>" alt="">
-                                                </div>
-                                                <div
-                                                    class="about_team_content_item_title item_line_title cl_linear h5 heading ">
-                                                    <?php echo esc_html($team_item['title'] ?? ''); ?>
-                                                </div>
-                                                <div class="about_team_content_item_des txt_14">
-                                                    <?php echo nl2br(esc_html($team_item['desc'] ?? '')); ?>
-                                                </div>
-                                            </div>
-                                            <?php
-                                        endforeach;
-                                    else:
-                                        for ($i = 0; $i < 6; $i++):
                                             ?>
                                             <div class="about_team_content_item_wrap ">
                                                 <div class="about_team_content_item item_line">
                                                     <div class="about_team_content_item_icon img_full">
-                                                        <img src="<?php echo get_template_directory_uri(); ?>/images/icon-careers.svg"
-                                                            alt="">
+                                                        <?php $icon_url = wp_get_attachment_image_url($team_item['icon'] ?? 0, 'full') ?: get_template_directory_uri() . '/images/icon-careers.svg'; ?>
+                                                        <img src="<?php echo esc_url($icon_url); ?>" alt="">
                                                     </div>
                                                     <div
                                                         class="about_team_content_item_title item_line_title cl_linear h5 heading txt_uppercase ">
-                                                        Insight
+                                                        <?php echo esc_html($team_item['title'] ?? ''); ?>
                                                     </div>
+                                                    <?php if (!empty($team_item['sub'])): ?>
                                                     <div class="about_team_content_item_sub h6 heading cl_white ">
-                                                        Research & Understanding
+                                                        <?php echo esc_html($team_item['sub']); ?>
                                                     </div>
-                                                    <div class="about_team_content_item_des txt_14">We take the time to explore
-                                                        and understand every product, project, and market in depth. By listening
-                                                        closely to our clients and gaining a genuine understanding of their
-                                                        aspirations, we create meaningful communication solutions and campaigns
-                                                        that deliver the greatest possible value and impact.</div>
+                                                    <?php endif; ?>
+                                                    <div class="about_team_content_item_des txt_14">
+                                                        <?php echo nl2br(esc_html($team_item['desc'] ?? '')); ?>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <?php
-                                        endfor;
+                                        endforeach;
                                     endif;
                                     ?>
                                 </div>
@@ -334,12 +303,12 @@ get_header();
                         <!-- Image wrap -->
                         <div class="about_team_card_img_wrap">
                             <?php
-                            $team_cards = tr_posts_field('about_team_cards');
+                            $team_cards = (tr_posts_field('about_team_cards') ?? '');
                             if (empty($team_cards)) {
                                 // Fallback to single fields if exists, or defaults
-                                $single_img = tr_posts_field('about_team_card_img');
-                                $single_title = tr_posts_field('about_team_card_title') ?: 'Driven by Innovation';
-                                $single_desc = tr_posts_field('about_team_card_desc') ?: "At TheMax, we don't just follow trends; we create solutions. Our team thrives on data-driven strategy and bold creativity, ensuring every digital product we touch delivers real impact and sustainable growth.";
+                                $single_img = (tr_posts_field('about_team_card_img') ?? '');
+                                $single_title = (tr_posts_field('about_team_card_title') ?? '') ;
+                                $single_desc = (tr_posts_field('about_team_card_desc') ?? '') ;
                                 $team_cards = [
                                     [
                                         'img' => $single_img,
@@ -427,7 +396,7 @@ get_header();
     </div>
     <section class="about_cta">
         <div class="about_cta_img img_full">
-            <?php $cta_img = wp_get_attachment_image_url(tr_posts_field('about_cta_img'), 'full') ?: get_template_directory_uri() . '/images/img_cta.webp'; ?>
+            <?php $cta_img = wp_get_attachment_image_url((tr_posts_field('about_cta_img') ?? ''), 'full') ?: get_template_directory_uri() . '/images/img_cta.webp'; ?>
             <img src="<?php echo esc_url($cta_img); ?>" alt="">
         </div>
         <div class="about_cta_inner_bg">
@@ -489,8 +458,9 @@ get_header();
         <div class="about_cta_inner_overlay"></div>
         <div class="container grid">
             <div class=" about_cta_inner_content h2 h5_mb heading cl_linear">
-                Have a Project in Mind,
-                Start your project <span class=" middle">Now</span> <span class="cl_red middle">Tell Us</span>
+                <?php echo nl2br(esc_html((tr_posts_field('about_cta_text1') ?? '') )); ?> 
+                <span class=" middle"><?php echo esc_html((tr_posts_field('about_cta_text2') ?? '') ); ?></span> 
+                <span class="cl_red middle"><?php echo esc_html((tr_posts_field('about_cta_text3') ?? '') ); ?></span>
                 <div class="about_cta_inner_content_icon svg_full">
                     <svg width="21" height="30" viewBox="0 0 21 30" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path

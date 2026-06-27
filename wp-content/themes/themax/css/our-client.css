@@ -1,5 +1,6 @@
 .casestudy_hero .container {
-    padding-block: 20rem 8rem;
+    padding-top: 20rem;
+    padding-bottom: 5.2rem;
     position: relative;
     overflow: hidden;
 }
@@ -13,6 +14,12 @@
     pointer-events: none;
     z-index: -1;
     filter: blur(15rem);
+}
+
+.casestudy_hero_subtitle {
+    grid-column: 1/13;
+    grid-row: 2/3;
+    margin-top: 4.8rem;
 }
 
 .casestudy_hero_inner {
@@ -119,7 +126,7 @@
 
 .home_clients_tab_item.active,
 .home_clients_tab_item:hover {
-    color: #bebebe;
+    color: #ebebeb;
 }
 
 .home_clients_tab_item.active::before {
@@ -150,21 +157,21 @@
 
 .home_clients_tab_item:hover {
     span {
-        color: #bebebe !important;
+        color: #ebebeb !important;
 
     }
 }
 
 .home_clients_tab_item.active {
     span {
-        color: #bebebe !important;
+        color: #ebebeb !important;
 
     }
 }
 
 .home_clients_tab_item.active:hover {
     span {
-        color: #bebebe;
+        color: #ebebeb;
 
     }
 

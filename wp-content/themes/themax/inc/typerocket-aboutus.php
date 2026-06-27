@@ -6,6 +6,9 @@ add_action('edit_form_after_title', function($post) {
         echo '<div class="typerocket-container">';
 
         echo beginBox("Hero Section", true);
+        echo $form->textarea('about_hero_title1')->setLabel("Hero Title Line 1 (White)");
+        echo $form->text('about_hero_title2')->setLabel("Hero Title Line 2 (Red)");
+        echo $form->textarea('about_hero_title3')->setLabel("Hero Title Line 3 (White)");
         echo $form->textarea('about_hero_desc')->setLabel("Hero Description");
         echo endBox();
 
@@ -38,6 +41,7 @@ add_action('edit_form_after_title', function($post) {
         echo $form->repeater('about_team_list')->setLabel("Values/Insight")->setFields([
             $form->image('icon')->setLabel("Icon"),
             $form->text('title')->setLabel("Title"),
+            $form->text('sub')->setLabel("Subtitle"),
             $form->textarea('desc')->setLabel("Description")
         ]);
         echo $form->repeater('about_team_cards')->setLabel("Team Cards")->setFields([
@@ -49,6 +53,9 @@ add_action('edit_form_after_title', function($post) {
 
         echo beginBox("Call to Action (CTA)", true);
         echo $form->image('about_cta_img')->setLabel("CTA Image");
+        echo $form->textarea('about_cta_text1')->setLabel("CTA Text Line 1");
+        echo $form->text('about_cta_text2')->setLabel("CTA Text Line 2 (White)");
+        echo $form->text('about_cta_text3')->setLabel("CTA Text Line 3 (Red)");
         echo endBox();
 
         echo '</div>';

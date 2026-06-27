@@ -17,8 +17,8 @@ get_header();
         <section class="casestudy_hero">
             <div class="container">
                 <div class="casestudy_hero_inner grid">
-                    <h1 class="casestudy_hero_title heading h1 h4_mb cl_linear"><?php echo nl2br(esc_html(tr_posts_field('cs_hero_title') ?: "Showcasing the results of\nour strategic approach.")); ?></h1>
-                    <div class="casestudy_hero_des txt_18"><?php echo nl2br(esc_html(tr_posts_field('cs_hero_desc') ?: "See the impact of our tailor-made strategies for every\nclient.")); ?></div>
+                    <h1 class="casestudy_hero_title heading h1 h4_mb cl_linear"><?php echo nl2br(esc_html(tr_posts_field('cs_hero_title') )); ?></h1>
+                    <div class="casestudy_hero_des txt_18"><?php echo nl2br(esc_html(tr_posts_field('cs_hero_desc') )); ?></div>
                 </div>
                 <div class="casestudy_hero_bg svg_full">
                     <svg width="883" height="806" viewBox="0 0 883 806" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -78,7 +78,7 @@ if (is_array($cs_items) && !empty($cs_items)) :
                         </div>
                         <div class="home_case_content_item_img_outer">
                             <div class="home_case_content_item_img img_full">
-                                <?php $item_img = wp_get_attachment_image_url($item['image'] ?? 0, 'full') ?: get_template_directory_uri() . '/images/case.webp'; ?>
+                                <?php $item_img = wp_get_attachment_image_url($item['image'] ?? 0, 'full') ; ?>
                                 <img src="<?php echo esc_url($item_img); ?>" alt="">
                             </div>
                         </div>
@@ -195,9 +195,9 @@ else:
                     </a>
 <?php endif; ?>
                 </div>
-                <a href="<?php echo esc_url(tr_posts_field('cs_see_more_link') ?: '#'); ?>" class="home_case_seeview button_hover hover_txt txt_uppercase txt_14 txt_medium cl_be">
+                <a href="<?php echo esc_url(tr_posts_field('cs_see_more_link') ); ?>" class="home_case_seeview button_hover hover_txt txt_uppercase txt_14 txt_medium cl_be">
                     <div class="hover_txt_grid">
-                        <?php $seemore = esc_html(tr_posts_field('cs_see_more_text') ?: 'SEE MORE'); ?>
+                        <?php $seemore = esc_html(tr_posts_field('cs_see_more_text') ); ?>
                         <span class="init"><?php echo $seemore; ?></span>
                         <span class="active"><?php echo $seemore; ?></span>
                     </div>
@@ -255,9 +255,9 @@ else:
             <div class="about_cta_inner_overlay"></div>
             <div class="container grid">
                 <div class=" about_cta_inner_content h2 h5_mb heading cl_linear">
-                    <?php echo nl2br(esc_html(tr_posts_field('cs_cta_text1') ?: "Have a Project in Mind,\nStart your project")); ?> 
-                    <span class=" middle"><?php echo esc_html(tr_posts_field('cs_cta_text2') ?: 'Now'); ?></span> 
-                    <span class="cl_red middle"><?php echo esc_html(tr_posts_field('cs_cta_text3') ?: 'Tell Us'); ?></span>
+                    <?php echo nl2br(esc_html(tr_posts_field('cs_cta_text1') )); ?> 
+                    <span class=" middle"><?php echo esc_html(tr_posts_field('cs_cta_text2') ); ?></span> 
+                    <span class="cl_red middle"><?php echo esc_html(tr_posts_field('cs_cta_text3') ); ?></span>
                     <div class="about_cta_inner_content_icon svg_full">
                         <svg width="21" height="30" viewBox="0 0 21 30" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path

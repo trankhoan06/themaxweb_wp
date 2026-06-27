@@ -17,13 +17,13 @@ get_header();
         <section class="service_hero">
             <div class="container grid">
                 <h1 class="service_hero_left heading h1 h4_mb cl_linear">
-                    <?php echo wp_kses_post(tr_posts_field('service_hero_title') ?: 'We <span class="txt_normal cl_linear_red txt_uppercase ">MAXIMIZE ONLINE POWER</span><br> for your brand\'s with comprehensive digital marketing services.'); ?>
+                    <?php echo wp_kses_post((tr_posts_field('service_hero_title') ?? '')); ?>
                 </h1>
                 <div class="service_hero_right">
-                    <div class="service_hero_right_txt txt_18"><?php echo nl2br(esc_html(tr_posts_field('service_hero_desc') ?: "With all the professionalism,\nWe know what to do for you.")); ?></div>
-                    <a href="<?php echo esc_url(tr_posts_field('service_hero_btn_link') ?: '#'); ?>" class="service_hero_right_discover hover_txt txt_16 cl_be">
+                    <div class="service_hero_right_txt txt_18"><?php echo nl2br(esc_html((tr_posts_field('service_hero_desc') ?? '') )); ?></div>
+                    <a href="<?php echo esc_url((tr_posts_field('service_hero_btn_link') ?? '') ); ?>" class="service_hero_right_discover hover_txt txt_16 cl_be">
                         <div class="hover_txt_grid">
-                            <?php $btn_txt = esc_html(tr_posts_field('service_hero_btn_text') ?: 'DISCOVERY NOW'); ?>
+                            <?php $btn_txt = esc_html((tr_posts_field('service_hero_btn_text') ?? '') ); ?>
                             <span class="init"><?php echo $btn_txt; ?></span>
                             <span class="active"><?php echo $btn_txt; ?></span>
                         </div>
@@ -109,8 +109,8 @@ get_header();
         </section>
         <section class="service_img">
             <?php 
-                $simg_desk = wp_get_attachment_image_url(tr_posts_field('service_img_desktop'), 'full') ?: get_template_directory_uri() . '/images/bg_service.webp';
-                $simg_mob = wp_get_attachment_image_url(tr_posts_field('service_img_mobile'), 'full') ?: get_template_directory_uri() . '/images/img_service_mb.webp';
+                $simg_desk = wp_get_attachment_image_url((tr_posts_field('service_img_desktop') ?? ''), 'full') ?: get_template_directory_uri() . '/images/bg_service.webp';
+                $simg_mob = wp_get_attachment_image_url((tr_posts_field('service_img_mobile') ?? ''), 'full') ?: get_template_directory_uri() . '/images/img_service_mb.webp';
             ?>
             <div class="service_img_content middle" style="background-image: url('<?php echo esc_url($simg_desk); ?>');">
             </div>
@@ -152,14 +152,9 @@ get_header();
 
                 </div>
                 <div class="container">
-                    <div class="home_services_sub txt_16 txt_medium block_arrow cl_fb">OUR SERVICES</div>
-                    <h2 class="heading h2 h4_mb home_services_title txt_center cl_white">We provide full-service digital
-                        marketing
-                        solutions.
-                    </h2>
-                    <div class=" home_services_des cl_fb heading h6 txt_uppercase txt_center">OUR PROCESS: FROM STRATEGY
-                        TO
-                        PERFORMANCE</div>
+                    <div class="home_services_sub txt_16 txt_medium block_arrow cl_fb"><?php echo esc_html((tr_posts_field('service_main_subtitle') ?? '')); ?></div>
+                    <h2 class="heading h2 h4_mb home_services_title txt_center cl_white"><?php echo nl2br(esc_html((tr_posts_field('service_main_title') ?? ''))); ?></h2>
+                    <div class=" home_services_des cl_fb heading h6 txt_uppercase txt_center"><?php echo esc_html((tr_posts_field('service_main_desc') ?? '')); ?></div>
                 </div>
             </div>
             <div class="home_services_cms_wrap">
@@ -167,7 +162,7 @@ get_header();
                     <div class="home_services_progress"></div>
                     <div class="home_services_list">
 <?php
-$services = tr_posts_field('home_services');
+$services = (tr_posts_field('home_services') ?? '');
 if (is_array($services) && !empty($services)) :
     $colors = ['', 'bg_red', '']; // based on current design (empty, bg_red, empty)
     foreach($services as $index => $srv) :
@@ -179,13 +174,13 @@ if (is_array($services) && !empty($services)) :
                                     <div class="home_services_content pa_container">
                                         <div class="home_services_content_top">
                                             <h3 class="home_services_content_title heading h1 h4_mb cl_linear"><?php echo esc_html($srv['title'] ?? ''); ?></h3>
-                                            <div class="heading h6 home_services_content_sub"><?php echo esc_html($srv['description'] ?? ''); ?></div>
+                                            <div class="heading h6 home_services_content_sub"><?php echo esc_html($srv['desc'] ?? ''); ?></div>
                                         </div>
                                         <div class="home_services_content_bottom">
-                                            <div class="home_services_content_bottom_des heading h4 cl_eb"><?php echo esc_html($srv['bottom_des'] ?? ''); ?></div>
+                                            <div class="home_services_content_bottom_des heading h4 cl_eb"><?php echo esc_html($srv['subtitle'] ?? ''); ?></div>
                                             <div class="home_services_content_bottom_list">
                                                 <?php 
-                                                $service_list = $srv['service_list'] ?? [];
+                                                $service_list = $srv['list'] ?? [];
                                                 if (is_array($service_list)) :
                                                     foreach($service_list as $sl) : 
                                                 ?>
@@ -205,7 +200,8 @@ if (is_array($services) && !empty($services)) :
                                     <div class="home_services_img img_fullfill right_full">
                                         <?php 
                                         $img_id = $srv['image'] ?? 0;
-                                        $img_url = wp_get_attachment_image_url($img_id, 'full') ?: get_template_directory_uri() . '/images/home_service.jpg'; 
+                                        $fallback_img = get_template_directory_uri() . '/images/home_service' . ($index == 0 ? '' : ($index + 1)) . '.jpg';
+                                        $img_url = wp_get_attachment_image_url($img_id, 'full') ?: $fallback_img; 
                                         ?>
                                         <img src="<?php echo esc_url($img_url); ?>" alt="">
                                     </div>
@@ -530,9 +526,9 @@ else:
             <div class="about_cta_inner_overlay"></div>
             <div class="container grid">
                 <div class=" about_cta_inner_content h2 h5_mb heading cl_linear">
-                    <?php echo nl2br(esc_html(tr_posts_field('service_cta_text1') ?: "Have a Project in Mind,\nStart your project")); ?> 
-                    <span class=" middle"><?php echo esc_html(tr_posts_field('service_cta_text2') ?: 'Now'); ?></span> 
-                    <span class="cl_red middle"><?php echo esc_html(tr_posts_field('service_cta_text3') ?: 'Tell Us'); ?></span>
+                    <?php echo nl2br(esc_html((tr_posts_field('service_cta_text1') ?? '') )); ?> 
+                    <span class=" middle"><?php echo esc_html((tr_posts_field('service_cta_text2') ?? '') ); ?></span> 
+                    <span class="cl_red middle"><?php echo esc_html((tr_posts_field('service_cta_text3') ?? '') ); ?></span>
                     <div class="about_cta_inner_content_icon svg_full">
                         <svg width="21" height="30" viewBox="0 0 21 30" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path

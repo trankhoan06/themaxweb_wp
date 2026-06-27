@@ -1291,14 +1291,17 @@ h2 {
     grid-column: 3/8;
     /* padding-block: 13.6rem; */
     margin-right: -4.2rem;
+}
+
+.about_cta .container {
     position: relative;
 }
 
 .about_cta_inner_content>span {
     transition: opacity .4s ease;
     position: absolute;
-    bottom: 0;
-    right: 1.3rem;
+    bottom: 13.6rem;
+    right: 47.3rem;
     -webkit-text-fill-color: currentColor;
 }
 
@@ -1312,8 +1315,8 @@ h2 {
     position: absolute;
     width: 2.1rem;
     height: 3rem;
-    right: 13rem;
-    bottom: 3.6rem;
+    right: 71rem;
+    bottom: 16.9rem;
     transition: right .4s ease;
 }
 
@@ -1322,7 +1325,7 @@ h2 {
 }
 
 .about_cta_inner_content:hover .about_cta_inner_content_icon {
-    right: -2rem;
+    right: 42rem;
 }
 
 .about_cta_inner_content:hover>span:nth-of-type(1) {
