@@ -1,0 +1,560 @@
+/* about_hero */
+
+.about_hero .container {
+    padding-top: 17.3rem;
+    padding-bottom: 8rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.about_hero_img {
+    margin-inline: 1.5rem;
+    margin-bottom: 8.5rem;
+}
+
+.about_hero_content {
+    align-items: end;
+}
+
+.about_hero_content_left {
+    grid-column: 1/6;
+}
+
+.about_hero_content_right {
+    grid-column: 11/13;
+}
+
+.about_hero_content_right {
+    text-align: right;
+}
+
+.about_hero_bg {
+    position: absolute;
+    height: 80rem;
+    right: 0%;
+    bottom: 0%;
+    filter: blur(15rem);
+    transform: translate(50%, 50%);
+    opacity: .7;
+}
+
+@media only screen and (max-width:767px) {
+    .about_hero .container {
+        padding-top: 12.8rem;
+    }
+
+    .about_hero_content {
+        gap: 4.8rem;
+
+    }
+
+    .about_hero_content_left {
+        grid-column: 1/5;
+    }
+
+    .about_hero_content_right {
+        grid-column: 3/5;
+    }
+}
+
+/* about_impressive */
+.about_impressive {
+    padding-top: 10rem;
+}
+
+.about_impressive_right_list_item_num {
+    margin-bottom: 1.2rem;
+}
+
+.about_impressive_right_list {
+    display: flex;
+    /* gap: 3.2rem; */
+    justify-content: space-between;
+}
+
+.about_impressive_right_title {
+    margin-bottom: 3.2rem;
+}
+
+.about_impressive_right_des {
+    margin-bottom: 8rem;
+}
+
+.about_impressive_left {
+    grid-column: 1/4;
+}
+
+.about_impressive_right {
+    grid-column: 5/13;
+}
+
+.about_impressive_left_img {
+    margin-top: -.5rem;
+    pointer-events: none;
+    z-index: -1;
+}
+
+@media only screen and (max-width:991px) {
+    .about_impressive .container {
+        position: relative;
+    }
+
+    .about_impressive_left_img {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+    }
+
+    .about_impressive_left {
+        grid-column: 1/3;
+    }
+
+    .about_impressive_right {
+        grid-column: 3/9;
+        padding-bottom: 6rem;
+    }
+}
+
+@media only screen and (max-width:767px) {
+    .about_impressive_left {
+        grid-column: 1/5;
+    }
+
+    .about_impressive_right {
+        grid-column: 1/5;
+        margin-right: 2rem;
+    }
+
+    .about_impressive {
+        padding-top: 4.6rem;
+    }
+
+    .about_impressive_left {
+        margin-bottom: 1.6rem;
+    }
+
+    .about_impressive_right_title {
+        margin-bottom: 1.6rem;
+    }
+
+    .about_impressive_right_des {
+        margin-bottom: 4.8rem;
+    }
+
+    .about_impressive_right_list {
+        flex-wrap: wrap;
+    }
+
+    .about_impressive_right_list_item {
+        width: calc(50% - 1.2rem);
+    }
+
+    .about_impressive_right_list_item_des {
+        font-size: 1.5rem;
+    }
+
+    .about_impressive_right {
+        padding-bottom: 6.4rem;
+    }
+}
+
+/* about_company */
+
+
+.about_company {
+    width: 100%;
+    height: 100vh;
+}
+
+.about_company_inner {
+    width: 100%;
+    height: 100%;
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+@media only screen and (max-width:767px) {
+    .about_company {
+        height: auto;
+    }
+
+    .about_company_inner {
+        background-attachment: unset;
+    }
+}
+
+/* about_best */
+.about_best {
+    padding-top: 10rem;
+    padding-bottom: 10rem;
+}
+
+.about_best_title {
+    margin-bottom: 8rem;
+}
+
+.about_best_right {
+    grid-column: 8/13;
+    justify-content: end;
+    display: flex;
+    flex-direction: column;
+}
+
+.about_best_left {
+    grid-column: 2/7;
+    margin-right: -1rem;
+}
+
+/* about_best_logo hover effects */
+.about_best_left svg {
+    pointer-events: none;
+    /* Let paths handle pointer events */
+}
+
+/* Shapes get bounding-box pointer events so their entire rectangular area (Figma frame) is hoverable */
+.about_best_left svg path:nth-child(1),
+.about_best_left svg path:nth-child(2),
+.about_best_left svg path:nth-child(3) {
+    pointer-events: bounding-box;
+    cursor: pointer;
+    transition: fill 0.4s ease, stroke 0.4s ease, opacity 0.4s ease;
+}
+
+/* Texts ignore pointer events so the mouse falls through to the shape */
+.about_best_left svg path:nth-child(4),
+.about_best_left svg path:nth-child(5),
+.about_best_left svg path:nth-child(6) {
+    pointer-events: none;
+    transition: fill 0.4s ease, stroke 0.4s ease, opacity 0.4s ease;
+}
+
+/* Implementation: Shape = 1, Text = 5 */
+.about_best_left svg path:nth-child(1):hover {
+    fill: white;
+    stroke: white;
+}
+
+.about_best_left svg path:nth-child(1):hover~path:nth-child(5) {
+    fill: white;
+}
+
+/* Creative: Shape = 2, Text = 6 */
+.about_best_left svg path:nth-child(2):hover {
+    fill: white;
+    stroke: white;
+}
+
+.about_best_left svg path:nth-child(2):hover~path:nth-child(6) {
+    fill: white;
+}
+
+/* Strategy: Shape = 3, Text = 4 */
+.about_best_left svg path:nth-child(3):hover {
+    opacity: 1;
+}
+
+.about_best_left svg path:nth-child(3):hover~path:nth-child(4) {
+    fill: #E62636;
+}
+
+.about_best_right_des {
+    margin-bottom: 1.6rem;
+}
+
+.about_best_subtitle {
+    margin-bottom: 3.2rem;
+}
+
+@media only screen and (max-width:991px) {
+    .about_best_left {
+        grid-column: 1/9;
+    }
+
+    .about_best_right {
+        grid-column: 1/9;
+    }
+
+    .about_best_inner {
+        gap: 2rem;
+    }
+}
+
+@media only screen and (max-width:767px) {
+    .about_best {
+        padding-block: 6.4rem;
+    }
+
+    .about_best_subtitle {
+        margin-bottom: 1.6rem;
+    }
+
+    .about_best_title {
+        margin-bottom: 3.2rem;
+    }
+
+    .about_best_title br {
+        display: none;
+    }
+
+    .about_best_inner {
+        gap: 4.8rem
+    }
+
+    .about_best_right {
+        font-size: 1.4rem;
+    }
+
+    .about_best_right_des {
+        margin-bottom: 1.2rem;
+    }
+}
+
+
+/* about_team */
+
+.about_team_bg {
+    position: absolute;
+    width: 60.69%;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 18.3rem;
+    pointer-events: none;
+    z-index: -1;
+    filter: blur(15rem);
+    opacity: .6;
+}
+
+.about_team .container {
+    padding-top: 27rem;
+    padding-bottom: 10rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.about_team_title {
+    width: 92.7rem;
+    margin-inline: auto;
+    margin-bottom: 3.2rem;
+}
+
+.about_team_subtitle {
+    width: max-content;
+    margin-inline: auto;
+    margin-bottom: 3.2rem;
+
+}
+
+.about_team_content {
+    padding-top: 30rem;
+    position: relative;
+    padding-bottom: 15rem;
+}
+
+.about_team_content_inner {
+    position: relative;
+    z-index: 2;
+}
+
+
+.about_team_content_inner .about_team_content_item {
+    grid-column: 2/6;
+    padding: 3.2rem;
+    background-color: #191919;
+    height: max-content;
+}
+
+.about_team_content_inner .about_team_content_item:nth-child(2n) {
+    grid-column: 8/12;
+    margin-top: 27.5rem;
+}
+
+.about_team_content_item_icon {
+    width: 5.6rem;
+    height: 5.6rem;
+}
+
+.about_team_content_item_icon {
+    margin-bottom: 3.2rem;
+}
+
+.about_team_content_item_title {
+    margin-bottom: 1.2rem;
+}
+
+.about_team_content_bgleft {
+    position: absolute;
+    top: 35.3rem;
+    left: -6.5rem;
+    width: 36.3rem;
+}
+
+.about_team_content_bgright {
+    position: absolute;
+    bottom: 19.2rem;
+    right: -6.5rem;
+    width: 36.3rem;
+}
+
+.about_team_card_item {
+    position: relative;
+}
+
+
+.about_team_card_item_content {
+    position: absolute;
+    width: 62.5rem;
+    padding: 3.2rem;
+    background: rgba(16, 16, 16, 0.5);
+    backdrop-filter: blur(4.8rem);
+    -webkit-backdrop-filter: blur(4.8rem);
+    bottom: 1.6rem;
+    left: 1.6rem;
+}
+
+.about_team_card_item_content_title {
+    margin-bottom: 1.2rem;
+}
+
+.about_team_card_item_content_des {
+    margin-bottom: 3.2rem;
+
+}
+
+.about_team_card_item_content_bot_buton_item {
+    width: 4rem;
+    height: 4rem;
+    cursor: pointer;
+
+}
+
+.about_team_card_item_content_bot_buton_item.last {
+    cursor: auto;
+}
+
+.about_team_card_item_content_bot_buton_item.last path {
+    opacity: .5;
+}
+
+.about_team_card_item_content_bot_buton_item rect {
+    transition: fill .4s ease;
+}
+
+.about_team_card_item_content_bot_buton_item path {
+    transition: stroke .4s ease;
+}
+
+.about_team_card_item_content_bot_buton_item:hover rect {
+    fill: #E62636;
+}
+
+.about_team_card_item_content_bot_buton_item:hover path {
+    stroke: #fff;
+}
+
+.about_team_card_item_content_bot_buton_item.last:hover rect {
+    fill: #131313;
+}
+
+.about_team_card_item_content_bot_buton_item.last:hover path {
+    stroke: #BEBEBE;
+}
+
+.about_team_card_item_content_bot_buton {
+    display: flex;
+    gap: 1.6rem;
+}
+
+.about_team_card_item_content_bot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.about_team_card_item_content_bot_page {
+    gap: .4rem;
+    display: flex;
+}
+
+@media only screen and (max-width:991px) {
+    .about_team .container {
+        padding-top: 6rem;
+    }
+
+    .about_team_title {
+        width: auto;
+    }
+
+    .about_team_content_inner .about_team_content_item {
+        grid-column: 1/5;
+    }
+
+    .about_team_content_inner .about_team_content_item:nth-child(2n) {
+        grid-column: 5/9;
+    }
+
+    .about_team_content {
+        padding-top: 10rem;
+    }
+}
+
+@media only screen and (max-width:767px) {
+    .about_team .container {
+        padding-block: 6.4rem;
+    }
+
+    .about_team_subtitle {
+        margin-inline: unset;
+        margin-bottom: 1.6rem;
+    }
+
+    .about_team_title {
+        text-align: left;
+        margin-bottom: 1.6rem;
+    }
+
+    .about_team_des {
+        text-align: left;
+    }
+
+    .about_team_des br {
+        display: none;
+    }
+
+    .about_team_content {
+        padding-top: 4.8rem;
+    }
+
+    .about_team_content_item {
+        grid-column: 1/5 !important;
+        grid-row: auto !important;
+        margin-top: 0 !important;
+    }
+
+    .about_team_content_inner {
+        gap: 1.6rem !important;
+    }
+
+    .about_team_bg {
+        top: 9.6rem;
+        width: 100%;
+    }
+
+    .about_team_card_img {
+        margin-left: -1.6rem;
+        margin-right: -1.6rem;
+    }
+
+    .about_team_card_item_content {
+        position: relative;
+        inset: unset;
+        width: 100%;
+        padding: 1.6rem;
+        margin-top: -6rem;
+    }
+
+    .about_team_card_item_content_des {
+        margin-bottom: 1.6rem;
+    }
+}
