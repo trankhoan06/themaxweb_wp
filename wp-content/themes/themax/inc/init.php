@@ -1,5 +1,6 @@
 <?php
 
+include('cleanup.php');  // Xóa JS/CSS không cần thiết của WordPress
 include('webfunc.php'); 
 include('shortcode/init.php');
 include('typerocket-config.php');
