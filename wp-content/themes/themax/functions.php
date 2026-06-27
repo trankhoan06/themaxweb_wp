@@ -30,6 +30,7 @@ function themax_enqueue_assets() {
 
     // Global CSS
     $style_version = filemtime(get_template_directory() . '/css/style.css') ?: '1.0.0';
+    wp_enqueue_style('swiper-css', $theme_dir . '/plugin/swiper/swiper-bundle.min.css');
     wp_enqueue_style('themax-style', $theme_dir . '/css/style.css', array(), $style_version);
 
     // Global JS
@@ -38,11 +39,14 @@ function themax_enqueue_assets() {
     wp_enqueue_script('scroll-trigger', $theme_dir . '/js/ScrollTrigger.min.js', array('gsap'), '1.0.0', true);
     wp_enqueue_script('split-text', $theme_dir . '/js/SplitText.min.js', array('gsap'), '1.0.0', true);
     wp_enqueue_script('lenis', $theme_dir . '/js/lenis.min.js', array(), '1.0.0', true);
-    wp_enqueue_script('themax-index-js', $theme_dir . '/js/index.js', array('jquery-3.7.1', 'gsap'), '1.0.0', true);
+    wp_enqueue_script('swiper-js', $theme_dir . '/plugin/swiper/swiper-bundle.min.js', array(), '7.0.6', true);
+    $index_js_version = filemtime(get_template_directory() . '/js/index.js') ?: '1.0.0';
+    wp_enqueue_script('themax-index-js', $theme_dir . '/js/index.js', array('jquery-3.7.1', 'gsap', 'swiper-js'), $index_js_version, true);
 
     // Template specific CSS
     if (is_page_template('page-templates/aboutus.php')) {
-        wp_enqueue_style('themax-aboutus', $theme_dir . '/css/aboutus.css');
+        $about_version = filemtime(get_template_directory() . '/css/aboutus.css') ?: '1.0.0';
+        wp_enqueue_style('themax-aboutus', $theme_dir . '/css/aboutus.css', array(), $about_version);
     }
     elseif (is_page_template('page-templates/career-detail.php')) {
         wp_enqueue_style('themax-career-detail', $theme_dir . '/css/career-detail.css');

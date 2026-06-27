@@ -3325,9 +3325,9 @@ const mainScript = () => {
             const targetVal = parseFloat(match[1].replace(/,/g, ''));
             const suffix = match[2];
             const obj = { val: 0 };
-            
+
             el.textContent = '0' + suffix;
-            
+
             const tween = gsap.to(obj, {
               val: targetVal,
               duration: 1.5,
@@ -3355,14 +3355,6 @@ const mainScript = () => {
             }
           });
         }
-        if (this.img) {
-          this.imgFade = new FadeIn({
-            el: this.img,
-            type: 'left',
-            isDisableRevert: true,
-            delay: 1.3
-          });
-        }
       }
       animFade() {
         this.fadeTl = gsap.timeline({
@@ -3378,7 +3370,6 @@ const mainScript = () => {
         if (this.titleSplit) tweenArr.push(this.titleSplit);
         if (this.desFade) tweenArr.push(this.desFade);
         if (this.listItemsFade) tweenArr.push(this.listItemsFade);
-        if (this.imgFade) tweenArr.push(this.imgFade);
 
         this.master = new MasterTimeline({
           timeline: this.fadeTl,
@@ -3386,6 +3377,34 @@ const mainScript = () => {
           tweenArr: tweenArr,
           stagger: 0.3
         });
+
+        const imgEl = this.img?.querySelector('img');
+        if (imgEl) {
+          this.imgTl = gsap.timeline({ paused: true });
+          this.imgTl.fromTo(imgEl,
+            { opacity: 0, x: -100 },
+            { opacity: 1, x: 0, duration: 1.2, ease: 'power2.out' }
+          );
+
+          this.imgPlayTrigger = ScrollTrigger.create({
+            trigger: this.el,
+            start: 'top bottom-=20%',
+            onEnter: () => this.imgTl?.play(),
+            onEnterBack: () => this.imgTl?.play()
+          });
+
+          this.imgResetTrigger = ScrollTrigger.create({
+            trigger: this.el,
+            start: 'top bottom',
+            end: 'bottom top',
+            onLeave: () => {
+              this.imgTl?.progress(0).pause();
+            },
+            onLeaveBack: () => {
+              this.imgTl?.progress(0).pause();
+            }
+          });
+        }
       }
       destroy() {
         super.cleanTrigger();
@@ -3396,6 +3415,18 @@ const mainScript = () => {
         if (this.master) {
           this.master.destroy();
           this.master = null;
+        }
+        if (this.imgTl) {
+          this.imgTl.kill();
+          this.imgTl = null;
+        }
+        if (this.imgPlayTrigger) {
+          this.imgPlayTrigger.kill();
+          this.imgPlayTrigger = null;
+        }
+        if (this.imgResetTrigger) {
+          this.imgResetTrigger.kill();
+          this.imgResetTrigger = null;
         }
         if (this.subFade) {
           this.subFade.destroy();
@@ -3486,11 +3517,12 @@ const mainScript = () => {
           });
         }
         if (this.cap) {
-          this.capFade = new FadeIn({
+          this.capFade = new FadeSplitText({
             el: this.cap,
-            type: 'bottom',
+            splitType: 'words',
             isDisableRevert: true,
-            duration: 0.8,
+            duration: 1.0,
+            stagger: 0.015,
           });
         }
       }
@@ -3507,8 +3539,6 @@ const mainScript = () => {
         if (this.subFade) tweenArr.push(this.subFade);
         if (this.titleSplit) tweenArr.push(this.titleSplit);
         if (this.leftFade) tweenArr.push(this.leftFade);
-        if (this.desFade) tweenArr.push(this.desFade);
-        if (this.capFade) tweenArr.push(this.capFade);
 
         this.master = new MasterTimeline({
           timeline: this.fadeTl,
@@ -3516,6 +3546,26 @@ const mainScript = () => {
           tweenArr: tweenArr,
           stagger: 0.3
         });
+
+        if (this.des) {
+          this.desCapTl = gsap.timeline({
+            scrollTrigger: {
+              trigger: this.des,
+              start: 'top top+=85%',
+              once: true
+            }
+          });
+          const desCapTweenArr = [];
+          if (this.desFade) desCapTweenArr.push(this.desFade);
+          if (this.capFade) desCapTweenArr.push(this.capFade);
+
+          this.desCapMaster = new MasterTimeline({
+            timeline: this.desCapTl,
+            triggerInit: this.des,
+            tweenArr: desCapTweenArr,
+            stagger: 0.2
+          });
+        }
       }
       destroy() {
         super.cleanTrigger();
@@ -3526,6 +3576,14 @@ const mainScript = () => {
         if (this.master) {
           this.master.destroy();
           this.master = null;
+        }
+        if (this.desCapTl) {
+          this.desCapTl.kill();
+          this.desCapTl = null;
+        }
+        if (this.desCapMaster) {
+          this.desCapMaster.destroy();
+          this.desCapMaster = null;
         }
         if (this.subFade) {
           this.subFade.destroy();
@@ -3598,7 +3656,7 @@ const mainScript = () => {
         this.sub = this.el.querySelector('.about_team_subtitle');
         this.title = this.el.querySelector('.about_team_title');
         this.des = this.el.querySelector('.about_team_des');
-        this.items = Array.from(this.el.querySelectorAll('.about_team_content_item'));
+        this.items = Array.from(this.el.querySelectorAll('.about_team_content_item_wrap, .about_team_content_inner > .about_team_content_item'));
         this.card = this.el.querySelector('.about_team_card');
         this.bgLeft = this.el.querySelector('.about_team_content_bgleft');
         this.bgRight = this.el.querySelector('.about_team_content_bgright');
@@ -3627,8 +3685,8 @@ const mainScript = () => {
         }
 
         // ── card ──
-        const cardImg = this.card?.querySelector('.about_team_card_img');
-        const cardContent = this.card?.querySelector('.about_team_card_item_content');
+        const cardImg = this.card?.querySelector('.about_team_card_img_wrap');
+        const cardContent = this.card?.querySelector('.about_team_card_swiper .about_team_card_slide:first-child .about_team_card_item_content') || this.card?.querySelector('.about_team_card_item_content');
         // img và content là siblings → không có parent-child opacity conflict
         if (cardImg) {
           this.cardImgFade = new ScaleInset({ el: cardImg, isDisableRevert: true });
@@ -3649,16 +3707,124 @@ const mainScript = () => {
             duration: 0.9,
             stagger: 0.01,
           });
-          this.cardBotFade = new FadeIn({ el: cardContent.querySelector('.about_team_card_item_content_bot'), type: 'bottom', isDisableRevert: true, duration: 0.8 });
+          this.cardBotFade = new FadeIn({ el: this.card.querySelector('.about_team_card_item_content_bot'), type: 'bottom', isDisableRevert: true, duration: 0.8 });
         }
 
-        // ── bg decorators ──
-        if (this.bgLeft) {
-          this.bgLeftFade = new FadeIn({ el: this.bgLeft, type: 'left', isDisableRevert: true, duration: 1.2, ease: 'power2.out' });
-        }
-        if (this.bgRight) {
-          this.bgRightFade = new FadeIn({ el: this.bgRight, type: 'right', isDisableRevert: true, duration: 1.2, ease: 'power2.out' });
-        }
+        // Initialize Swiper
+        this.initSwiper();
+      }
+      initSwiper() {
+        const swiperEl = this.card?.querySelector('.about_team_card_swiper');
+        const imgWrap = this.card?.querySelector('.about_team_card_img_wrap');
+        if (!swiperEl || !imgWrap) return;
+
+        const imgItems = Array.from(imgWrap.querySelectorAll('.about_team_card_img_item'));
+
+        // Measure and set fixed width on resize
+        const updateImgWidth = () => {
+          const wrapWidth = imgWrap.getBoundingClientRect().width;
+          imgWrap.style.setProperty('--card-img-width', `${wrapWidth}px`);
+        };
+        updateImgWidth();
+        window.addEventListener('resize', updateImgWidth);
+        this._destroyWidthListener = () => {
+          window.removeEventListener('resize', updateImgWidth);
+        };
+
+        // Initialize state
+        imgItems.forEach((item, idx) => {
+          if (idx === 0) {
+            gsap.set(item, { width: '100%', zIndex: 2 });
+          } else {
+            gsap.set(item, { width: '0%', zIndex: 1 });
+          }
+        });
+
+        let lastIndex = 0;
+
+        // Initialize Swiper
+        this.cardSwiper = new Swiper(swiperEl, {
+          effect: 'fade',
+          fadeEffect: {
+            crossFade: true
+          },
+          loop: false,
+          speed: 600,
+          allowTouchMove: true,
+          navigation: {
+            nextEl: this.card.querySelector('.about_team_btn_next'),
+            prevEl: this.card.querySelector('.about_team_btn_prev')
+          }
+        });
+
+        this.cardSwiper.on('slideChange', () => {
+          const activeIndex = this.cardSwiper.activeIndex;
+          if (activeIndex === lastIndex) return;
+
+          const isNext = activeIndex > lastIndex;
+
+          // Update page indicator
+          const curIdx = activeIndex + 1;
+          const curEl = this.card.querySelector('.about_team_card_item_content_bot_page_cur');
+          if (curEl) {
+            curEl.textContent = (curIdx < 10 ? '0' + curIdx : curIdx) + ' /';
+          }
+
+          // Trigger image reveal
+          const newImg = imgItems[activeIndex];
+          const oldImg = imgItems[lastIndex];
+          const innerImg = newImg?.querySelector('img');
+
+          if (newImg && oldImg) {
+            imgItems.forEach((item, idx) => {
+              if (idx === activeIndex) {
+                gsap.set(item, { zIndex: 3 });
+              } else if (idx === lastIndex) {
+                gsap.set(item, { zIndex: 2 });
+              } else {
+                gsap.set(item, { zIndex: 1 });
+              }
+            });
+
+            // Configure alignment based on direction
+            if (isNext) {
+              // Reveal from Left to Right
+              gsap.set(newImg, { left: 0, right: 'auto' });
+              if (innerImg) {
+                gsap.set(innerImg, { left: 0, right: 'auto' });
+              }
+            } else {
+              // Reveal from Right to Left
+              gsap.set(newImg, { left: 'auto', right: 0 });
+              if (innerImg) {
+                gsap.set(innerImg, { left: 'auto', right: 0 });
+              }
+            }
+
+            gsap.fromTo(newImg,
+              { width: '0%' },
+              {
+                width: '100%',
+                duration: 0.8,
+                ease: 'power2.inOut',
+                onComplete: () => {
+                  // After reveal completes, normalize to left-anchored for responsive stability
+                  gsap.set(newImg, { left: 0, right: 'auto', width: '100%' });
+                  if (innerImg) {
+                    gsap.set(innerImg, { left: 0, right: 'auto' });
+                  }
+                  imgItems.forEach((item, idx) => {
+                    if (idx !== activeIndex) {
+                      gsap.set(item, { width: '0%', zIndex: 1 });
+                    }
+                  });
+                }
+              }
+            );
+          }
+
+          lastIndex = activeIndex;
+        });
       }
       animHeader() {
         this.headerTl = gsap.timeline({
@@ -3677,51 +3843,53 @@ const mainScript = () => {
       }
       animItems() {
         this.ctx = gsap.matchMedia();
-
+ 
         this.ctx.add({
           isDesktop: "(min-width: 992px)",
           isMobile: "(max-width: 991px)"
         }, (context) => {
           let { isDesktop, isMobile } = context.conditions;
-
+ 
           if (isDesktop) {
             const innerWrap = this.el.querySelector('.about_team_inner');
             const wrapper = this.el.querySelector('.about_team_content');
             const inner = this.el.querySelector('.about_team_content_inner');
             if (innerWrap && wrapper && inner) {
               gsap.set(inner, { x: 0 });
-              
+ 
               this.horizontalTl = gsap.timeline({
                 scrollTrigger: {
-                  trigger: innerWrap,
+                  trigger: '.about_team_inner',
                   scrub: 1,
                   start: "top top",
                   end: "bottom bottom",
                   invalidateOnRefresh: true,
                 }
               });
-
+ 
               this.horizontalTl.to(inner, {
                 x: () => -(inner.scrollWidth - wrapper.clientWidth),
                 ease: "none"
               });
-
+ 
               // Stagger fade-in the cards when wrapper enters view
+              const mainContent = this.el.querySelector('.about_team_content_main');
               this.itemsFadeTl = gsap.timeline({
                 scrollTrigger: {
-                  trigger: wrapper,
-                  start: "top bottom-=20%",
+                  trigger: mainContent || wrapper,
+                  start: "top top+=80%",
                   once: true
                 }
               });
-
-              this.itemsFadeTl.fromTo(this.items, 
-                { opacity: 0, y: 50 }, 
+ 
+              const cards = this.el.querySelectorAll('.about_team_content_item_wrap');
+              this.itemsFadeTl.fromTo(cards,
+                { opacity: 0, y: 50 },
                 { opacity: 1, y: 0, duration: 0.8, stagger: 0.1, ease: "power2.out" }
               );
             }
           }
-
+ 
           if (isMobile) {
             this.itemTls = [];
             this.itemMasters = [];
@@ -3742,7 +3910,7 @@ const mainScript = () => {
                 duration: 0.8,
                 stagger: 0.01,
               });
-
+ 
               const tl = gsap.timeline({
                 scrollTrigger: { trigger: item, start: 'top top+=75%', once: true }
               });
@@ -3751,7 +3919,7 @@ const mainScript = () => {
               if (titleFade.DOM?.el) tweenArr.push(titleFade);
               if (desFade.DOM?.el) tweenArr.push(desFade);
               if (itemFade.DOM?.el) tweenArr.push(itemFade);
-
+ 
               const master = new MasterTimeline({ timeline: tl, triggerInit: item, tweenArr, stagger: 0.2 });
               this.itemTls.push(tl);
               this.itemMasters.push(master);
@@ -3780,28 +3948,57 @@ const mainScript = () => {
         });
       }
       animBg() {
-        if (this.bgLeft && this.bgLeftFade) {
-          this.bgTl = gsap.timeline({
-            scrollTrigger: {
-              trigger: this.el,
-              start: 'top top+=75%',
-              once: true
-            }
+        const mainContent = this.el.querySelector('.about_team_content_main');
+        const bgImg = this.bgLeft?.querySelector('img');
+        if (bgImg && mainContent) {
+          this.bgTl = gsap.timeline({ paused: true });
+          this.bgTl.fromTo(bgImg,
+            { opacity: 0, x: -100 },
+            { opacity: 1, x: 0, duration: 1.2, ease: 'power2.out' }
+          );
+ 
+          this.bgPlayTrigger = ScrollTrigger.create({
+            trigger: mainContent,
+            start: 'top bottom-=20%',
+            onEnter: () => this.bgTl?.play(),
+            onEnterBack: () => this.bgTl?.play()
           });
-          this.bgMaster = new MasterTimeline({
-            timeline: this.bgTl,
-            triggerInit: this.bgLeft,
-            tweenArr: [this.bgLeftFade],
-            stagger: 0
+ 
+          this.bgResetTrigger = ScrollTrigger.create({
+            trigger: this.el,
+            start: 'top bottom',
+            end: 'bottom top',
+            onLeave: () => {
+              this.bgTl?.progress(0).pause();
+            },
+            onLeaveBack: () => {
+              this.bgTl?.progress(0).pause();
+            }
           });
         }
       }
-
+ 
       destroy() {
         super.cleanTrigger();
         if (this.ctx) {
           this.ctx.revert();
           this.ctx = null;
+        }
+        if (this.bgPlayTrigger) {
+          this.bgPlayTrigger.kill();
+          this.bgPlayTrigger = null;
+        }
+        if (this.bgResetTrigger) {
+          this.bgResetTrigger.kill();
+          this.bgResetTrigger = null;
+        }
+        if (this.cardSwiper) {
+          this.cardSwiper.destroy(true, true);
+          this.cardSwiper = null;
+        }
+        if (this._destroyWidthListener) {
+          this._destroyWidthListener();
+          this._destroyWidthListener = null;
         }
         [this.headerTl, this.cardTl, this.bgTl, this.bgRightTl, this.horizontalTl, this.itemsFadeTl, ...this.itemTls].forEach(tl => tl?.kill());
         [this.headerMaster, this.cardMaster, this.bgMaster, this.bgRightMaster, ...this.itemMasters].forEach(m => m?.destroy());

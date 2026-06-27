@@ -213,110 +213,116 @@ get_header();
         <section class="about_team">
             <div class="container">
                 <div class="about_team_inner">
+                    <div class="about_team_bg svg_full">
+                        <svg width="883" height="806" viewBox="0 0 883 806" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <g opacity="0.5" filter="url(#filter0_d_368_2651)">
+                                <path
+                                    d="M288.603 0.5L556.76 395.47L285.328 797.5H4.94043L276.185 395.749L276.374 395.469L276.185 395.188L8.21777 0.5H288.603Z"
+                                    fill="url(#paint0_radial_368_2651)" stroke="black" />
+                                <path
+                                    d="M680.564 588.973L493.875 313.896L682.845 33.9004L877.79 33.9004L689.008 313.617L688.818 313.897L689.009 314.178L875.506 588.973L680.564 588.973Z"
+                                    fill="url(#paint1_radial_368_2651)" stroke="black" />
+                            </g>
+                            <defs>
+                                <filter id="filter0_d_368_2651" x="0" y="0" width="882.73" height="806"
+                                    filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                                    <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                                    <feColorMatrix in="SourceAlpha" type="matrix"
+                                        values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
+                                    <feOffset dy="4" />
+                                    <feGaussianBlur stdDeviation="2" />
+                                    <feComposite in2="hardAlpha" operator="out" />
+                                    <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0" />
+                                    <feBlend mode="normal" in2="BackgroundImageFix"
+                                        result="effect1_dropShadow_368_2651" />
+                                    <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_368_2651"
+                                        result="shape" />
+                                </filter>
+                                <radialGradient id="paint0_radial_368_2651" cx="0" cy="0" r="1"
+                                    gradientUnits="userSpaceOnUse"
+                                    gradientTransform="translate(280.682 399) rotate(90) scale(399 276.682)">
+                                    <stop stop-color="#EB4250" />
+                                    <stop offset="1" stop-color="#0D0D0D" />
+                                </radialGradient>
+                                <radialGradient id="paint1_radial_368_2651" cx="0" cy="0" r="1"
+                                    gradientUnits="userSpaceOnUse"
+                                    gradientTransform="translate(686.001 311.436) rotate(-90) scale(278.036 192.73)">
+                                    <stop stop-color="#0D0D0D" stop-opacity="0" />
+                                    <stop offset="1" stop-color="#A9000E" />
+                                </radialGradient>
+                            </defs>
+                        </svg>
+
+                    </div>
+                    <div class="about_team_title_wrap">
+                        <div class="about_team_subtitle txt_uppercase txt_16 block_arrow txt_medium">
+                            <?php echo esc_html(tr_posts_field('about_team_subtitle') ?: 'THE TEAM'); ?>
+                        </div>
+                        <div class="about_team_title txt_center h2 h4_mb heading cl_linear">
+                            <?php echo nl2br(esc_html(tr_posts_field('about_team_title') ?: 'We take pride in cultivating a fun, creative, and inspiring work environment.')); ?>
+                        </div>
+                        <div class="about_team_des txt_center txt_16">
+                            <?php echo nl2br(esc_html(tr_posts_field('about_team_desc') ?: "Step into our vibrant Vietnam office to meet a dynamic team of thinkers\nand creators, always ready to push the boundaries of digital growth.")); ?>
+                        </div>
+                    </div>
 
                     <div class="about_team_main grid">
-                        <div class="about_team_bg svg_full">
-                            <svg width="883" height="806" viewBox="0 0 883 806" fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <g opacity="0.5" filter="url(#filter0_d_368_2651)">
-                                    <path
-                                        d="M288.603 0.5L556.76 395.47L285.328 797.5H4.94043L276.185 395.749L276.374 395.469L276.185 395.188L8.21777 0.5H288.603Z"
-                                        fill="url(#paint0_radial_368_2651)" stroke="black" />
-                                    <path
-                                        d="M680.564 588.973L493.875 313.896L682.845 33.9004L877.79 33.9004L689.008 313.617L688.818 313.897L689.009 314.178L875.506 588.973L680.564 588.973Z"
-                                        fill="url(#paint1_radial_368_2651)" stroke="black" />
-                                </g>
-                                <defs>
-                                    <filter id="filter0_d_368_2651" x="0" y="0" width="882.73" height="806"
-                                        filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-                                        <feFlood flood-opacity="0" result="BackgroundImageFix" />
-                                        <feColorMatrix in="SourceAlpha" type="matrix"
-                                            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
-                                        <feOffset dy="4" />
-                                        <feGaussianBlur stdDeviation="2" />
-                                        <feComposite in2="hardAlpha" operator="out" />
-                                        <feColorMatrix type="matrix"
-                                            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0" />
-                                        <feBlend mode="normal" in2="BackgroundImageFix"
-                                            result="effect1_dropShadow_368_2651" />
-                                        <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_368_2651"
-                                            result="shape" />
-                                    </filter>
-                                    <radialGradient id="paint0_radial_368_2651" cx="0" cy="0" r="1"
-                                        gradientUnits="userSpaceOnUse"
-                                        gradientTransform="translate(280.682 399) rotate(90) scale(399 276.682)">
-                                        <stop stop-color="#EB4250" />
-                                        <stop offset="1" stop-color="#0D0D0D" />
-                                    </radialGradient>
-                                    <radialGradient id="paint1_radial_368_2651" cx="0" cy="0" r="1"
-                                        gradientUnits="userSpaceOnUse"
-                                        gradientTransform="translate(686.001 311.436) rotate(-90) scale(278.036 192.73)">
-                                        <stop stop-color="#0D0D0D" stop-opacity="0" />
-                                        <stop offset="1" stop-color="#A9000E" />
-                                    </radialGradient>
-                                </defs>
-                            </svg>
-
-                        </div>
-                        <div class="about_team_title_wrap">
-                            <div class="about_team_subtitle txt_uppercase txt_16 block_arrow txt_medium">
-                                <?php echo esc_html(tr_posts_field('about_team_subtitle') ?: 'THE TEAM'); ?>
-                            </div>
-                            <div class="about_team_title txt_center h2 h4_mb heading cl_linear">
-                                <?php echo nl2br(esc_html(tr_posts_field('about_team_title') ?: 'We take pride in cultivating a fun, creative, and inspiring work environment.')); ?>
-                            </div>
-                            <div class="about_team_des txt_center txt_16">
-                                <?php echo nl2br(esc_html(tr_posts_field('about_team_desc') ?: "Step into our vibrant Vietnam office to meet a dynamic team of thinkers\nand creators, always ready to push the boundaries of digital growth.")); ?>
-                            </div>
-                        </div>
                         <div class="about_team_content ">
                             <div class="about_team_content_mask"></div>
                             <div class="about_team_content_bgleft middle img_full">
                                 <img src="<?php echo get_template_directory_uri(); ?>/images/pattern_left.webp" alt="">
                             </div>
-                            <div class="about_team_content_inner grid">
-                                <?php
-                                $team_list = tr_posts_field('about_team_list');
-                                if (is_array($team_list) && !empty($team_list)):
-                                    foreach ($team_list as $team_item):
-                                        ?>
-                                        <div class="about_team_content_item item_line">
-                                            <div class="about_team_content_item_icon img_full">
-                                                <?php $icon_url = wp_get_attachment_image_url($team_item['icon'] ?? 0, 'full') ?: get_template_directory_uri() . '/images/icon-careers.svg'; ?>
-                                                <img src="<?php echo esc_url($icon_url); ?>" alt="">
+                            <div class="about_team_content_main">
+                                <div class="about_team_content_inner grid">
+                                    <?php
+                                    $team_list = tr_posts_field('about_team_list');
+                                    if (is_array($team_list) && !empty($team_list)):
+                                        foreach ($team_list as $team_item):
+                                            ?>
+                                            <div class="about_team_content_item item_line">
+                                                <div class="about_team_content_item_icon img_full">
+                                                    <?php $icon_url = wp_get_attachment_image_url($team_item['icon'] ?? 0, 'full') ?: get_template_directory_uri() . '/images/icon-careers.svg'; ?>
+                                                    <img src="<?php echo esc_url($icon_url); ?>" alt="">
+                                                </div>
+                                                <div
+                                                    class="about_team_content_item_title item_line_title cl_linear h5 heading ">
+                                                    <?php echo esc_html($team_item['title'] ?? ''); ?>
+                                                </div>
+                                                <div class="about_team_content_item_des txt_14">
+                                                    <?php echo nl2br(esc_html($team_item['desc'] ?? '')); ?>
+                                                </div>
                                             </div>
-                                            <div class="about_team_content_item_title item_line_title cl_linear h5 heading ">
-                                                <?php echo esc_html($team_item['title'] ?? ''); ?>
+                                            <?php
+                                        endforeach;
+                                    else:
+                                        for ($i = 0; $i < 6; $i++):
+                                            ?>
+                                            <div class="about_team_content_item_wrap ">
+                                                <div class="about_team_content_item item_line">
+                                                    <div class="about_team_content_item_icon img_full">
+                                                        <img src="<?php echo get_template_directory_uri(); ?>/images/icon-careers.svg"
+                                                            alt="">
+                                                    </div>
+                                                    <div
+                                                        class="about_team_content_item_title item_line_title cl_linear h5 heading txt_uppercase ">
+                                                        Insight
+                                                    </div>
+                                                    <div class="about_team_content_item_sub h6 heading cl_white ">
+                                                        Research & Understanding
+                                                    </div>
+                                                    <div class="about_team_content_item_des txt_14">We take the time to explore
+                                                        and understand every product, project, and market in depth. By listening
+                                                        closely to our clients and gaining a genuine understanding of their
+                                                        aspirations, we create meaningful communication solutions and campaigns
+                                                        that deliver the greatest possible value and impact.</div>
+                                                </div>
                                             </div>
-                                            <div class="about_team_content_item_des txt_14">
-                                                <?php echo nl2br(esc_html($team_item['desc'] ?? '')); ?>
-                                            </div>
-                                        </div>
-                                        <?php
-                                    endforeach;
-                                else:
-                                    for ($i = 0; $i < 6; $i++):
-                                        ?>
-                                        <div class="about_team_content_item item_line">
-                                            <div class="about_team_content_item_icon img_full">
-                                                <img src="<?php echo get_template_directory_uri(); ?>/images/icon-careers.svg"
-                                                    alt="">
-                                            </div>
-                                            <div class="about_team_content_item_title item_line_title cl_linear h5 heading ">
-                                                Insight
-                                            </div>
-                                            <div class="about_team_content_item_des txt_14">Luôn lắng nghe và thấu hiểu sản
-                                                phẩm, thấu
-                                                hiểu
-                                                mong muốn của khách hàng nhằm mang lại hiệu quả thiết thực cho khách hàng trong
-                                                từng
-                                                chiến
-                                                dịch truyền thông.</div>
-                                        </div>
-                                        <?php
-                                    endfor;
-                                endif;
-                                ?>
+                                            <?php
+                                        endfor;
+                                    endif;
+                                    ?>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -325,41 +331,91 @@ get_header();
                 </div>
                 <div class="about_team_card">
                     <div class="about_team_card_item">
-                        <div class="about_team_card_img img_full">
-                            <?php $card_img = wp_get_attachment_image_url(tr_posts_field('about_team_card_img'), 'full') ?: get_template_directory_uri() . '/images/card.webp'; ?>
-                            <img src="<?php echo esc_url($card_img); ?>" alt="">
+                        <!-- Image wrap -->
+                        <div class="about_team_card_img_wrap">
+                            <?php
+                            $team_cards = tr_posts_field('about_team_cards');
+                            if (empty($team_cards)) {
+                                // Fallback to single fields if exists, or defaults
+                                $single_img = tr_posts_field('about_team_card_img');
+                                $single_title = tr_posts_field('about_team_card_title') ?: 'Driven by Innovation';
+                                $single_desc = tr_posts_field('about_team_card_desc') ?: "At TheMax, we don't just follow trends; we create solutions. Our team thrives on data-driven strategy and bold creativity, ensuring every digital product we touch delivers real impact and sustainable growth.";
+                                $team_cards = [
+                                    [
+                                        'img' => $single_img,
+                                        'title' => $single_title,
+                                        'desc' => $single_desc
+                                    ],
+                                    [
+                                        'img' => 0,
+                                        'title' => 'Cultivating Excellence',
+                                        'desc' => 'We foster a collaborative culture that brings out the best in our team. By empowering creative minds and using data-driven logic, we build brand experiences that resonate.'
+                                    ],
+                                    [
+                                        'img' => 0,
+                                        'title' => 'Empowering Growth',
+                                        'desc' => 'Our mission is to drive digital transformation. We craft tailor-made strategies that optimize business growth, enhance user engagement, and deliver long-term value.'
+                                    ]
+                                ];
+                            }
+
+                            foreach ($team_cards as $index => $card):
+                                $img_id = isset($card['img']) ? $card['img'] : 0;
+                                $card_img = wp_get_attachment_image_url($img_id, 'full') ?: get_template_directory_uri() . '/images/' . (($index % 2 === 0) ? 'card.webp' : 'card2.jpg');
+                                ?>
+                                <div class="about_team_card_img_item <?php echo $index === 0 ? 'active' : ''; ?>">
+                                    <img src="<?php echo esc_url($card_img); ?>" alt="">
+                                </div>
+                            <?php endforeach; ?>
                         </div>
+
+                        <!-- Shared content overlay box containing Swiper -->
                         <div class="about_team_card_item_content">
-                            <div class="about_team_card_item_content_title heading h5 cl_linear">
-                                <?php echo esc_html(tr_posts_field('about_team_card_title') ?: 'Driven by Innovation'); ?>
+                            <!-- Swiper for text content -->
+                            <div class="swiper about_team_card_swiper">
+                                <div class="swiper-wrapper">
+                                    <?php foreach ($team_cards as $card):
+                                        $card_title = isset($card["title"]) ? $card["title"] : "";
+                                        $card_desc = isset($card["desc"]) ? $card["desc"] : "";
+                                        ?>
+                                        <div class="swiper-slide about_team_card_slide">
+                                            <div class="about_team_card_item_content_title heading h5 cl_linear">
+                                                <?php echo esc_html($card_title); ?>
+                                            </div>
+                                            <div class="about_team_card_item_content_des txt_14">
+                                                <?php echo nl2br(esc_html($card_desc)); ?>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
                             </div>
-                            <div class="about_team_card_item_content_des txt_14">
-                                <?php echo nl2br(esc_html(tr_posts_field('about_team_card_desc') ?: "At TheMax, we don't just follow trends; we create solutions. Our team thrives on data-driven strategy and bold creativity, ensuring every digital product we touch delivers real impact and sustainable growth.")); ?>
-                            </div>
+
+                            <!-- Shared Bot navigation -->
                             <div class="about_team_card_item_content_bot">
                                 <div class="about_team_card_item_content_bot_buton">
-                                    <div class="about_team_card_item_content_bot_buton_item svg_full last">
+                                    <div
+                                        class="about_team_card_item_content_bot_buton_item svg_full about_team_btn_prev">
                                         <svg width="40" height="40" viewBox="0 0 40 40" fill="none"
                                             xmlns="http://www.w3.org/2000/svg">
                                             <rect width="40" height="40" fill="#131313" />
                                             <path d="M23 14L17 20L23 26" stroke="#BEBEBE" stroke-width="1.5"
                                                 stroke-linecap="square" stroke-linejoin="round" />
                                         </svg>
-
                                     </div>
-                                    <div class="about_team_card_item_content_bot_buton_item svg_full">
+                                    <div
+                                        class="about_team_card_item_content_bot_buton_item svg_full about_team_btn_next">
                                         <svg width="40" height="40" viewBox="0 0 40 40" fill="none"
                                             xmlns="http://www.w3.org/2000/svg">
                                             <rect width="40" height="40" fill="#131313" />
                                             <path d="M17 26L23 20L17 14" stroke="#BEBEBE" stroke-width="1.5"
                                                 stroke-linecap="square" stroke-linejoin="round" />
                                         </svg>
-
                                     </div>
                                 </div>
                                 <div class="about_team_card_item_content_bot_page txt_14">
                                     <div class="about_team_card_item_content_bot_page_cur cl_red">01 /</div>
-                                    <div class="about_team_card_item_content_bot_page_max">03</div>
+                                    <div class="about_team_card_item_content_bot_page_max">
+                                        <?php echo sprintf("%02d", count($team_cards)); ?></div>
                                 </div>
                             </div>
                         </div>

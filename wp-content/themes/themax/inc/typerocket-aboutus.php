@@ -40,9 +40,11 @@ add_action('edit_form_after_title', function($post) {
             $form->text('title')->setLabel("Title"),
             $form->textarea('desc')->setLabel("Description")
         ]);
-        echo $form->image('about_team_card_img')->setLabel("Card Image");
-        echo $form->text('about_team_card_title')->setLabel("Card Title");
-        echo $form->textarea('about_team_card_desc')->setLabel("Card Description");
+        echo $form->repeater('about_team_cards')->setLabel("Team Cards")->setFields([
+            $form->image('img')->setLabel("Card Image"),
+            $form->text('title')->setLabel("Card Title"),
+            $form->textarea('desc')->setLabel("Card Description"),
+        ]);
         echo endBox();
 
         echo beginBox("Call to Action (CTA)", true);
