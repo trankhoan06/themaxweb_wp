@@ -139,8 +139,8 @@ $specialize_subtitle = tr_posts_field('specialize_subtitle') ?: "The Max special
                             <div class="home_specialize_inner_txt span main cl_black heading h1 h4_mb cl_main txt_uppercase">
                                 <span>maximize online power</span>
                                 <span>CREATE QUALITY RESULTS</span>
-                                <span>DEVELOP LONG TERM</span>
-                                <span>OFFER THE SOLUTION</span>
+                                <span>OFFER THE SOLUTIONS</span>
+                                <span>LONG-TERM PARTNERSHIP</span>
                                 <span>DO THE BEST</span>
                             </div>
                             <div class="home_specialize_inner_txt cl_black heading h1 h4_mb">for your brand's with
@@ -287,7 +287,7 @@ else:
                                                             d="M4.63313 0H0.0532536L4.42012 6.44248L0 13H4.57988L9 6.44248L4.63313 0Z"
                                                             fill="#929292" />
                                                     </svg>
-                                                    Competitors Analysis
+                                                    Product/ project surveys
                                                 </div>
                                                 <div class="home_services_content_bottom_list_item h6 heading">
                                                     <svg width="9" height="13" viewBox="0 0 9 13" fill="none"
@@ -296,7 +296,7 @@ else:
                                                             d="M4.63313 0H0.0532536L4.42012 6.44248L0 13H4.57988L9 6.44248L4.63313 0Z"
                                                             fill="#929292" />
                                                     </svg>
-                                                    Customers Insight
+                                                    Competitor Analysis
                                                 </div>
                                                 <div class="home_services_content_bottom_list_item h6 heading">
                                                     <svg width="9" height="13" viewBox="0 0 9 13" fill="none"
@@ -305,7 +305,7 @@ else:
                                                             d="M4.63313 0H0.0532536L4.42012 6.44248L0 13H4.57988L9 6.44248L4.63313 0Z"
                                                             fill="#929292" />
                                                     </svg>
-                                                    Project /Product Analysis
+                                                    Customer Insight
                                                 </div>
                                                 <div class="home_services_content_bottom_list_item h6 heading">
                                                     <svg width="9" height="13" viewBox="0 0 9 13" fill="none"
@@ -314,7 +314,7 @@ else:
                                                             d="M4.63313 0H0.0532536L4.42012 6.44248L0 13H4.57988L9 6.44248L4.63313 0Z"
                                                             fill="#929292" />
                                                     </svg>
-                                                    Brand Strategy / Story
+                                                    Project & Product Analysis
                                                 </div>
                                                 <div class="home_services_content_bottom_list_item h6 heading">
                                                     <svg width="9" height="13" viewBox="0 0 9 13" fill="none"
@@ -323,7 +323,25 @@ else:
                                                             d="M4.63313 0H0.0532536L4.42012 6.44248L0 13H4.57988L9 6.44248L4.63313 0Z"
                                                             fill="#929292" />
                                                     </svg>
-                                                    Master Marketing Plan
+                                                    Brand Positioning
+                                                </div>
+                                                <div class="home_services_content_bottom_list_item h6 heading">
+                                                    <svg width="9" height="13" viewBox="0 0 9 13" fill="none"
+                                                        xmlns="http://www.w3.org/2000/svg">
+                                                        <path
+                                                            d="M4.63313 0H0.0532536L4.42012 6.44248L0 13H4.57988L9 6.44248L4.63313 0Z"
+                                                            fill="#929292" />
+                                                    </svg>
+                                                    Communication Strategy
+                                                </div>
+                                                <div class="home_services_content_bottom_list_item h6 heading">
+                                                    <svg width="9" height="13" viewBox="0 0 9 13" fill="none"
+                                                        xmlns="http://www.w3.org/2000/svg">
+                                                        <path
+                                                            d="M4.63313 0H0.0532536L4.42012 6.44248L0 13H4.57988L9 6.44248L4.63313 0Z"
+                                                            fill="#929292" />
+                                                    </svg>
+                                                    Integrated Marketing Plan
                                                 </div>
                                             </div>
                                         </div>
@@ -375,7 +393,7 @@ else:
                                                             d="M4.63313 0H0.0532536L4.42012 6.44248L0 13H4.57988L9 6.44248L4.63313 0Z"
                                                             fill="#929292" />
                                                     </svg>
-                                                    KV/ Baner/ Post/Clip Ads Design & Marketing Materials
+                                                    KV/ Baner/ Post/Clip Ads Design
                                                 </div>
                                                 <div class="home_services_content_bottom_list_item h6 heading">
                                                     <svg width="9" height="13" viewBox="0 0 9 13" fill="none"
@@ -519,8 +537,8 @@ else:
         </section>
         <section class="home_case pa_container">
             <div class="container">
-                <div class="home_case_subtitle txt_16 txt_medium block_arrow">CASE STUDY</div>
-                <div class="home_case_title heading h2 txt_center cl_linear h4_mb">Discover unique projects</div>
+                <div class="home_case_subtitle txt_16 txt_medium block_arrow">OUR WORKS</div>
+                <div class="home_case_title heading h2 txt_center cl_linear h4_mb">Discover featured “works” projects</div>
                 <div class="home_case_content_list right_full left_full">
 <?php
 $cases = tr_posts_field('home_cases');
@@ -818,14 +836,14 @@ else:
                 <div class="home_clients_bg img_full">
                     <img src="./images/pattern-blur.svg" alt="">
                 </div>
-                <div class="home_clients_subtitle block_arrow">OUR CLIENTS</div>
-                <div class="home_clients_title heading h2 h4_mb cl_linear txt_center">Crafting excellence alongside
-                    visionary brands</div>
+                <div class="home_clients_subtitle block_arrow">TYPICAL CLIENTS</div>
+                <div class="home_clients_title heading h2 h4_mb cl_linear txt_center">We are proud to partner
+with renowned brands.</div>
                 <div class="home_clients_tab">
                     <div class="home_clients_tab_item hover_txt txt_16 txt_medium active" data-tabs="tab1">
                         <div class="hover_txt_grid">
-                            <span class="init">Real Estate Clients</span>
-                            <span class="active">Real Estate Clients</span>
+                            <span class="init">Real Estate Developers</span>
+                            <span class="active">Real Estate Developers</span>
                         </div>
                     </div>
                     <div class="home_clients_tab_item hover_txt txt_16 txt_medium" data-tabs="tab2">
@@ -836,8 +854,8 @@ else:
                     </div>
                     <div class="home_clients_tab_item hover_txt txt_16 txt_medium" data-tabs="tab3">
                         <div class="hover_txt_grid">
-                            <span class="init">Web & Mobile App</span>
-                            <span class="active">Web & Mobile App</span>
+                            <span class="init">Others Industry</span>
+                            <span class="active">Others Industry</span>
                         </div>
                     </div>
                 </div>

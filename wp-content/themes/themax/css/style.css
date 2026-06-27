@@ -846,21 +846,11 @@ h2 {
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: hidden;
 
     &.active {
         opacity: 1;
         transform: translateX(0%);
-    }
-
-    &::before {
-        content: "";
-        position: absolute;
-        left: 0;
-        bottom: 0;
-        background: url(../images/icon_triangle.svg) no-repeat;
-        background-position: right center;
-        width: 2.2rem;
-        height: 6.6rem;
     }
 }
 
@@ -926,13 +916,47 @@ h2 {
 
 .header_menu_nav_footer {
     position: absolute;
-    left: 6.4rem;
-    right: 6.4rem;
+    left: 0;
+    right: 0;
     bottom: 0;
+    padding-inline: 6.4rem;
     padding-block: 1.7rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    overflow: hidden;
+    cursor: pointer;
+
+    /* Pseudo fill: bắt đầu là tam giác đỏ nhỏ góc trái, hover → hình chữ nhật full */
+    &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: calc(100% + 2.2rem);
+        background-color: #EB4250;
+        clip-path: polygon(0 0, calc(100% - 2.2rem) 0, 100% 50%, calc(100% - 2.2rem) 100%, 0 100%);
+        transform: translateX(calc(-100% + 2.2rem));
+        transition: transform 0.6s cubic-bezier(0.785, 0.135, 0.15, 0.86);
+        z-index: 0;
+    }
+
+    &:hover::before {
+        transform: translateX(0);
+    }
+
+    /* Text nổi lên trên layer ::before */
+    &>* {
+        position: relative;
+        z-index: 1;
+        transition: color 0.35s ease;
+    }
+
+    &:hover .header_menu_nav_footer_hotline,
+    &:hover .header_menu_nav_footer_tel {
+        color: #fff;
+    }
 }
 
 @media only screen and (max-width: 991px) {
@@ -956,8 +980,10 @@ h2 {
     }
 
     .header_menu_nav_footer {
-        left: 5.4rem;
-        right: 2.4rem;
+        left: 0;
+        right: 0;
+        padding-left: 5.4rem;
+        padding-right: 2.4rem;
     }
 
     .header_menu {
@@ -1126,6 +1152,7 @@ h2 {
     width: 4.8rem;
     height: 4.8rem;
     display: block;
+    color: #BEBEBE;
 }
 
 .footer_bot_contact_social_item svg g>rect:first-child {
@@ -1137,12 +1164,24 @@ h2 {
 }
 
 .footer_bot_contact_social_item:hover svg g>rect:first-child {
-    fill: #BEBEBE;
-    stroke: #BEBEBE;
+    fill: #fff;
+    stroke: #fff;
 }
 
-.footer_bot_contact_social_item:hover svg path {
-    fill: #1DA1F2;
+.footer_bot_contact_social_item.ic_fb:hover svg path {
+    fill: #1877F2;
+}
+
+.footer_bot_contact_social_item.ic_zalo:hover svg path {
+    fill: #0053CC;
+}
+
+.footer_bot_contact_social_item.ic_linkin:hover svg path {
+    fill: #0A66C2;
+}
+
+.footer_bot_contact_social_item.ic_pret:hover svg path {
+    fill: #E60019;
 }
 
 .btn_top {

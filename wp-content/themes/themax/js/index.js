@@ -2165,10 +2165,10 @@ const mainScript = () => {
                 smoothScroll.start();
               }
             })
-              .to('.home_intro_img_list:nth-child(1)', { x: '-180%', duration: 1, ease: 'power2.inOut', overwrite: 'auto' }, 0)
-              .to('.home_intro_img_list:nth-child(2)', { x: '220%', duration: 1, ease: 'power2.inOut', overwrite: 'auto' }, 0)
-              .to('.home_intro_img_list:nth-child(3)', { x: '-180%', duration: 1, ease: 'power2.inOut', overwrite: 'auto' }, 0)
-              .to('.home_intro_img_list:nth-child(4)', { x: '240%', duration: 1, ease: 'power2.inOut', overwrite: 'auto' }, 0);
+              .to('.home_intro_img_list:nth-child(1)', { x: '-180%', duration: 1.6, ease: 'power2.inOut', overwrite: 'auto' }, 0)
+              .to('.home_intro_img_list:nth-child(2)', { x: '220%', duration: 1.6, ease: 'power2.inOut', overwrite: 'auto' }, 0)
+              .to('.home_intro_img_list:nth-child(3)', { x: '-180%', duration: 1.6, ease: 'power2.inOut', overwrite: 'auto' }, 0)
+              .to('.home_intro_img_list:nth-child(4)', { x: '240%', duration: 1.6, ease: 'power2.inOut', overwrite: 'auto' }, 0);
           },
           onEnterBack: () => {
             smoothScroll.stop();
@@ -3109,7 +3109,7 @@ const mainScript = () => {
       }
       interact() {
         let _thisEl = this.el;
-        
+
         // Initial setup: hide all content except the active one
         let activeTab = $(_thisEl).find('.home_clients_tab_item.active').first();
         let initialTabId = activeTab.attr('data-tabs') || 'tab1';
@@ -3269,6 +3269,7 @@ const mainScript = () => {
         this.titleSplit = null;
         this.desFade = null;
         this.listItemsFade = null;
+        this.numAnims = [];
       }
       trigger(data) {
         this.el = document.querySelector('.about_impressive');
@@ -3314,6 +3315,32 @@ const mainScript = () => {
 
           });
         }
+
+        this.numAnims = [];
+        const numberElements = Array.from(this.el.querySelectorAll('.about_impressive_right_list_item_num'));
+        numberElements.forEach((el) => {
+          const text = el.textContent.trim();
+          const match = text.match(/^([\d,]+)(.*)$/);
+          if (match) {
+            const targetVal = parseFloat(match[1].replace(/,/g, ''));
+            const suffix = match[2];
+            const obj = { val: 0 };
+            
+            el.textContent = '0' + suffix;
+            
+            const tween = gsap.to(obj, {
+              val: targetVal,
+              duration: 1.5,
+              ease: 'power2.out',
+              paused: true,
+              onUpdate: () => {
+                el.textContent = Math.floor(obj.val) + suffix;
+              }
+            });
+            this.numAnims.push(tween);
+          }
+        });
+
         if (this.items.length > 0) {
           this.listItemsFade = new FadeIn({
             el: this.items,
@@ -3321,6 +3348,11 @@ const mainScript = () => {
             stagger: 0.1,
             isDisableRevert: true,
             delay: 1,
+            onStart: () => {
+              this.numAnims.forEach((tween, index) => {
+                gsap.delayedCall(index * 0.1, () => tween.play());
+              });
+            }
           });
         }
         if (this.img) {
@@ -3384,6 +3416,10 @@ const mainScript = () => {
         if (this.listItemsFade) {
           this.listItemsFade.destroy();
           this.listItemsFade = null;
+        }
+        if (this.numAnims) {
+          this.numAnims.forEach(tween => tween.kill());
+          this.numAnims = [];
         }
       }
     },
@@ -3541,6 +3577,10 @@ const mainScript = () => {
         this.bgRightMaster = null;
         this.bgLeftFade = null;
         this.bgRightFade = null;
+        // horizontal scroll
+        this.ctx = null;
+        this.horizontalTl = null;
+        this.itemsFadeTl = null;
       }
       trigger(data) {
         this.el = document.querySelector('.about_team');
@@ -3636,36 +3676,87 @@ const mainScript = () => {
         });
       }
       animItems() {
-        this.items.forEach((item) => {
-          const itemFade = new FadeIn({ el: item, type: 'bottom', isDisableRevert: true, duration: 0.8 });
-          const iconFade = new FadeIn({ el: item.querySelector('.about_team_content_item_icon'), type: 'bottom', isDisableRevert: true, duration: 0.8 });
-          const titleFade = new FadeSplitText({
-            el: item.querySelector('.about_team_content_item_title'),
-            splitType: 'words',
-            isDisableRevert: true,
-            duration: 0.8,
-            stagger: 0.02,
-          });
-          const desFade = new FadeSplitText({
-            el: item.querySelector('.about_team_content_item_des'),
-            splitType: 'words',
-            isDisableRevert: true,
-            duration: 0.8,
-            stagger: 0.01,
-          });
+        this.ctx = gsap.matchMedia();
 
-          const tl = gsap.timeline({
-            scrollTrigger: { trigger: item, start: 'top top+=75%', once: true }
-          });
-          const tweenArr = [];
-          if (iconFade.DOM?.el) tweenArr.push(iconFade);
-          if (titleFade.DOM?.el) tweenArr.push(titleFade);
-          if (desFade.DOM?.el) tweenArr.push(desFade);
-          if (itemFade.DOM?.el) tweenArr.push(itemFade);
+        this.ctx.add({
+          isDesktop: "(min-width: 992px)",
+          isMobile: "(max-width: 991px)"
+        }, (context) => {
+          let { isDesktop, isMobile } = context.conditions;
 
-          const master = new MasterTimeline({ timeline: tl, triggerInit: item, tweenArr, stagger: 0.2 });
-          this.itemTls.push(tl);
-          this.itemMasters.push(master);
+          if (isDesktop) {
+            const innerWrap = this.el.querySelector('.about_team_inner');
+            const wrapper = this.el.querySelector('.about_team_content');
+            const inner = this.el.querySelector('.about_team_content_inner');
+            if (innerWrap && wrapper && inner) {
+              gsap.set(inner, { x: 0 });
+              
+              this.horizontalTl = gsap.timeline({
+                scrollTrigger: {
+                  trigger: innerWrap,
+                  scrub: 1,
+                  start: "top top",
+                  end: "bottom bottom",
+                  invalidateOnRefresh: true,
+                }
+              });
+
+              this.horizontalTl.to(inner, {
+                x: () => -(inner.scrollWidth - wrapper.clientWidth),
+                ease: "none"
+              });
+
+              // Stagger fade-in the cards when wrapper enters view
+              this.itemsFadeTl = gsap.timeline({
+                scrollTrigger: {
+                  trigger: wrapper,
+                  start: "top bottom-=20%",
+                  once: true
+                }
+              });
+
+              this.itemsFadeTl.fromTo(this.items, 
+                { opacity: 0, y: 50 }, 
+                { opacity: 1, y: 0, duration: 0.8, stagger: 0.1, ease: "power2.out" }
+              );
+            }
+          }
+
+          if (isMobile) {
+            this.itemTls = [];
+            this.itemMasters = [];
+            this.items.forEach((item) => {
+              const itemFade = new FadeIn({ el: item, type: 'bottom', isDisableRevert: true, duration: 0.8 });
+              const iconFade = new FadeIn({ el: item.querySelector('.about_team_content_item_icon'), type: 'bottom', isDisableRevert: true, duration: 0.8 });
+              const titleFade = new FadeSplitText({
+                el: item.querySelector('.about_team_content_item_title'),
+                splitType: 'words',
+                isDisableRevert: true,
+                duration: 0.8,
+                stagger: 0.02,
+              });
+              const desFade = new FadeSplitText({
+                el: item.querySelector('.about_team_content_item_des'),
+                splitType: 'words',
+                isDisableRevert: true,
+                duration: 0.8,
+                stagger: 0.01,
+              });
+
+              const tl = gsap.timeline({
+                scrollTrigger: { trigger: item, start: 'top top+=75%', once: true }
+              });
+              const tweenArr = [];
+              if (iconFade.DOM?.el) tweenArr.push(iconFade);
+              if (titleFade.DOM?.el) tweenArr.push(titleFade);
+              if (desFade.DOM?.el) tweenArr.push(desFade);
+              if (itemFade.DOM?.el) tweenArr.push(itemFade);
+
+              const master = new MasterTimeline({ timeline: tl, triggerInit: item, tweenArr, stagger: 0.2 });
+              this.itemTls.push(tl);
+              this.itemMasters.push(master);
+            });
+          }
         });
       }
       animCard() {
@@ -3692,9 +3783,9 @@ const mainScript = () => {
         if (this.bgLeft && this.bgLeftFade) {
           this.bgTl = gsap.timeline({
             scrollTrigger: {
-              trigger: this.bgLeft,
-              start: 'top top+=50%',
-              toggleActions: 'play reverse play reverse'
+              trigger: this.el,
+              start: 'top top+=75%',
+              once: true
             }
           });
           this.bgMaster = new MasterTimeline({
@@ -3704,30 +3795,19 @@ const mainScript = () => {
             stagger: 0
           });
         }
-        if (this.bgRight && this.bgRightFade) {
-          this.bgRightTl = gsap.timeline({
-            scrollTrigger: {
-              trigger: this.bgRight,
-              start: 'top top+=50%',
-              toggleActions: 'play reverse play reverse'
-            }
-          });
-          this.bgRightMaster = new MasterTimeline({
-            timeline: this.bgRightTl,
-            triggerInit: this.bgRight,
-            tweenArr: [this.bgRightFade],
-            stagger: 0
-          });
-        }
       }
 
       destroy() {
         super.cleanTrigger();
-        [this.headerTl, this.cardTl, this.bgTl, this.bgRightTl, ...this.itemTls].forEach(tl => tl?.kill());
+        if (this.ctx) {
+          this.ctx.revert();
+          this.ctx = null;
+        }
+        [this.headerTl, this.cardTl, this.bgTl, this.bgRightTl, this.horizontalTl, this.itemsFadeTl, ...this.itemTls].forEach(tl => tl?.kill());
         [this.headerMaster, this.cardMaster, this.bgMaster, this.bgRightMaster, ...this.itemMasters].forEach(m => m?.destroy());
         [this.subFade, this.titleSplit, this.desFade, this.cardImgFade, this.cardContentFade, this.cardTitleSplit, this.cardDesFade, this.cardBotFade, this.bgLeftFade, this.bgRightFade]
           .forEach(a => a?.destroy?.());
-        this.headerTl = this.cardTl = this.bgTl = this.bgRightTl = null;
+        this.headerTl = this.cardTl = this.bgTl = this.bgRightTl = this.horizontalTl = this.itemsFadeTl = null;
         this.headerMaster = this.cardMaster = this.bgMaster = this.bgRightMaster = null;
         this.subFade = this.titleSplit = this.desFade = this.cardImgFade = this.cardContentFade = this.cardTitleSplit = this.cardDesFade = this.cardBotFade = this.bgLeftFade = this.bgRightFade = null;
         this.itemTls = [];

@@ -16,16 +16,18 @@
 <!--[if !(IE 7) | !(IE 8)  ]><!-->
 <html <?php language_attributes(); ?> xmlns:fb="http://ogp.me/ns/fb#">
 <!--<![endif]-->
-<head>
-<meta charset="<?php bloginfo( 'charset' ); ?>">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<?php wp_head(); ?>
+<head>
+    <meta charset="<?php bloginfo('charset'); ?>">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <?php wp_head(); ?>
 </head>
+
 <body>
 
-  <!-- Header -->
-  <header>
+    <!-- Header -->
+    <header>
         <div class="header">
             <div class="grid container" data-init>
                 <a href="/" class="header_logo svg_full">
@@ -44,7 +46,7 @@
                             d="M110.694 6.37714H101.888L110.285 17.8971L101.786 29.6228H110.592L119.091 17.8971L110.694 6.37714Z"
                             fill="#EB4250" />
                     </svg>
-</a>
+                </a>
                 <div class="header_title block_arrow txt_medium txt_16 middle">
                     Digital Marketing Agency
                 </div>
@@ -61,25 +63,29 @@
                             </div>
                         </div>
                         <div class="header_menu_nav_content">
-                            <a href="/aboutus" class="header_menu_nav_content_item txt_48 cl_black hover_txt txt_medium">
+                            <a href="/aboutus"
+                                class="header_menu_nav_content_item txt_48 cl_black hover_txt txt_medium">
                                 <div class="hover_txt_grid">
                                     <span class="init">About Us</span>
                                     <span class="active">About Us</span>
                                 </div>
                             </a>
-                            <a href="/service" class="header_menu_nav_content_item txt_48 cl_black hover_txt txt_medium">
+                            <a href="/service"
+                                class="header_menu_nav_content_item txt_48 cl_black hover_txt txt_medium">
                                 <div class="hover_txt_grid">
                                     <span class="init">Services</span>
                                     <span class="active">Services</span>
                                 </div>
                             </a>
-                            <a href="/case-study" class="header_menu_nav_content_item txt_48 cl_black hover_txt txt_medium">
+                            <a href="/case-study"
+                                class="header_menu_nav_content_item txt_48 cl_black hover_txt txt_medium">
                                 <div class="hover_txt_grid">
-                                    <span class="init">Case Study</span>
-                                    <span class="active">Case Study</span>
+                                    <span class="init">Works</span>
+                                    <span class="active">Works</span>
                                 </div>
                             </a>
-                            <a href="/our-client" class="header_menu_nav_content_item txt_48 cl_black hover_txt txt_medium">
+                            <a href="/our-client"
+                                class="header_menu_nav_content_item txt_48 cl_black hover_txt txt_medium">
                                 <div class="hover_txt_grid">
                                     <span class="init">Clients</span>
                                     <span class="active">Clients</span>
@@ -91,7 +97,8 @@
                                     <span class="active">Careers</span>
                                 </div>
                             </a>
-                            <a href="/contact" class="header_menu_nav_content_item txt_48 cl_black hover_txt txt_medium">
+                            <a href="/contact"
+                                class="header_menu_nav_content_item txt_48 cl_black hover_txt txt_medium">
                                 <div class="hover_txt_grid">
                                     <span class="init">Contact</span>
                                     <span class="active">Contact</span>
