@@ -53,6 +53,8 @@
                             echo 'Digital Marketing Agency';
                         } elseif (is_singular('post')) {
                             echo '<a href="/works" class="header_works_link">Works</a> &nbsp;/&nbsp; ' . esc_html(get_the_title());
+                        } elseif (is_singular('career')) {
+                            echo '<a href="/career" class="header_works_link">Careers</a> &nbsp;/&nbsp; ' . esc_html(get_the_title());
                         } else {
                             echo esc_html(get_the_title());
                         }

@@ -90,6 +90,31 @@
     margin-bottom: 4rem;
 }
 
+.error_msg {
+    display: none;
+    color: #F32B3B;
+    font-size: 1.2rem;
+    margin-top: 0.8rem;
+    position: absolute;
+}
+
+.contact_form_row {
+    position: relative;
+}
+
+.contact_form_col {
+    position: relative;
+    width: 100%;
+}
+
+.has-error .error_msg {
+    display: block;
+}
+
+.has-error .contact_form_input {
+    border-bottom-color: #F32B3B;
+}
+
 @media only screen and (max-width:991px) {
     .contact_hero_content {
         grid-column: 1/6;

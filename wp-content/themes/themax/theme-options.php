@@ -24,12 +24,24 @@ $form = tr_form()->useJson()->setGroup( $this->getName() );
         echo $form->text('about_cta_text3')->setLabel('CTA Text Line 3 (Red)');
     };
 
+    // CTA Single Career
+    $cta_career = function() use ($form) {
+        echo "<h3>CTA Section (Global for Single Careers)</h3>";
+        echo "<p>Set the global CTA content here. This will appear at the bottom of all Career single pages.</p>";
+        echo $form->image('career_cta_img')->setLabel('CTA Image');
+        echo $form->text('career_cta_link')->setLabel('CTA Button Link URL');
+        echo $form->text('career_cta_btn_text')->setLabel('CTA Button Text');
+        echo $form->textarea('career_cta_title')->setLabel('CTA Title');
+        echo $form->textarea('career_cta_des')->setLabel('CTA Description');
+    };
+
     // Save
     $save = $form->submit( 'Save Options' );
 
     // Layout
     tr_tabs()->setSidebar( $save )
         ->addTab( 'Single Case Study', $cta_single )
+        ->addTab( 'Single Career', $cta_career )
         ->render( 'box' );
         
     echo $form->close();

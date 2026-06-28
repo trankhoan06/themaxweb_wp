@@ -365,8 +365,10 @@ h2 {
     color: #101010;
 }
 
-.cl_red {
+.cl_red,
+.txt_red {
     color: #E62636 !important;
+    -webkit-text-fill-color: #E62636 !important;
 }
 
 .cl_fb {
@@ -802,7 +804,7 @@ h2 {
 
 
 .header_title {
-    grid-column: 3/5;
+    grid-column: 3/9;
     margin-right: -2.5rem;
     display: flex;
     align-items: center;
@@ -1373,7 +1375,11 @@ h2 {
 .about_cta .container {
     position: relative;
     z-index: 11;
-    padding-block: 13.6rem;
+    height: 40rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
 }
 
 @media only screen and (max-width: 991px) {
@@ -1515,6 +1521,7 @@ h2 {
 
     .about_cta .container {
         padding-block: 9.3rem;
+        height: auto;
     }
 
     .about_cta_inner_content_icon {

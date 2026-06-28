@@ -1,6 +1,7 @@
 /* info */
 .careerdetail_info {
     padding-block: 20rem 10rem;
+    contain: paint;
 }
 
 .careerdetail_info_bg {
@@ -52,6 +53,13 @@
 
 .careerdetail_info_content_des_item_title {
     margin-bottom: 1.6rem;
+    padding-bottom: 0.2em;
+    margin-bottom: calc(1.6rem - 0.2em);
+}
+
+.careerdetail_info_content_des_item_title .bp-line {
+    padding-bottom: 0.2em;
+    margin-bottom: -0.2em;
 }
 
 .careerdetail_info_content_des_item_txt {
@@ -145,6 +153,30 @@
     font-size: 1.4rem;
 }
 
+.error_msg {
+    display: none;
+    color: #F32B3B;
+    font-size: 1.2rem;
+    margin-top: 0.8rem;
+    position: absolute;
+}
+
+.careerdetail_form_row,
+.careerdetail_form_col {
+    position: relative;
+}
+
+.careerdetail_form_col {
+    width: 100%;
+}
+
+.has-error .error_msg {
+    display: block;
+}
+
+.has-error .careerdetail_form_input {
+    border-bottom-color: #F32B3B;
+}
 
 .home_case_content_item_txt_icon {
     position: relative;

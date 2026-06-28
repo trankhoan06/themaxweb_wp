@@ -278,10 +278,21 @@ const mainScript = () => {
 
             const bgImage = computedStyle.backgroundImage;
             const hasGradient = bgImage && bgImage !== 'none' && bgImage.includes('gradient');
+
+            // Force red color explicitly on red text nodes before processing gradients
+            const redNodes = self.elements[0].querySelectorAll('.txt_red, .cl_red, .cl_main');
+            redNodes.forEach(node => {
+              node.style.setProperty('-webkit-text-fill-color', '#E62636', 'important');
+              node.style.setProperty('color', '#E62636', 'important');
+            });
+
             if (hasGradient) {
               const parentRect = self.elements[0].getBoundingClientRect();
               const parentWidth = parentRect.width;
               self[this.splitType].forEach(child => {
+                if (child.classList.contains('txt_red') || child.classList.contains('cl_red') || child.classList.contains('cl_main') || child.classList.contains('cl_linear_red') || child.querySelector('.txt_red, .cl_red, .cl_main, .cl_linear_red') || child.closest('.txt_red, .cl_red, .cl_main, .cl_linear_red')) {
+                  return;
+                }
                 const childRect = child.getBoundingClientRect();
                 const offsetX = childRect.left - parentRect.left;
                 child.style.backgroundImage = bgImage;
@@ -4466,7 +4477,183 @@ const mainScript = () => {
       }
     }
   };
-  const CareerDetailPage = {};
+  const CareerDetailPage = {
+    Animation: class {
+      constructor() {
+        this.el = null;
+        this.titleFade = null;
+        this.jobBlockFade = null;
+        this.jobItemFade = null;
+        this.descItemFade = null;
+        this.formFade = null;
+        this.otherFade = null;
+        this.bgFade = null;
+      }
+      trigger() {
+        this.el = document.querySelector('.careerdetail_info');
+        if (!this.el) return;
+        this.setup();
+        this.animFade();
+      }
+      setup() {
+        const title = this.el.querySelector('.careerdetail_info_content_title');
+        const jobBlock = this.el.querySelector('.careerdetail_info_content_job');
+        const jobItems = this.el.querySelectorAll('.careerdetail_info_content_job_item');
+        const descItems = this.el.querySelectorAll('.careerdetail_info_content_des_item');
+        const formBlock = this.el.querySelector('.careerdetail_info_content_form');
+        const otherSidebar = this.el.querySelector('.careerdetail_info_other');
+        const bgSVG = this.el.querySelector('.careerdetail_info_bg');
+
+        if (title) this.titleFade = new FadeSplitText({ el: title, splitType: 'words', isDisableRevert: true, duration: 1.0 });
+        if (jobBlock) this.jobBlockFade = new FadeIn({ el: jobBlock, type: 'bottom', isDisableRevert: true, duration: 0.8 });
+        if (jobItems.length) this.jobItemFade = new FadeIn({ el: jobItems, type: 'bottom', isDisableRevert: true, duration: 0.8, stagger: 0.1 });
+        if (descItems.length) this.descItemFade = new FadeIn({ el: descItems, type: 'bottom', isDisableRevert: true, duration: 1.0, stagger: 0.1 });
+        if (formBlock) this.formFade = new FadeIn({ el: formBlock, type: 'bottom', isDisableRevert: true, duration: 1.0 });
+        if (otherSidebar) this.otherFade = new FadeIn({ el: otherSidebar, type: 'bottom', isDisableRevert: true, duration: 1.0, delay: 0.2 });
+        if (bgSVG) this.bgFade = new FadeIn({ el: bgSVG, type: 'left', isDisableRevert: true, duration: 1.2 });
+      }
+      animFade() {
+        this.tl = gsap.timeline({ scrollTrigger: { trigger: this.el, start: 'top top+=85%', once: true } });
+        if (this.bgFade) this.tl.add(this.bgFade.play(), 0);
+        if (this.titleFade) this.tl.add(this.titleFade.play(), 0.1);
+        if (this.jobBlockFade) this.tl.add(this.jobBlockFade.play(), 0.2);
+        if (this.jobItemFade) this.tl.add(this.jobItemFade.play(), 0.3);
+        if (this.descItemFade) this.tl.add(this.descItemFade.play(), 0.5);
+        if (this.otherFade) this.tl.add(this.otherFade.play(), 0.3);
+
+        const formBlock = this.el.querySelector('.careerdetail_info_content_form');
+        if (formBlock && this.formFade) {
+          this.formTl = gsap.timeline({ scrollTrigger: { trigger: formBlock, start: 'top top+=85%', once: true } });
+          this.formTl.add(this.formFade.play(), 0);
+        }
+      }
+      destroy() {
+        if (this.tl) this.tl.kill();
+        if (this.formTl) this.formTl.kill();
+        [this.titleFade, this.jobBlockFade, this.jobItemFade, this.descItemFade, this.formFade, this.otherFade, this.bgFade].forEach(a => a?.destroy?.());
+      }
+    },
+    SocialShare: class {
+      constructor() {
+        this.fbBtns = document.querySelectorAll('.btn-share-fb');
+        this.twBtns = document.querySelectorAll('.btn-share-tw');
+        this.inBtns = document.querySelectorAll('.btn-share-in');
+
+        this.handleShareFB = this.handleShareFB.bind(this);
+        this.handleShareTW = this.handleShareTW.bind(this);
+        this.handleShareIN = this.handleShareIN.bind(this);
+
+        if (this.fbBtns) this.fbBtns.forEach(btn => btn.addEventListener('click', this.handleShareFB));
+        if (this.twBtns) this.twBtns.forEach(btn => btn.addEventListener('click', this.handleShareTW));
+        if (this.inBtns) this.inBtns.forEach(btn => btn.addEventListener('click', this.handleShareIN));
+      }
+
+      handleShareFB(e) {
+        e.preventDefault();
+        const url = e.currentTarget.dataset.url;
+        if (url) window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank', 'width=600,height=400');
+      }
+
+      handleShareTW(e) {
+        e.preventDefault();
+        const url = e.currentTarget.dataset.url;
+        const title = e.currentTarget.dataset.title;
+        if (url) window.open(`https://twitter.com/intent/tweet?url=${url}&text=${title}`, '_blank', 'width=600,height=400');
+      }
+
+      handleShareIN(e) {
+        e.preventDefault();
+        const url = e.currentTarget.dataset.url;
+        const title = e.currentTarget.dataset.title;
+        if (url) window.open(`https://www.linkedin.com/shareArticle?mini=true&url=${url}&title=${title}`, '_blank', 'width=600,height=400');
+      }
+
+      destroy() {
+        if (this.fbBtns) this.fbBtns.forEach(btn => btn.removeEventListener('click', this.handleShareFB));
+        if (this.twBtns) this.twBtns.forEach(btn => btn.removeEventListener('click', this.handleShareTW));
+        if (this.inBtns) this.inBtns.forEach(btn => btn.removeEventListener('click', this.handleShareIN));
+        this.fbBtns = null;
+        this.twBtns = null;
+        this.inBtns = null;
+      }
+    },
+    FormValidator: class {
+      constructor() {
+        this.formEl = null;
+      }
+      trigger() {
+        this.formEl = document.querySelector('.careerdetail_form');
+        if (!this.formEl) return;
+
+        this.inputs = this.formEl.querySelectorAll('input[required]');
+        
+        this.handleInput = (e) => {
+          const parent = e.target.closest('.careerdetail_form_col') || e.target.closest('.careerdetail_form_row');
+          if (parent) parent.classList.remove('has-error');
+        };
+        
+        this.inputs.forEach(input => {
+          input.addEventListener('input', this.handleInput);
+          input.addEventListener('change', this.handleInput);
+        });
+
+        this.handleSubmit = (e) => {
+          e.preventDefault();
+          let isValid = true;
+          
+          this.inputs.forEach(input => {
+            const parent = input.closest('.careerdetail_form_col') || input.closest('.careerdetail_form_row');
+            const type = input.getAttribute('type');
+            let isInputValid = true;
+
+            if (type === 'file') {
+              if (input.files.length === 0) isInputValid = false;
+            } else {
+              const value = input.value.trim();
+              if (value === '') {
+                isInputValid = false;
+              } else if (type === 'email') {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(value)) isInputValid = false;
+              }
+            }
+
+            if (!isInputValid) {
+              parent.classList.add('has-error');
+              isValid = false;
+            } else {
+              parent.classList.remove('has-error');
+            }
+          });
+
+          if (isValid) {
+            const submitBtnInit = this.formEl.querySelector('.btn_submit .init');
+            if (submitBtnInit) {
+              const originalText = submitBtnInit.innerText;
+              submitBtnInit.innerText = "SENDING...";
+              setTimeout(() => {
+                submitBtnInit.innerText = "SENT SUCCESSFULLY";
+                this.formEl.reset();
+                setTimeout(() => { submitBtnInit.innerText = originalText; }, 3000);
+              }, 1500);
+            }
+          }
+        };
+        this.formEl.addEventListener('submit', this.handleSubmit);
+      }
+      destroy() {
+        if (this.formEl) {
+          this.formEl.removeEventListener('submit', this.handleSubmit);
+          if (this.inputs) {
+            this.inputs.forEach(input => {
+              input.removeEventListener('input', this.handleInput);
+              input.removeEventListener('change', this.handleInput);
+            });
+          }
+        }
+      }
+    }
+  };
   const CaseStudyPage = {
     Content: class {
       constructor() {
@@ -4560,9 +4747,9 @@ const mainScript = () => {
       }
     }
   };
-  
+
   const CaseStudyDetailPage = {};
-  
+
   CaseStudyDetailPage.Animations = class {
     constructor() {
       this.heroMaster = null;
@@ -4580,7 +4767,7 @@ const mainScript = () => {
         if (heroImg) tweenArr.push(new FadeIn({ el: heroImg, type: 'bottom', isDisableRevert: true }));
         const heroTxt = hero.querySelector('.casestudydetail_hero_content_txt');
         if (heroTxt) tweenArr.push(new FadeSplitText({ el: heroTxt }));
-        
+
         if (tweenArr.length > 0) {
           this.heroMaster = new MasterTimeline({ triggerInit: hero, tweenArr });
         }
@@ -4599,7 +4786,7 @@ const mainScript = () => {
           tweenArr: [new FadeIn({ el: item, type: 'bottom', isDisableRevert: true })]
         }));
       });
-      
+
       const socialContainer = document.querySelector('.casestudydetail_content_social');
       if (socialContainer) {
         const links = Array.from(socialContainer.querySelectorAll('a'));
@@ -4617,7 +4804,7 @@ const mainScript = () => {
         const tweenArr = [];
         if (title) tweenArr.push(new FadeSplitText({ el: title }));
         if (des) tweenArr.push(new FadeSplitText({ el: des }));
-        
+
         if (tweenArr.length > 0) {
           this.relatedMasterList.push(new MasterTimeline({
             triggerInit: item,
@@ -4641,7 +4828,7 @@ const mainScript = () => {
       this.copyBtns = document.querySelectorAll('.btn-copy-link');
       this.fbBtns = document.querySelectorAll('.btn-share-fb');
       this.inBtns = document.querySelectorAll('.btn-share-in');
-      
+
       this.handleCopy = this.handleCopy.bind(this);
       this.handleShareFB = this.handleShareFB.bind(this);
       this.handleShareIN = this.handleShareIN.bind(this);
@@ -4650,7 +4837,7 @@ const mainScript = () => {
       if (this.fbBtns) this.fbBtns.forEach(btn => btn.addEventListener('click', this.handleShareFB));
       if (this.inBtns) this.inBtns.forEach(btn => btn.addEventListener('click', this.handleShareIN));
     }
-    
+
     handleCopy(e) {
       e.preventDefault();
       const url = e.currentTarget.dataset.url;
@@ -4664,18 +4851,18 @@ const mainScript = () => {
     }
 
     handleShareFB(e) {
-        e.preventDefault();
-        const url = e.currentTarget.dataset.url;
-        if (url) window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank', 'width=600,height=400');
+      e.preventDefault();
+      const url = e.currentTarget.dataset.url;
+      if (url) window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank', 'width=600,height=400');
     }
 
     handleShareIN(e) {
-        e.preventDefault();
-        const url = e.currentTarget.dataset.url;
-        const title = e.currentTarget.dataset.title;
-        if (url) window.open(`https://www.linkedin.com/shareArticle?mini=true&url=${url}&title=${title}`, '_blank', 'width=600,height=400');
+      e.preventDefault();
+      const url = e.currentTarget.dataset.url;
+      const title = e.currentTarget.dataset.title;
+      if (url) window.open(`https://www.linkedin.com/shareArticle?mini=true&url=${url}&title=${title}`, '_blank', 'width=600,height=400');
     }
-    
+
     destroy() {
       if (this.copyBtns) this.copyBtns.forEach(btn => btn.removeEventListener('click', this.handleCopy));
       if (this.fbBtns) this.fbBtns.forEach(btn => btn.removeEventListener('click', this.handleShareFB));
@@ -4686,7 +4873,124 @@ const mainScript = () => {
     }
   };
 
-  const ContactPage = {};
+  const ContactPage = {
+    Hero: class {
+      constructor() {
+        this.el = null;
+        this.bgFade = null;
+        this.vectoFade = null;
+        this.titleSplit = null;
+        this.subFade = null;
+        this.infoFade = null;
+        this.formFade = null;
+        this.master = null;
+      }
+      trigger() {
+        this.el = document.querySelector('.contact_hero');
+        if (!this.el) return;
+        this.setup();
+        this.animFade();
+      }
+      setup() {
+        const bg = this.el.querySelector('.contact_hero_bg');
+        const vecto = this.el.querySelector('.contact_hero_vecto');
+        const title = this.el.querySelector('.contact_hero_content_title');
+        const sub = this.el.querySelector('.contact_hero_content_subtitle');
+        const info = this.el.querySelector('.contact_hero_content_info');
+        const form = this.el.querySelector('.contact_hero_form');
+
+        if (bg) this.bgFade = new FadeIn({ el: bg, type: 'none', isDisableRevert: true, duration: 1.5 });
+        if (vecto) this.vectoFade = new FadeIn({ el: vecto, type: 'right', isDisableRevert: true, duration: 1.5 });
+        if (title) this.titleSplit = new FadeSplitText({ el: title, splitType: 'words', isDisableRevert: true, duration: 1.2, stagger: 0.05 });
+        if (sub) this.subFade = new FadeIn({ el: sub, type: 'bottom', isDisableRevert: true });
+        if (info) this.infoFade = new FadeIn({ el: info, type: 'bottom', isDisableRevert: true });
+        if (form) this.formFade = new FadeIn({ el: form, type: 'bottom', isDisableRevert: true });
+
+        // Form Validation Logic
+        this.formEl = this.el.querySelector('.contact_form');
+        if (this.formEl) {
+          this.inputs = this.formEl.querySelectorAll('input[required]');
+          
+          this.handleInput = (e) => {
+            const parent = e.target.closest('.contact_form_col') || e.target.closest('.contact_form_row');
+            if (parent) parent.classList.remove('has-error');
+          };
+          
+          this.inputs.forEach(input => {
+            input.addEventListener('input', this.handleInput);
+          });
+
+          this.handleSubmit = (e) => {
+            e.preventDefault();
+            let isValid = true;
+            
+            this.inputs.forEach(input => {
+              const parent = input.closest('.contact_form_col') || input.closest('.contact_form_row');
+              const type = input.getAttribute('type');
+              const value = input.value.trim();
+              let isInputValid = true;
+
+              if (value === '') {
+                isInputValid = false;
+              } else if (type === 'email') {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(value)) isInputValid = false;
+              }
+
+              if (!isInputValid) {
+                parent.classList.add('has-error');
+                isValid = false;
+              } else {
+                parent.classList.remove('has-error');
+              }
+            });
+
+            if (isValid) {
+              // Valid form, can submit or send AJAX here
+              const submitBtnInit = this.formEl.querySelector('.btn_submit .init');
+              if (submitBtnInit) {
+                const originalText = submitBtnInit.innerText;
+                submitBtnInit.innerText = "SENDING...";
+                setTimeout(() => {
+                  submitBtnInit.innerText = "SENT SUCCESSFULLY";
+                  this.formEl.reset();
+                  setTimeout(() => { submitBtnInit.innerText = originalText; }, 3000);
+                }, 1500);
+              }
+            }
+          };
+          this.formEl.addEventListener('submit', this.handleSubmit);
+        }
+      }
+      animFade() {
+        const tweenArr = [];
+        if (this.titleSplit) tweenArr.push(this.titleSplit);
+        if (this.subFade) tweenArr.push(this.subFade);
+        if (this.infoFade) tweenArr.push(this.infoFade);
+        if (this.formFade) tweenArr.push(this.formFade);
+
+        const bgArr = [];
+        if (this.bgFade) bgArr.push(this.bgFade);
+        if (this.vectoFade) bgArr.push(this.vectoFade);
+
+        if (tweenArr.length) {
+          const fadeTl = gsap.timeline();
+          this.master = new MasterTimeline({ timeline: fadeTl, triggerInit: this.el, tweenArr: [...bgArr, ...tweenArr], stagger: 0.1 });
+        }
+      }
+      destroy() {
+        if (this.master) { this.master.destroy(); this.master = null; }
+        [this.titleSplit, this.subFade, this.infoFade, this.formFade, this.bgFade, this.vectoFade].forEach(a => a?.destroy?.());
+        
+        if (this.formEl) {
+          this.formEl.removeEventListener('submit', this.handleSubmit);
+          if (this.inputs) {
+            this.inputs.forEach(input => input.removeEventListener('input', this.handleInput));
+          }
+        }
+      }
+    }
+  };
   const ServicePage = {
     Hero: class {
       constructor() {
@@ -4728,6 +5032,100 @@ const mainScript = () => {
       destroy() {
         if (this.master) { this.master.destroy(); this.master = null; }
         [this.titleSplit, this.descFade, this.btnFade, this.bgFade].forEach(a => a?.destroy?.());
+      }
+    },
+    ServicesTop: class {
+      constructor() {
+        this.el = null;
+        this.subFade = null;
+        this.titleSplit = null;
+        this.desFade = null;
+        this.bgLeftFade = null;
+        this.bgRightFade = null;
+        this.master = null;
+      }
+      trigger() {
+        this.el = document.querySelector('.home_services_top');
+        if (!this.el) return;
+        this.setup();
+        this.animFade();
+      }
+      setup() {
+        const sub = this.el.querySelector('.home_services_sub');
+        const title = this.el.querySelector('.home_services_title');
+        const des = this.el.querySelector('.home_services_des');
+        const bgLeft = this.el.querySelector('.home_services_top_bg.left');
+        const bgRight = this.el.querySelector('.home_services_top_bg.right');
+
+        if (sub) this.subFade = new FadeIn({ el: sub, type: 'bottom', isDisableRevert: true });
+        if (title) this.titleSplit = new FadeSplitText({ el: title });
+        if (des) this.desFade = new FadeIn({ el: des, type: 'bottom', isDisableRevert: true });
+        if (bgLeft) this.bgLeftFade = new FadeIn({ el: bgLeft, type: 'left', isDisableRevert: true });
+        if (bgRight) this.bgRightFade = new FadeIn({ el: bgRight, type: 'right', isDisableRevert: true });
+      }
+      animFade() {
+        const tweenArr = [];
+        if (this.subFade) tweenArr.push(this.subFade);
+        if (this.titleSplit) tweenArr.push(this.titleSplit);
+        if (this.desFade) tweenArr.push(this.desFade);
+
+        // Backgrounds can fade in simultaneously with text
+        const bgArr = [];
+        if (this.bgLeftFade) bgArr.push(this.bgLeftFade);
+        if (this.bgRightFade) bgArr.push(this.bgRightFade);
+
+        if (tweenArr.length) {
+          const fadeTl = gsap.timeline({
+            scrollTrigger: {
+              trigger: this.el,
+              start: 'top top+=75%',
+              once: true
+            }
+          });
+          this.master = new MasterTimeline({ timeline: fadeTl, triggerInit: this.el, tweenArr: [...tweenArr, ...bgArr], stagger: 0.1 });
+        }
+      }
+      destroy() {
+        if (this.master) { this.master.destroy(); this.master = null; }
+        [this.subFade, this.titleSplit, this.desFade, this.bgLeftFade, this.bgRightFade].forEach(a => a?.destroy?.());
+      }
+    },
+    ServicesList: class {
+      constructor() {
+        this.masterList = [];
+      }
+      trigger() {
+        const items = document.querySelectorAll('.home_services_item');
+        if (!items || items.length === 0) return;
+
+        items.forEach(item => {
+          const title = item.querySelector('.home_services_content_title');
+          const sub = item.querySelector('.home_services_content_sub');
+          const bottomDes = item.querySelector('.home_services_content_bottom_des');
+          const listItems = item.querySelectorAll('.home_services_content_bottom_list_item');
+          const img = item.querySelector('.home_services_img');
+
+          const tweenArr = [];
+          if (title) tweenArr.push(new FadeSplitText({ el: title }));
+          if (sub) tweenArr.push(new FadeIn({ el: sub, type: 'bottom', isDisableRevert: true }));
+          if (bottomDes) tweenArr.push(new FadeIn({ el: bottomDes, type: 'bottom', isDisableRevert: true }));
+          if (listItems && listItems.length > 0) {
+            tweenArr.push(new FadeIn({ el: listItems, type: 'bottom', isDisableRevert: true, stagger: 0.1 }));
+          }
+          if (img) tweenArr.push(new FadeIn({ el: img, type: 'none', isDisableRevert: true }));
+
+          if (tweenArr.length > 0) {
+            this.masterList.push(new MasterTimeline({
+              triggerInit: item,
+              tweenArr: tweenArr,
+              stagger: 0.1
+            }));
+          }
+        });
+      }
+      destroy() {
+        this.masterList.forEach(m => m.destroy());
+        this.masterList = [];
       }
     }
   };

@@ -23,11 +23,5 @@ $box->setCallback(function() {
     ]);
     echo $desc;
 
-    // CTA Section
-    echo "<h3>CTA Section (Bottom)</h3>";
-    echo "<p>Để trống để sử dụng nội dung mặc định.</p>";
-    echo $form->text('cta_title')->setLabel('CTA Title');
-    echo $form->textarea('cta_desc')->setLabel('CTA Description');
-    echo $form->text('cta_btn_text')->setLabel('Button Text');
-    echo $form->text('cta_btn_link')->setLabel('Button Link');
+
 });
