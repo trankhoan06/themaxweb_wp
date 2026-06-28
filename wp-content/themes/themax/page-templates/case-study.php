@@ -66,138 +66,27 @@ get_header();
             <div class="container">
                 <div class="home_case_content_list right_full left_full">
 <?php
-$cs_items = tr_posts_field('cs_items');
-if (is_array($cs_items) && !empty($cs_items)) :
-    foreach($cs_items as $item) :
-        $item_link = esc_url($item['link'] ?? '#');
-?>
-                    <a href="<?php echo $item_link; ?>" class="home_case_content_item" style="display:block; text-decoration:none;">
-                        <div class="home_case_content_item_des cl_be">
-                            <div class="home_case_content_item_des_txt txt_15 txt_medium"><?php echo esc_html($item['client_name'] ?? ''); ?></div>
-                            <div class="home_case_content_item_des_txt txt_15 txt_medium"><?php echo esc_html($item['type'] ?? ''); ?></div>
-                        </div>
-                        <div class="home_case_content_item_img_outer">
-                            <div class="home_case_content_item_img img_full">
-                                <?php $item_img = wp_get_attachment_image_url($item['image'] ?? 0, 'full') ; ?>
-                                <img src="<?php echo esc_url($item_img); ?>" alt="">
-                            </div>
-                        </div>
-                        <div class="home_case_content_item_txt">
-                            <div class="home_case_content_item_txt_title heading cl_be h4 h5_mb"><?php echo esc_html($item['title'] ?? ''); ?></div>
-                            <div class="home_case_content_item_txt_icon">
-                                <div class="home_case_content_item_txt_icon_wrap svg_full">
-                                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <g clip-path="url(#clip0_1164_690)">
-                                            <path d="M12 12H36.0003V36.0003" stroke="#929292" stroke-width="2"
-                                                stroke-linejoin="round" />
-                                            <path d="M12 36.0003L36.0003 12" stroke="#929292" stroke-width="2"
-                                                stroke-linejoin="round" />
-                                        </g>
-                                        <defs>
-                                            <clipPath id="clip0_1164_690">
-                                                <rect width="48" height="48" fill="white" />
-                                            </clipPath>
-                                        </defs>
-                                    </svg>
-                                </div>
-                                <div class="home_case_content_item_txt_icon_wrap svg_full active">
-                                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <g clip-path="url(#clip0_1164_690)">
-                                            <path d="M12 12H36.0003V36.0003" stroke="#F32B3B" stroke-width="2"
-                                                stroke-linejoin="round" />
-                                            <path d="M12 36.0003L36.0003 12" stroke="#F32B3B" stroke-width="2"
-                                                stroke-linejoin="round" />
-                                        </g>
-                                        <defs>
-                                            <clipPath id="clip0_1164_690">
-                                                <rect width="48" height="48" fill="white" />
-                                            </clipPath>
-                                        </defs>
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-<?php
-    endforeach;
-else:
-?>
-                    <a href="#" class="home_case_content_item" style="display:block; text-decoration:none;">
-                        <div class="home_case_content_item_des cl_be">
-                            <div class="home_case_content_item_des_txt txt_15 txt_medium">DAT XANH GROUP</div>
-                            <div class="home_case_content_item_des_txt txt_15 txt_medium">WEBSITE</div>
-                        </div>
-                        <div class="home_case_content_item_img_outer">
-                            <div class="home_case_content_item_img img_full">
-                                <img src="<?php echo get_template_directory_uri(); ?>/images/case.webp" alt="">
-                            </div>
-                        </div>
-                        <div class="home_case_content_item_txt">
-                            <div class="home_case_content_item_txt_title heading cl_be h4 h5_mb">Opal Garden</div>
-                            <div class="home_case_content_item_txt_icon">
-                                <div class="home_case_content_item_txt_icon_wrap svg_full">
-                                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <g clip-path="url(#clip0_1164_690)">
-                                            <path d="M12 12H36.0003V36.0003" stroke="#929292" stroke-width="2" stroke-linejoin="round" />
-                                            <path d="M12 36.0003L36.0003 12" stroke="#929292" stroke-width="2" stroke-linejoin="round" />
-                                        </g>
-                                        <defs>
-                                            <clipPath id="clip0_1164_690">
-                                                <rect width="48" height="48" fill="white" />
-                                            </clipPath>
-                                        </defs>
-                                    </svg>
-                                </div>
-                                <div class="home_case_content_item_txt_icon_wrap svg_full active">
-                                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <g clip-path="url(#clip0_1164_690)">
-                                            <path d="M12 12H36.0003V36.0003" stroke="#F32B3B" stroke-width="2" stroke-linejoin="round" />
-                                            <path d="M12 36.0003L36.0003 12" stroke="#F32B3B" stroke-width="2" stroke-linejoin="round" />
-                                        </g>
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                    <a href="#" class="home_case_content_item" style="display:block; text-decoration:none;">
-                        <div class="home_case_content_item_des cl_be">
-                            <div class="home_case_content_item_des_txt txt_15 txt_medium">NOVALAND</div>
-                            <div class="home_case_content_item_des_txt txt_15 txt_medium">BRANDING</div>
-                        </div>
-                        <div class="home_case_content_item_img_outer">
-                            <div class="home_case_content_item_img img_full">
-                                <img src="<?php echo get_template_directory_uri(); ?>/images/case.webp" alt="">
-                            </div>
-                        </div>
-                        <div class="home_case_content_item_txt">
-                            <div class="home_case_content_item_txt_title heading cl_be h4 h5_mb">Aqua City</div>
-                            <div class="home_case_content_item_txt_icon">
-                                <div class="home_case_content_item_txt_icon_wrap svg_full">
-                                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <g clip-path="url(#clip0_1164_690)">
-                                            <path d="M12 12H36.0003V36.0003" stroke="#929292" stroke-width="2" stroke-linejoin="round" />
-                                            <path d="M12 36.0003L36.0003 12" stroke="#929292" stroke-width="2" stroke-linejoin="round" />
-                                        </g>
-                                    </svg>
-                                </div>
-                                <div class="home_case_content_item_txt_icon_wrap svg_full active">
-                                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <g clip-path="url(#clip0_1164_690)">
-                                            <path d="M12 12H36.0003V36.0003" stroke="#F32B3B" stroke-width="2" stroke-linejoin="round" />
-                                            <path d="M12 36.0003L36.0003 12" stroke="#F32B3B" stroke-width="2" stroke-linejoin="round" />
-                                        </g>
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-<?php endif; ?>
+$args = array(
+    'post_type' => 'post',
+    'post_status' => 'publish',
+    'posts_per_page' => 6,
+    'paged' => 1
+);
+$cs_query = new WP_Query($args);
+if ($cs_query->have_posts()) :
+    while ($cs_query->have_posts()) :
+        $cs_query->the_post();
+        get_template_part('template-parts/content', 'case-study');
+    endwhile;
+    wp_reset_postdata();
+endif; ?>
                 </div>
-                <a href="<?php echo esc_url(tr_posts_field('cs_see_more_link') ); ?>" class="home_case_seeview button_hover hover_txt txt_uppercase txt_14 txt_medium cl_be">
+<?php
+$max_pages = isset($cs_query) ? $cs_query->max_num_pages : 1;
+?>
+                <a href="#" id="load-more-case-study" data-page="1" data-max="<?php echo $max_pages; ?>" class="home_case_seeview button_hover hover_txt txt_uppercase txt_14 txt_medium cl_be" <?php if ($max_pages <= 1) echo 'style="display:none;"'; ?>>
                     <div class="hover_txt_grid">
-                        <?php $seemore = esc_html(tr_posts_field('cs_see_more_text') ); ?>
+                        <?php $seemore = esc_html(tr_posts_field('cs_see_more_text') ?: 'SEE MORE'); ?>
                         <span class="init"><?php echo $seemore; ?></span>
                         <span class="active"><?php echo $seemore; ?></span>
                     </div>

@@ -11,15 +11,7 @@ add_action('edit_form_after_title', function($post) {
         echo endBox();
 
         echo beginBox("Case Studies", true);
-        echo $form->repeater('cs_items')->setLabel("Items")->setFields([
-            $form->text('client_name')->setLabel("Client Name (e.g. DAT XANH GROUP)"),
-            $form->text('type')->setLabel("Project Type (e.g. WEBSITE)"),
-            $form->image('image')->setLabel("Thumbnail Image"),
-            $form->text('title')->setLabel("Project Title (e.g. Opal Garden)"),
-            $form->text('link')->setLabel("Project Link")
-        ]);
         echo $form->text('cs_see_more_text')->setLabel("See More Button Text");
-        echo $form->text('cs_see_more_link')->setLabel("See More Button Link");
         echo endBox();
 
         echo beginBox("Call to Action (CTA)", true);

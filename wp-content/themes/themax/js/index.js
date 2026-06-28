@@ -3214,11 +3214,11 @@ const mainScript = () => {
             stagger: 0.05
           });
         }
-        
+
         let activeTab = $(this.el).find('.home_clients_tab_item.active').first();
         let tabId = activeTab.attr('data-tabs') || 'tab1';
         let activeContent = $(this.el).find('.home_clients_content_item[data-tabs="' + tabId + '"]')[0];
-        
+
         if (activeContent) {
           const items = activeContent.querySelectorAll('.home_clients_content_item_img');
           if (items.length) {
@@ -3231,7 +3231,7 @@ const mainScript = () => {
             });
           }
         }
-        
+
         const imgs = this.el.querySelectorAll('.home_clients_content_item_img');
         if (imgs.length) {
           gsap.set(imgs, { opacity: 0 }); // Hide initially to prevent flash before FadeIn
@@ -3259,15 +3259,15 @@ const mainScript = () => {
           $(_thisEl).find('.home_clients_content_item').hide();
           let targetContent = $(_thisEl).find('.home_clients_content_item[data-tabs="' + tabId + '"]');
           targetContent.css('display', 'flex');
-          
+
           const items = targetContent[0].querySelectorAll('.home_clients_content_item_img');
           if (items.length) {
-            new FadeIn({ 
-              el: items, 
-              type: 'bottom', 
-              isDisableRevert: true, 
-              duration: 0.8, 
-              stagger: 0.1 
+            new FadeIn({
+              el: items,
+              type: 'bottom',
+              isDisableRevert: true,
+              duration: 0.8,
+              stagger: 0.1
             });
           }
         };
@@ -4173,7 +4173,99 @@ const mainScript = () => {
   };
   const CareerPage = {};
   const CareerDetailPage = {};
-  const CaseStudyPage = {};
+  const CaseStudyPage = {
+    Content: class {
+      constructor() {
+        this.el = null;
+        this.btn = null;
+        this.clickAjax = null;
+      }
+      trigger(data) {
+        this.el = document.querySelector('.casestudy_content');
+        if (!this.el) return;
+        this.interact();
+
+        // Fix initial scroll bug when images load asynchronously
+        setTimeout(() => {
+          window.dispatchEvent(new Event('resize'));
+          if (typeof smoothScroll !== 'undefined' && smoothScroll.lenis) smoothScroll.lenis.resize();
+          if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
+        }, 500);
+        setTimeout(() => {
+          window.dispatchEvent(new Event('resize'));
+          if (typeof smoothScroll !== 'undefined' && smoothScroll.lenis) smoothScroll.lenis.resize();
+          if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
+        }, 1500);
+      }
+      interact() {
+        this.btn = this.el.querySelector('#load-more-case-study');
+        if (!this.btn) return;
+
+        this.clickAjax = (e) => {
+          e.preventDefault();
+
+          const button = jQuery(this.btn);
+          let page = parseInt(button.attr('data-page'));
+          let maxPages = parseInt(button.attr('data-max'));
+
+          if (page >= maxPages) return;
+
+          if (!button.attr('data-original-text')) {
+            button.attr('data-original-text', button.find('.init').text());
+          }
+          let originalText = button.attr('data-original-text');
+
+          button.find('.init').text('LOADING...');
+          button.find('.active').text('LOADING...');
+
+          jQuery.ajax({
+            url: caseStudyAjax.ajaxurl,
+            type: 'POST',
+            data: {
+              action: 'load_more_case_studies',
+              paged: page + 1
+            },
+            success: (response) => {
+              if (response.success) {
+                jQuery('.home_case_content_list').append(response.data.html);
+
+                button.attr('data-page', page + 1);
+
+                let newPage = page + 1;
+                if (newPage >= maxPages) {
+                  button.hide();
+                } else {
+                  button.find('.init').text(originalText);
+                  button.find('.active').text(originalText);
+                }
+                setTimeout(() => {
+                  if (typeof smoothScroll !== 'undefined' && smoothScroll.lenis) smoothScroll.lenis.resize();
+                  if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
+                }, 200);
+              } else {
+                button.find('.init').text(originalText);
+                button.find('.active').text(originalText);
+              }
+            },
+            error: () => {
+              button.find('.init').text('Error! Try again');
+              button.find('.active').text('Error! Try again');
+            }
+          });
+        };
+
+        this.btn.addEventListener('click', this.clickAjax);
+      }
+      destroy() {
+        if (this.btn && this.clickAjax) {
+          this.btn.removeEventListener('click', this.clickAjax);
+          this.clickAjax = null;
+          this.btn = null;
+        }
+        this.el = null;
+      }
+    }
+  };
   const CaseStudyDetailPage = {};
   const ContactPage = {};
   const ServicePage = {
@@ -4353,3 +4445,5 @@ const mainScript = () => {
   });
 };
 window.onload = mainScript;
+
+

@@ -12,6 +12,8 @@ require dirname( __FILE__ ) . '/inc/typerocket-casestudy.php';
 require dirname( __FILE__ ) . '/inc/typerocket-ourclient.php';
 require dirname( __FILE__ ) . '/inc/typerocket-thanks.php';
 require dirname( __FILE__ ) . '/inc/typerocket-default.php';
+require dirname( __FILE__ ) . '/inc/typerocket-single.php';
+require dirname( __FILE__ ) . '/inc/typerocket-career-detail.php';
 add_filter('tr_theme_options_page', function() {
     return get_template_directory() . '/theme-options.php';
 });
@@ -48,19 +50,24 @@ function themax_enqueue_assets() {
     wp_enqueue_script('swiper-js', $theme_dir . '/plugin/swiper/swiper-bundle.min.js', array(), '7.0.6', true);
     $index_js_version = filemtime(get_template_directory() . '/js/index.js') ?: '1.0.0';
     wp_enqueue_script('themax-index-js', $theme_dir . '/js/index.js', array('jquery-3.7.1', 'gsap', 'swiper-js'), $index_js_version, true);
+    wp_localize_script('themax-index-js', 'caseStudyAjax', array(
+        'ajaxurl' => admin_url('admin-ajax.php'),
+        'loadMoreText' => 'XEM THÊM'
+    ));
 
     // Template specific CSS
     if (is_page_template('page-templates/aboutus.php')) {
         $about_version = filemtime(get_template_directory() . '/css/aboutus.css') ?: '1.0.0';
         wp_enqueue_style('themax-aboutus', $theme_dir . '/css/aboutus.css', array(), $about_version);
     }
-    elseif (is_page_template('page-templates/career-detail.php')) {
-        wp_enqueue_style('themax-career-detail', $theme_dir . '/css/career-detail.css');
+    elseif (is_page_template('page-templates/career-detail.php') || is_singular('career')) {
+        $career_detail_version = filemtime(get_template_directory() . '/css/career-detail.css') ?: '1.0.0';
+        wp_enqueue_style('themax-career-detail', $theme_dir . '/css/career-detail.css', array(), $career_detail_version);
     }
     elseif (is_page_template('page-templates/career.php')) {
         wp_enqueue_style('themax-career', $theme_dir . '/css/career.css');
     }
-    elseif (is_page_template('page-templates/case-study-detail.php')) {
+    elseif (is_page_template('page-templates/case-study-detail.php') || is_singular('case-study-detail') || is_singular('post')) {
         wp_enqueue_style('themax-case-study-detail', $theme_dir . '/css/case-study-detail.css');
     }
     elseif (is_page_template('page-templates/case-study.php')) {
@@ -80,3 +87,35 @@ function themax_enqueue_assets() {
     }
 }
 add_action('wp_enqueue_scripts', 'themax_enqueue_assets');
+
+function themax_load_more_case_studies() {
+    $paged = isset($_POST["paged"]) ? intval($_POST["paged"]) : 1;
+    
+    $args = array(
+        "post_type" => "post",
+        "post_status" => "publish",
+        "posts_per_page" => 6,
+        "paged" => $paged
+    );
+    
+    $query = new WP_Query($args);
+    
+    ob_start();
+    if ($query->have_posts()) {
+        while ($query->have_posts()) {
+            $query->the_post();
+            get_template_part("template-parts/content", "case-study");
+        }
+    }
+    $html = ob_get_clean();
+    
+    wp_reset_postdata();
+    
+    if (!empty($html)) {
+        wp_send_json_success(array("html" => $html));
+    } else {
+        wp_send_json_error(array("message" => "No more posts"));
+    }
+}
+add_action("wp_ajax_load_more_case_studies", "themax_load_more_case_studies");
+add_action("wp_ajax_nopriv_load_more_case_studies", "themax_load_more_case_studies");

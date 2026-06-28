@@ -30,14 +30,6 @@ add_action('edit_form_after_title', function($post) {
         echo $form->image('career_why_choose_desktop')->setLabel("Choose Image Desktop");
         echo $form->image('career_why_choose_mobile')->setLabel("Choose Image Mobile");
         echo $form->text('career_why_bottom_text')->setLabel("Bottom Text (Are you ready...)");
-        
-        echo $form->repeater('career_positions')->setLabel("Open Positions")->setFields([
-            $form->text('position')->setLabel("Position"),
-            $form->text('level')->setLabel("Level"),
-            $form->text('quantity')->setLabel("Quantity"),
-            $form->text('deadline')->setLabel("Deadline"),
-            $form->text('link')->setLabel("Link")
-        ]);
         echo endBox();
 
         echo beginBox("Call to Action (CTA)", true);

@@ -195,6 +195,9 @@
     position: relative;
 }
 
+.home_case_content_item_des_txt {
+    color: #bebebe;
+}
 
 .home_case_content_item::before {
     background-color: #262626;
