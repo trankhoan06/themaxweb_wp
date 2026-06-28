@@ -180,56 +180,49 @@ get_header();
                     <div class="career_why_list_item_deadline">DEADLINE</div>
                 </div>
                 <?php
-                $positions = tr_posts_field('career_positions');
-                if (is_array($positions) && !empty($positions)):
-                    foreach ($positions as $pos):
-                        ?>
-                        <a href="<?php echo esc_url($pos['link'] ?? '#'); ?>" class="career_why_list_item grid item_line">
-                            <div class="career_why_list_item_position item_line_title heaeding h5 cl_linear">
-                                <?php echo esc_html($pos['position'] ?? ''); ?>
-                            </div>
-                            <div class="career_why_list_item_level txt_16"><?php echo esc_html($pos['level'] ?? ''); ?></div>
-                            <div class="career_why_list_item_quality txt_16"><?php echo esc_html($pos['quantity'] ?? ''); ?>
-                            </div>
-                            <div class="career_why_list_item_deadline txt_16"><?php echo esc_html($pos['deadline'] ?? ''); ?>
-                            </div>
-                            <div class="home_case_content_item_txt_icon middle">
-                                <div class="home_case_content_item_txt_icon_wrap svg_full"><svg width="48" height="48"
-                                        viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <g clip-path="url(#clip0_1164_690)">
-                                            <path d="M12 12H36.0003V36.0003" stroke="#929292" stroke-width="2"
-                                                stroke-linejoin="round" />
-                                            <path d="M12 36.0003L36.0003 12" stroke="#929292" stroke-width="2"
-                                                stroke-linejoin="round" />
-                                        </g>
-                                        <defs>
-                                            <clipPath id="clip0_1164_690">
-                                                <rect width="48" height="48" fill="white" />
-                                            </clipPath>
-                                        </defs>
-                                    </svg></div>
-                                <div class="home_case_content_item_txt_icon_wrap svg_full active"><svg width="48" height="48"
-                                        viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <g clip-path="url(#clip0_1164_690)">
-                                            <path d="M12 12H36.0003V36.0003" stroke="#F32B3B" stroke-width="2"
-                                                stroke-linejoin="round" />
-                                            <path d="M12 36.0003L36.0003 12" stroke="#F32B3B" stroke-width="2"
-                                                stroke-linejoin="round" />
-                                        </g>
-                                        <defs>
-                                            <clipPath id="clip0_1164_690">
-                                                <rect width="48" height="48" fill="white" />
-                                            </clipPath>
-                                        </defs>
-                                    </svg></div>
-                            </div>
-                        </a>
-                        <?php
-                    endforeach;
-                else:
-                    ?>
-                    <!-- No positions found -->
-                    <?php
+                $args = array(
+                    'post_type' => 'career',
+                    'posts_per_page' => -1,
+                    'post_status' => 'publish',
+                    'order' => 'DESC',
+                    'orderby' => 'date'
+                );
+                $career_query = new WP_Query($args);
+                if ($career_query->have_posts()) :
+                    while ($career_query->have_posts()) : $career_query->the_post();
+                        $job_info = tr_posts_field('job_info', get_the_ID());
+                        $level = '';
+                        $quantity = '';
+                        $deadline = '';
+                        if (is_array($job_info) && !empty($job_info)) {
+                            $level = isset($job_info[0]['value']) ? $job_info[0]['value'] : '';
+                            $quantity = isset($job_info[1]['value']) ? $job_info[1]['value'] : '';
+                            $deadline = isset($job_info[2]['value']) ? $job_info[2]['value'] : '';
+                            foreach ($job_info as $info) {
+                                $label = mb_strtolower($info['label'] ?? '', 'UTF-8');
+                                if (strpos($label, 'level') !== false || strpos($label, 'cấp bậc') !== false || strpos($label, 'kinh nghiệm') !== false || strpos($label, 'experience') !== false) {
+                                    $level = $info['value'] ?? '';
+                                } elseif (strpos($label, 'quantity') !== false || strpos($label, 'số lượng') !== false) {
+                                    $quantity = $info['value'] ?? '';
+                                } elseif (strpos($label, 'deadline') !== false || strpos($label, 'hạn') !== false || strpos($label, 'thời hạn') !== false) {
+                                    $deadline = $info['value'] ?? '';
+                                }
+                            }
+                        }
+                ?>
+                <a href="<?php the_permalink(); ?>" class="career_why_list_item grid item_line">
+                    <div class="career_why_list_item_position item_line_title heaeding h5 cl_linear"><?php the_title(); ?></div>
+                    <div class="career_why_list_item_level txt_16"><?php echo esc_html($level); ?></div>
+                    <div class="career_why_list_item_quality txt_16"><?php echo esc_html($quantity); ?></div>
+                    <div class="career_why_list_item_deadline txt_16"><?php echo esc_html($deadline); ?></div>
+                    <div class="home_case_content_item_txt_icon middle">
+                        <div class="home_case_content_item_txt_icon_wrap svg_full"><svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0_1164_690)"><path d="M12 12H36.0003V36.0003" stroke="#929292" stroke-width="2" stroke-linejoin="round" /><path d="M12 36.0003L36.0003 12" stroke="#929292" stroke-width="2" stroke-linejoin="round" /></g><defs><clipPath id="clip0_1164_690"><rect width="48" height="48" fill="white" /></clipPath></defs></svg></div>
+                        <div class="home_case_content_item_txt_icon_wrap svg_full active"><svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0_1164_690)"><path d="M12 12H36.0003V36.0003" stroke="#F32B3B" stroke-width="2" stroke-linejoin="round" /><path d="M12 36.0003L36.0003 12" stroke="#F32B3B" stroke-width="2" stroke-linejoin="round" /></g><defs><clipPath id="clip0_1164_690"><rect width="48" height="48" fill="white" /></clipPath></defs></svg></div>
+                    </div>
+                </a>
+                <?php
+                    endwhile;
+                    wp_reset_postdata();
                 endif;
                 ?>
             </div>
