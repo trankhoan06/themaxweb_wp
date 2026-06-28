@@ -179,6 +179,22 @@ get_header();
                                 <div class="home_services_item_inner">
                                     <div class="container grid">
                                         <div class="home_services_content pa_container">
+                                            <div class="home_services_item_bg middle svg_full">
+                                                <svg width="418" height="556" viewBox="0 0 418 556" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M214.93 0.5L417.38 275.54L212.457 555.5H0.985352L205.693 275.835L205.91 275.539L205.692 275.243L3.46289 0.5H214.93Z" fill="url(#paint0_linear_1953_118)" stroke="url(#paint1_linear_1953_118)"/>
+                                                <defs>
+                                                <linearGradient id="paint0_linear_1953_118" x1="418" y1="278" x2="0" y2="278" gradientUnits="userSpaceOnUse">
+                                                <stop stop-color="#F32B3B" stop-opacity="0.1"/>
+                                                <stop offset="0.501395" stop-color="#F32B3B" stop-opacity="0"/>
+                                                </linearGradient>
+                                                <linearGradient id="paint1_linear_1953_118" x1="418" y1="278" x2="0" y2="278" gradientUnits="userSpaceOnUse">
+                                                <stop stop-color="#E62636" stop-opacity="0.7"/>
+                                                <stop offset="0.532815" stop-color="#101010" stop-opacity="0"/>
+                                                </linearGradient>
+                                                </defs>
+                                                </svg>
+
+                                            </div>
                                             <div class="home_services_content_top">
                                                 <h3 class="home_services_content_title heading h2 h4_mb cl_linear">
                                                     <?php echo esc_html($srv['title'] ?? ''); ?>
