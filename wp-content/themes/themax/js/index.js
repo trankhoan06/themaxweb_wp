@@ -30,7 +30,6 @@ const mainScript = () => {
       document.fonts.ready.then(() => this.setup());
     }
     setup() {
-      if (!this.allowMobile) return;
       gsap.timeline({
         scrollTrigger: {
           trigger: this.triggerInit,
@@ -246,6 +245,24 @@ const mainScript = () => {
       this.headingType = headingType || 'false';
       this.duration = duration || .8;
       this.stagger = stagger || .02;
+
+      const screen = getScreenType();
+      if (screen.isMobile || screen.isTablet) {
+        this.isFallback = true;
+        this.animation = gsap.fromTo(this.DOM.el,
+          { opacity: 0, y: parseRem(45) },
+          {
+            opacity: 1,
+            y: 0,
+            duration: this.duration,
+            ease: 'power2.out',
+            clearProps: 'all',
+            ...props
+          }
+        );
+        return;
+      }
+
       let animation;
       document.fonts.ready.then(() => {
         this.textSplit = SplitText.create(this.DOM.el, {
@@ -325,9 +342,13 @@ const mainScript = () => {
       })
     }
     init() {
-      document.fonts.ready.then(() => {
+      if (this.isFallback) {
+        gsap.set(this.DOM.el, { opacity: 0, y: parseRem(32) });
+      } else {
+        document.fonts.ready.then(() => {
 
-      })
+        })
+      }
     }
     destroy() {
       if (this.animation) this.animation.kill();
@@ -1789,7 +1810,7 @@ const mainScript = () => {
       this.bot = this.el.querySelector('.footer_bot');
 
       if (this.menuItems.length > 0) {
-        this.menuItemsFade = new FadeIn({ el: this.menuItems, type: 'bottom', isDisableRevert: true, stagger: 0.1 });
+        this.menuItemsFade = new FadeIn({ el: this.menuItems, isDisableRevert: true, stagger: 0.1 });
       }
       if (this.email) {
         this.emailFade = new FadeIn({ el: this.email, type: 'bottom', isDisableRevert: true });
@@ -1880,11 +1901,13 @@ const mainScript = () => {
       this.setup();
       this.animFade();
       this.animBgDecorators();
+      this.animHover();
     }
     setup() {
       this.img = this.el.querySelector('.about_cta_img');
       this.content = this.el.querySelector('.about_cta_inner_content');
       this.icon = this.el.querySelector('.about_cta_inner_content_icon');
+      this.link = this.el.querySelector('.about_cta_link');
       this.bgTop = this.el.querySelector('.about_cta_bg_top');
       this.bgBot = this.el.querySelector('.about_cta_bg_bot');
       this.bgRed = this.el.querySelector('.about_cta_bg_red');
@@ -1894,9 +1917,6 @@ const mainScript = () => {
       }
       if (this.content) {
         this.contentSplit = new FadeIn({ el: this.content, type: 'bottom', isDisableRevert: true, duration: 1.0 });
-      }
-      if (this.icon) {
-        this.iconFade = new FadeIn({ el: this.icon, type: 'bottom', isDisableRevert: true, duration: 0.8 });
       }
       if (this.bgTop) {
         this.bgTopFade = new FadeIn({ el: this.bgTop, type: 'top', isDisableRevert: true, duration: 1.0, ease: 'power2.out' });
@@ -1909,6 +1929,21 @@ const mainScript = () => {
       }
     }
 
+    animHover() {
+      if (!this.content || !this.icon || !this.link) return;
+
+      this.content.addEventListener('mouseenter', () => {
+        const linkWidth = this.link.offsetWidth + 6;
+        // Subtract icon width if we just want to move it to the right edge.
+        // The user specifically said "bằng width của about_cta_link" so:
+        this.icon.style.transform = `translateX(${linkWidth}px)`;
+      });
+
+      this.content.addEventListener('mouseleave', () => {
+        this.icon.style.transform = `translateX(0)`;
+      });
+    }
+
     animFade() {
       this.fadeTl = gsap.timeline({
         scrollTrigger: { trigger: this.el, start: 'top top+=70%', once: true }
@@ -1916,7 +1951,6 @@ const mainScript = () => {
       const tweenArr = [];
       if (this.imgFade) tweenArr.push(this.imgFade);
       if (this.contentSplit) tweenArr.push(this.contentSplit);
-      if (this.iconFade) tweenArr.push(this.iconFade);
       this.master = new MasterTimeline({ timeline: this.fadeTl, triggerInit: this.el, tweenArr, stagger: 0.2 });
     }
     animBgDecorators() {
@@ -3082,29 +3116,10 @@ const mainScript = () => {
         this.interact();
       }
       setup() {
-        const topTab = this.el.querySelector(".home_clients_tab:not(.bottom)");
-        const bottomTab = this.el.querySelector(".home_clients_tab.bottom");
-
-        if (topTab && bottomTab) {
-          // Initially hide the bottom tab if the top tab is visible
-          this.observer = new IntersectionObserver(entries => {
-            entries.forEach(entry => {
-              if (entry.isIntersecting) {
-                // Top tab is visible, hide bottom tab
-                bottomTab.style.opacity = "0";
-                bottomTab.style.pointerEvents = "none";
-              } else {
-                // Top tab is scrolled out of view, show bottom tab
-                bottomTab.style.opacity = "1";
-                bottomTab.style.pointerEvents = "auto";
-              }
-            });
-          }, {
-            // Trigger as soon as top tab is 100% out of view
-            threshold: 0
-          });
-
-          this.observer.observe(topTab);
+        const tab = this.el.querySelector('.home_clients_tab');
+        if (tab && typeof header !== 'undefined' && header) {
+          header.listDependent.push(tab);
+          header.onHideDependent(); // Trigger immediately to set initial state
         }
       }
       interact() {
@@ -3138,9 +3153,12 @@ const mainScript = () => {
         if (this.tabClickHandler && this.el) {
           $(this.el).find('.home_clients_tab_item').off('click', this.tabClickHandler);
         }
-        if (this.observer) {
-          this.observer.disconnect();
+
+        const tab = this.el?.querySelector('.home_clients_tab');
+        if (tab && typeof header !== 'undefined' && header) {
+          header.listDependent = header.listDependent.filter(item => item !== tab);
         }
+
         if (this.scrubTl) {
           this.scrubTl.kill();
           this.scrubTl = null;
@@ -3843,45 +3861,45 @@ const mainScript = () => {
       }
       animItems() {
         this.ctx = gsap.matchMedia();
- 
+
         this.ctx.add({
           isDesktop: "(min-width: 992px)",
           isMobile: "(max-width: 991px)"
         }, (context) => {
           let { isDesktop, isMobile } = context.conditions;
- 
+
           if (isDesktop) {
             const innerWrap = this.el.querySelector('.about_team_inner');
             const wrapper = this.el.querySelector('.about_team_content');
             const inner = this.el.querySelector('.about_team_content_inner');
             if (innerWrap && wrapper && inner) {
               gsap.set(inner, { x: 0 });
- 
+
               this.horizontalTl = gsap.timeline({
                 scrollTrigger: {
                   trigger: '.about_team_inner',
                   scrub: 1,
-                  start: "top top",
-                  end: "bottom bottom",
+                  start: "top+=5% top",
+                  end: "bottom-=5% bottom",
                   invalidateOnRefresh: true,
                 }
               });
- 
+
               this.horizontalTl.to(inner, {
                 x: () => -(inner.scrollWidth - wrapper.clientWidth),
                 ease: "none"
               });
- 
+
               // Stagger fade-in the cards when wrapper enters view
               const mainContent = this.el.querySelector('.about_team_content_main');
               this.itemsFadeTl = gsap.timeline({
                 scrollTrigger: {
                   trigger: mainContent || wrapper,
-                  start: "top top+=80%",
+                  start: viewport.w > 991 ? "top top+=80%" : "top top+=40%",
                   once: true
                 }
               });
- 
+
               const cards = this.el.querySelectorAll('.about_team_content_item_wrap');
               this.itemsFadeTl.fromTo(cards,
                 { opacity: 0, y: 50 },
@@ -3889,7 +3907,7 @@ const mainScript = () => {
               );
             }
           }
- 
+
           if (isMobile) {
             this.itemTls = [];
             this.itemMasters = [];
@@ -3910,7 +3928,7 @@ const mainScript = () => {
                 duration: 0.8,
                 stagger: 0.01,
               });
- 
+
               const tl = gsap.timeline({
                 scrollTrigger: { trigger: item, start: 'top top+=75%', once: true }
               });
@@ -3919,7 +3937,7 @@ const mainScript = () => {
               if (titleFade.DOM?.el) tweenArr.push(titleFade);
               if (desFade.DOM?.el) tweenArr.push(desFade);
               if (itemFade.DOM?.el) tweenArr.push(itemFade);
- 
+
               const master = new MasterTimeline({ timeline: tl, triggerInit: item, tweenArr, stagger: 0.2 });
               this.itemTls.push(tl);
               this.itemMasters.push(master);
@@ -3956,14 +3974,14 @@ const mainScript = () => {
             { opacity: 0, x: -100 },
             { opacity: 1, x: 0, duration: 1.2, ease: 'power2.out' }
           );
- 
+
           this.bgPlayTrigger = ScrollTrigger.create({
             trigger: mainContent,
             start: 'top bottom-=20%',
             onEnter: () => this.bgTl?.play(),
             onEnterBack: () => this.bgTl?.play()
           });
- 
+
           this.bgResetTrigger = ScrollTrigger.create({
             trigger: this.el,
             start: 'top bottom',
@@ -3977,7 +3995,7 @@ const mainScript = () => {
           });
         }
       }
- 
+
       destroy() {
         super.cleanTrigger();
         if (this.ctx) {

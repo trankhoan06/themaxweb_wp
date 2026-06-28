@@ -134,11 +134,16 @@
 }
 
 .home_clients_tab {
+    background: #0D0D0D;
     display: flex;
     /* width: max-content; */
     /* margin-inline: auto; */
     border-bottom: 1px solid #262626;
     margin-bottom: 6.3rem;
+    position: sticky;
+    z-index: 10;
+    top: 0;
+    transition: top .4s ease;
 }
 
 .home_clients_tab.bottom {

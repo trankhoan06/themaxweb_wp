@@ -50,7 +50,7 @@ get_header();
             <div class="about_hero_content grid">
                 <div class="about_hero_content_left">
                     <div class="about_hero_content_txt txt_18">
-                        <?php echo wp_kses_post((tr_posts_field('about_hero_desc') ?? '') ); ?>
+                        <?php echo wp_kses_post((tr_posts_field('about_hero_desc') ?? '')); ?>
                     </div>
                 </div>
                 <div class="about_hero_content_right">
@@ -105,11 +105,11 @@ get_header();
             </div>
         </div>
     </section>
-    <section class="about_impressive">
+    <section class="about_impressive" data-init>
         <div class="container grid">
             <div class="about_impressive_left">
                 <div class="about_impressive_left_subtitle block_arrow txt_16 txt_uppercase">
-                    <?php echo esc_html((tr_posts_field('about_impr_subtitle') ?? '') ); ?>
+                    <?php echo esc_html((tr_posts_field('about_impr_subtitle') ?? '')); ?>
                 </div>
                 <div class="about_impressive_left_img img_full left_full">
                     <img src="<?php echo get_template_directory_uri(); ?>/images/bg_pattern.webp" alt="">
@@ -117,10 +117,10 @@ get_header();
             </div>
             <div class="about_impressive_right">
                 <div class="about_impressive_right_title heading h2 h4_mb cl_white">
-                    <?php echo esc_html((tr_posts_field('about_impr_title') ?? '') ); ?>
+                    <?php echo esc_html((tr_posts_field('about_impr_title') ?? '')); ?>
                 </div>
-                <div class="about_impressive_right_des txt_16">
-                    <?php echo nl2br(esc_html((tr_posts_field('about_impr_desc') ?? '') )); ?>
+                <div class="about_impressive_right_des txt_16 tablet-no-br">
+                    <?php echo nl2br(esc_html((tr_posts_field('about_impr_desc') ?? ''))); ?>
                 </div>
                 <div class="about_impressive_right_list">
                     <?php
@@ -158,10 +158,10 @@ get_header();
     <section class="about_best">
         <div class="container">
             <div class="about_best_subtitle block_arrow txt_16">
-                <?php echo esc_html((tr_posts_field('about_best_subtitle') ?? '') ); ?>
+                <?php echo esc_html((tr_posts_field('about_best_subtitle') ?? '')); ?>
             </div>
             <div class="about_best_title h2 h4_mb heading cl_linear">
-                <?php echo wp_kses_post((tr_posts_field('about_best_title') ?? '') ); ?>
+                <?php echo wp_kses_post((tr_posts_field('about_best_title') ?? '')); ?>
             </div>
             <div class="about_best_inner grid">
                 <div class="about_best_left svg_full">
@@ -187,10 +187,10 @@ get_header();
                 </div>
                 <div class="about_best_right txt_18">
                     <div class="about_best_right_des">
-                        <?php echo esc_html((tr_posts_field('about_best_desc') ?? '') ); ?>
+                        <?php echo esc_html((tr_posts_field('about_best_desc') ?? '')); ?>
                     </div>
                     <div class="about_best_right_cap cl_red txt_medium">
-                        <?php echo esc_html((tr_posts_field('about_best_cap') ?? '') ); ?>
+                        <?php echo esc_html((tr_posts_field('about_best_cap') ?? '')); ?>
                     </div>
                 </div>
             </div>
@@ -244,13 +244,13 @@ get_header();
                     </div>
                     <div class="about_team_title_wrap">
                         <div class="about_team_subtitle txt_uppercase txt_16 block_arrow txt_medium">
-                            <?php echo esc_html((tr_posts_field('about_team_subtitle') ?? '') ); ?>
+                            <?php echo esc_html((tr_posts_field('about_team_subtitle') ?? '')); ?>
                         </div>
-                        <div class="about_team_title txt_center h2 h4_mb heading cl_linear">
-                            <?php echo nl2br(esc_html((tr_posts_field('about_team_title') ?? '') )); ?>
+                        <div class="about_team_title txt_center h2 h4_mb heading cl_linear tablet-no-br">
+                            <?php echo nl2br(esc_html((tr_posts_field('about_team_title') ?? ''))); ?>
                         </div>
                         <div class="about_team_des txt_center txt_16">
-                            <?php echo nl2br(esc_html((tr_posts_field('about_team_desc') ?? '') )); ?>
+                            <?php echo nl2br(esc_html((tr_posts_field('about_team_desc') ?? ''))); ?>
                         </div>
                     </div>
 
@@ -261,7 +261,7 @@ get_header();
                                 <img src="<?php echo get_template_directory_uri(); ?>/images/pattern_left.webp" alt="">
                             </div>
                             <div class="about_team_content_main">
-                                <div class="about_team_content_inner grid">
+                                <div class="about_team_content_inner">
                                     <?php
                                     $team_list = (tr_posts_field('about_team_list') ?? '');
                                     if (is_array($team_list) && !empty($team_list)):
@@ -278,9 +278,9 @@ get_header();
                                                         <?php echo esc_html($team_item['title'] ?? ''); ?>
                                                     </div>
                                                     <?php if (!empty($team_item['sub'])): ?>
-                                                    <div class="about_team_content_item_sub h6 heading cl_white ">
-                                                        <?php echo esc_html($team_item['sub']); ?>
-                                                    </div>
+                                                        <div class="about_team_content_item_sub h6 heading cl_white ">
+                                                            <?php echo esc_html($team_item['sub']); ?>
+                                                        </div>
                                                     <?php endif; ?>
                                                     <div class="about_team_content_item_des txt_14">
                                                         <?php echo nl2br(esc_html($team_item['desc'] ?? '')); ?>
@@ -307,8 +307,8 @@ get_header();
                             if (empty($team_cards)) {
                                 // Fallback to single fields if exists, or defaults
                                 $single_img = (tr_posts_field('about_team_card_img') ?? '');
-                                $single_title = (tr_posts_field('about_team_card_title') ?? '') ;
-                                $single_desc = (tr_posts_field('about_team_card_desc') ?? '') ;
+                                $single_title = (tr_posts_field('about_team_card_title') ?? '');
+                                $single_desc = (tr_posts_field('about_team_card_desc') ?? '');
                                 $team_cards = [
                                     [
                                         'img' => $single_img,
@@ -384,7 +384,8 @@ get_header();
                                 <div class="about_team_card_item_content_bot_page txt_14">
                                     <div class="about_team_card_item_content_bot_page_cur cl_red">01 /</div>
                                     <div class="about_team_card_item_content_bot_page_max">
-                                        <?php echo sprintf("%02d", count($team_cards)); ?></div>
+                                        <?php echo sprintf("%02d", count($team_cards)); ?>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -457,19 +458,30 @@ get_header();
         </div>
         <div class="about_cta_inner_overlay"></div>
         <div class="container grid">
-            <div class=" about_cta_inner_content h2 h5_mb heading cl_linear">
-                <?php echo nl2br(esc_html((tr_posts_field('about_cta_text1') ?? '') )); ?> 
-                <span class=" middle"><?php echo esc_html((tr_posts_field('about_cta_text2') ?? '') ); ?></span> 
-                <span class="cl_red middle"><?php echo esc_html((tr_posts_field('about_cta_text3') ?? '') ); ?></span>
-                <div class="about_cta_inner_content_icon svg_full">
-                    <svg width="21" height="30" viewBox="0 0 21 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            d="M11.0342 0.000106148L0.121454 0L10.0872 14.8672L-7.74663e-05 29.9999L10.9127 30L21 14.8673L11.0342 0.000106148Z"
-                            fill="#E62636" />
-                    </svg>
+            <a href="<?php echo esc_url((tr_posts_field('about_cta_link') ?? '')); ?>"
+                class=" about_cta_inner_content h2 h5_mb heading ">
+                <span class="cl_linear">
+                    <?php echo nl2br(esc_html((tr_posts_field('about_cta_text1') ?? ''))); ?>
+                </span>
+                <div class="about_cta_link">
+                    <div class="about_cta_inner_content_icon svg_full">
+                        <svg width="21" height="30" viewBox="0 0 21 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M11.0342 0.000106148L0.121454 0L10.0872 14.8672L-7.74663e-05 29.9999L10.9127 30L21 14.8673L11.0342 0.000106148Z"
+                                fill="#E62636" />
+                        </svg>
+                    </div>
+                    <div class="about_cta_link_txt">
+                        <span class=" middle cl_linear">
+                            <?php echo esc_html((tr_posts_field('about_cta_text2') ?? '')); ?>
+                        </span>
+                        <span class="cl_red middle">
+                            <?php echo esc_html((tr_posts_field('about_cta_text3') ?? '')); ?>
+                        </span>
+                    </div>
 
                 </div>
-            </div>
+            </a>
         </div>
     </section>
 </main>

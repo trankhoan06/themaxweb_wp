@@ -1,7 +1,7 @@
 <?php
-add_action('edit_form_after_title', function($post) {
+add_action('edit_form_after_title', function ($post) {
     if ($post->post_type == 'page' && basename(get_page_template()) == "our-client.php") {
-        remove_post_type_support( 'page', 'editor' );
+        remove_post_type_support('page', 'editor');
         $form = tr_form();
         echo '<div class="typerocket-container">';
 
@@ -30,14 +30,13 @@ add_action('edit_form_after_title', function($post) {
             $form->text('link')->setLabel('Link (Optional)')
         ]);
         echo endBox();
-
         echo beginBox("Call to Action (CTA)", true);
-        echo $form->text('client_cta_text1')->setLabel("CTA Text Line 1");
-        echo $form->text('client_cta_text2')->setLabel("CTA Text Highlight (white)");
-        echo $form->text('client_cta_text3')->setLabel("CTA Text Highlight (red)");
-        echo $form->text('client_cta_link')->setLabel("CTA Link");
+        echo $form->image('about_cta_img')->setLabel("CTA Image");
+        echo $form->text('about_cta_link')->setLabel("CTA Link");
+        echo $form->textarea('about_cta_text1')->setLabel("CTA Text Line 1");
+        echo $form->text('about_cta_text2')->setLabel("CTA Text Line 2 (White)");
+        echo $form->text('about_cta_text3')->setLabel("CTA Text Line 3 (Red)");
         echo endBox();
-
         echo '</div>';
     }
 });
