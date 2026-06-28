@@ -9,27 +9,28 @@ add_action('edit_form_after_title', function($post) {
         echo $form->file('home_banner_video')->setLabel("Banner Video (.mp4)");
         echo endBox();
 
-        echo beginBox("Intro Images (Giới thiệu)",true);
+        echo beginBox("Intro Text & Images (Giới thiệu)",true);
+        echo $form->text('home_intro_text_1')->setLabel("Tiêu đề dòng 1");
+        echo $form->text('home_intro_text_2')->setLabel("Tiêu đề dòng 2 (Translate)");
+        echo $form->text('home_intro_text_3')->setLabel("Tiêu đề dòng 3 (Màu đỏ)");
+        echo $form->textarea('home_intro_subtext')->setLabel("Mô tả phụ");
         echo $form->gallery('home_intro_images')->setLabel("Danh sách hình ảnh");
         echo endBox();
 
         echo beginBox("Specialize (Lĩnh vực chuyên môn)",true);
         echo $form->image('specialize_bg')->setLabel("Hình nền chuyên môn");
-        echo $form->row(
-            $form->image('specialize_icon_top')->setLabel("Icon Top"),
-            $form->image('specialize_icon_center')->setLabel("Icon Center"),
-            $form->image('specialize_icon_bottom')->setLabel("Icon Bottom")
-        );
-        echo $form->text('specialize_title')->setLabel("Tiêu đề lớn");
+        echo $form->text('specialize_title_1')->setLabel("Tiêu đề phần 1 (Trước chữ đỏ)");
+        echo $form->repeater('specialize_red_texts')->setLabel("Các dòng chữ đỏ (Loop)")->setFields([
+            $form->text('text')->setLabel("Nội dung")
+        ]);
+        echo $form->textarea('specialize_title_2')->setLabel("Tiêu đề phần 2 (Sau chữ đỏ)");
         echo $form->text('specialize_subtitle')->setLabel("Tiêu đề phụ");
-        echo $form->textarea('specialize_description')->setLabel("Mô tả ngắn");
-        echo $form->row(
-            $form->text('specialize_btn_text')->setLabel("Text nút bấm"),
-            $form->text('specialize_btn_link')->setLabel("Link nút bấm")
-        );
         echo endBox();
 
         echo beginBox("Services (Dịch vụ)",true);
+        echo $form->text('home_services_subtitle')->setLabel("Tiêu đề phụ (VD: OUR SERVICES)");
+        echo $form->textarea('home_services_title')->setLabel("Tiêu đề chính (VD: We provide full-service...)");
+        echo $form->textarea('home_services_desc')->setLabel("Mô tả thêm (VD: OUR PROCESS...)");
         echo $form->repeater('home_services')->setLabel("Danh sách dịch vụ")->setFields([
             $form->text('title')->setLabel("Tên dịch vụ"),
             $form->textarea('description')->setLabel("Mô tả dịch vụ"),
@@ -42,44 +43,39 @@ add_action('edit_form_after_title', function($post) {
         echo endBox();
 
         echo beginBox("Case Studies (Dự án)",true);
-        echo $form->repeater('home_cases')->setLabel("Danh sách dự án")->setFields([
-            $form->text('title')->setLabel("Tên dự án"),
-            $form->text('client')->setLabel("Tên đối tác / Client"),
-            $form->text('type')->setLabel("Loại dự án (VD: WEBSITE)"),
-            $form->image('image')->setLabel("Hình ảnh dự án")
-        ]);
-        echo endBox();
-
-        echo beginBox("Our Clients (Khách hàng)",true);
-        echo $form->image('clients_pattern')->setLabel("Pattern Background");
-        echo $form->repeater('home_clients_tab1')->setLabel("Logo Tab 1 (Real Estate Clients)")->setFields([
-            $form->image('logo')->setLabel("Logo đối tác")
-        ]);
-        echo $form->repeater('home_clients_tab2')->setLabel("Logo Tab 2 (Real Estate Projects)")->setFields([
-            $form->image('logo')->setLabel("Logo đối tác")
-        ]);
-        echo $form->repeater('home_clients_tab3')->setLabel("Logo Tab 3 (Web & Mobile App)")->setFields([
-            $form->image('logo')->setLabel("Logo đối tác")
-        ]);
-        echo endBox();
-
-        echo beginBox("The Team (Đội ngũ)",true);
-        echo $form->image('team_image')->setLabel("Hình ảnh đội ngũ");
-        echo $form->text('team_title')->setLabel("Tiêu đề");
-        echo $form->text('team_subtitle')->setLabel("Tiêu đề phụ");
-        echo $form->textarea('team_description')->setLabel("Mô tả");
+        echo $form->text('home_case_subtitle')->setLabel("Tiêu đề phụ (VD: OUR WORKS)");
+        echo $form->text('home_case_title')->setLabel("Tiêu đề chính (VD: Discover featured projects)");
         echo $form->row(
-            $form->text('team_btn_text')->setLabel("Text nút bấm"),
-            $form->text('team_btn_link')->setLabel("Link nút bấm")
+            $form->text('home_case_btn_text')->setLabel("Text nút bấm"),
+            $form->text('home_case_btn_link')->setLabel("Link nút bấm")
+        );
+        echo endBox();
+        echo beginBox("Our Clients (Khách hàng)",true);
+        echo $form->text('home_clients_subtitle')->setLabel("Tiêu đề phụ (VD: TYPICAL CLIENTS)");
+        echo $form->textarea('home_clients_title')->setLabel("Tiêu đề chính (VD: We are proud to partner...)");
+        
+        echo $form->text('home_clients_tab1_name')->setLabel("Tên Tab 1 (VD: Real Estate Developers)");
+        echo $form->repeater('home_clients_tab1')->setLabel("Logo Tab 1")->setFields([
+            $form->image('logo')->setLabel("Logo đối tác")
+        ]);
+        
+        echo $form->text('home_clients_tab2_name')->setLabel("Tên Tab 2 (VD: Real Estate Projects)");
+        echo $form->repeater('home_clients_tab2')->setLabel("Logo Tab 2")->setFields([
+            $form->image('logo')->setLabel("Logo đối tác")
+        ]);
+        
+        echo $form->text('home_clients_tab3_name')->setLabel("Tên Tab 3 (VD: Others Industry)");
+        echo $form->repeater('home_clients_tab3')->setLabel("Logo Tab 3")->setFields([
+            $form->image('logo')->setLabel("Logo đối tác")
+        ]);
+        
+        echo $form->row(
+            $form->text('home_clients_btn_text')->setLabel("Text nút bấm"),
+            $form->text('home_clients_btn_link')->setLabel("Link nút bấm")
         );
         echo endBox();
 
-        echo beginBox("Global Network",true);
-        echo $form->repeater('home_network')->setLabel("Danh sách Global Network")->setFields([
-            $form->text('name')->setLabel("Tên Network"),
-            $form->text('link')->setLabel("Link (URL)")
-        ]);
-        echo endBox();
+
         echo '</div>';
     }
 });
