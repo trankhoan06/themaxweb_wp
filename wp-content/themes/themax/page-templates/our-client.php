@@ -13,7 +13,7 @@
 get_header();
 
 ?>
-<main class="main" data-namespace="ourClient">
+<main class="main" data-namespace="ourClient" data-init="">
     <section class="casestudy_hero" data-init>
         <div class="container">
             <div class="casestudy_hero_inner grid">

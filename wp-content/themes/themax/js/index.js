@@ -3096,9 +3096,90 @@ const mainScript = () => {
   };
 
   const OurClientPage = {
-    Clients: class extends TriggerSetup {
+    Hero: class {
       constructor() {
-        super();
+        this.el = null;
+        this.fadeTl = null;
+        this.master = null;
+        this.titleSplit = null;
+        this.descFade = null;
+        this.subFade = null;
+        this.bgFade = null;
+      }
+      trigger(data) {
+        this.el = document.querySelector('.casestudy_hero');
+        if (!this.el) return;
+        this.setup();
+        this.animFade();
+      }
+      setup() {
+        this.title = this.el.querySelector('.casestudy_hero_title');
+        this.desc = this.el.querySelector('.casestudy_hero_des');
+        this.sub = this.el.querySelector('.casestudy_hero_subtitle');
+        this.bg = this.el.querySelector('.casestudy_hero_bg');
+
+        if (this.title) {
+          this.titleSplit = new FadeSplitText({
+            el: this.title,
+            splitType: 'words',
+            isDisableRevert: true,
+            duration: 1.2,
+            stagger: 0.05,
+            ease: 'power3.out'
+          });
+        }
+        if (this.desc) {
+          this.descFade = new FadeSplitText({
+            el: this.desc,
+            splitType: 'words',
+            isDisableRevert: true,
+            duration: 1.2,
+            stagger: 0.05,
+            ease: 'power3.out'
+          });
+        }
+        if (this.sub) {
+          this.subFade = new FadeSplitText({
+            el: this.sub,
+            splitType: 'words',
+            isDisableRevert: true,
+            duration: 1.2,
+            stagger: 0.05,
+            ease: 'power3.out'
+          });
+        }
+        if (this.bg) {
+          this.bgFade = new FadeIn({
+            el: this.bg,
+            type: 'none',
+            from: { scale: 0.8, opacity: 0 },
+            to: { scale: 1, opacity: 1 },
+            isDisableRevert: true,
+            duration: 2.0,
+            ease: 'power2.out'
+          });
+        }
+      }
+      animFade() {
+        this.fadeTl = gsap.timeline();
+        const tweenArr = [];
+        if (this.titleSplit) tweenArr.push(this.titleSplit);
+        if (this.descFade) tweenArr.push(this.descFade);
+        if (this.subFade) tweenArr.push(this.subFade);
+        if (this.bgFade) tweenArr.push(this.bgFade);
+
+        if (tweenArr.length) {
+          this.master = new MasterTimeline({
+            timeline: this.fadeTl,
+            triggerInit: this.el,
+            tweenArr: tweenArr,
+            stagger: 0.15
+          });
+        }
+      }
+    },
+    Clients: class {
+      constructor() {
         this.tabClickHandler = null;
         this.observer = null;
         this.scrubTl = null;
@@ -3107,23 +3188,58 @@ const mainScript = () => {
         let container = data && data.next && data.next.container ? data.next.container : document;
         this.el = container.querySelector('.home_clients');
         if (!this.el) return;
-        super.setTrigger(this.el, this.onTrigger.bind(this));
-      }
-      onTrigger() {
         this.setup();
         this.animFade();
         this.animScrub();
         this.interact();
       }
       setup() {
-        const tab = this.el.querySelector('.home_clients_tab');
-        if (tab && typeof header !== 'undefined' && header) {
-          header.listDependent.push(tab);
-          header.onHideDependent(); // Trigger immediately to set initial state
+        this.tabContainer = this.el.querySelector('.home_clients_tab');
+        if (this.tabContainer) {
+          this.tabContainerFade = new FadeIn({
+            el: this.tabContainer,
+            type: 'bottom',
+            isDisableRevert: true,
+            duration: 0.8
+          });
+        }
+
+        this.tabItems = this.el.querySelectorAll('.home_clients_tab_item');
+        if (this.tabItems.length) {
+          this.tabItemsFade = new FadeIn({
+            el: this.tabItems,
+            type: 'bottom',
+            isDisableRevert: true,
+            duration: 0.8,
+            stagger: 0.05
+          });
+        }
+        
+        let activeTab = $(this.el).find('.home_clients_tab_item.active').first();
+        let tabId = activeTab.attr('data-tabs') || 'tab1';
+        let activeContent = $(this.el).find('.home_clients_content_item[data-tabs="' + tabId + '"]')[0];
+        
+        if (activeContent) {
+          const items = activeContent.querySelectorAll('.home_clients_content_item_img');
+          if (items.length) {
+            this.contentFade = new FadeIn({
+              el: items,
+              type: 'bottom',
+              isDisableRevert: true,
+              duration: 0.8,
+              stagger: 0.1
+            });
+          }
+        }
+        
+        const imgs = this.el.querySelectorAll('.home_clients_content_item_img');
+        if (imgs.length) {
+          gsap.set(imgs, { opacity: 0 }); // Hide initially to prevent flash before FadeIn
         }
       }
       interact() {
         let _thisEl = this.el;
+        let _this = this;
 
         // Initial setup: hide all content except the active one
         let activeTab = $(_thisEl).find('.home_clients_tab_item.active').first();
@@ -3132,31 +3248,56 @@ const mainScript = () => {
         $(_thisEl).find('.home_clients_content_item[data-tabs="' + initialTabId + '"]').css('display', 'flex');
 
         this.tabClickHandler = function () {
-          if ($(this).hasClass('active')) return;
+          let clicked = $(this);
+          if (clicked.hasClass('active')) return;
 
           $(_thisEl).find('.home_clients_tab_item').removeClass('active');
 
-          let tabId = $(this).attr('data-tabs');
+          let tabId = clicked.attr('data-tabs');
           $(_thisEl).find('.home_clients_tab_item[data-tabs="' + tabId + '"]').addClass('active');
 
           $(_thisEl).find('.home_clients_content_item').hide();
-          $(_thisEl).find('.home_clients_content_item[data-tabs="' + tabId + '"]').css('display', 'flex').hide().fadeIn(300);
+          let targetContent = $(_thisEl).find('.home_clients_content_item[data-tabs="' + tabId + '"]');
+          targetContent.css('display', 'flex');
+          
+          const items = targetContent[0].querySelectorAll('.home_clients_content_item_img');
+          if (items.length) {
+            new FadeIn({ 
+              el: items, 
+              type: 'bottom', 
+              isDisableRevert: true, 
+              duration: 0.8, 
+              stagger: 0.1 
+            });
+          }
         };
 
         $(_thisEl).find('.home_clients_tab_item').on('click', this.tabClickHandler);
       }
-      animFade() { }
+      animFade() {
+        this.fadeTl = gsap.timeline({
+          scrollTrigger: { trigger: this.el, start: 'top top+=70%', once: true }
+        });
+
+        const tweenArr = [];
+        if (this.tabContainerFade) tweenArr.push(this.tabContainerFade);
+        if (this.tabItemsFade) tweenArr.push(this.tabItemsFade);
+        if (this.contentFade) tweenArr.push(this.contentFade);
+
+        if (tweenArr.length) {
+          this.master = new MasterTimeline({
+            timeline: this.fadeTl,
+            triggerInit: this.el,
+            tweenArr: tweenArr,
+            stagger: 0.15
+          });
+        }
+      }
       animScrub() {
       }
       destroy() {
-        super.cleanTrigger();
         if (this.tabClickHandler && this.el) {
           $(this.el).find('.home_clients_tab_item').off('click', this.tabClickHandler);
-        }
-
-        const tab = this.el?.querySelector('.home_clients_tab');
-        if (tab && typeof header !== 'undefined' && header) {
-          header.listDependent = header.listDependent.filter(item => item !== tab);
         }
 
         if (this.scrubTl) {

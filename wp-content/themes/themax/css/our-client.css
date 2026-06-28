@@ -224,7 +224,7 @@
 }
 
 .home_clients_content_item {
-    display: flex;
+    display: none;
     flex-wrap: wrap;
     gap: 2.4rem;
 }
