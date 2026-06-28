@@ -14,7 +14,7 @@ get_header();
 
 ?>
 <main class="main" data-namespace="service">
-    <section class="service_hero">
+    <section class="service_hero" data-init>
         <div class="container grid">
             <h1 class="service_hero_left heading h1 h4_mb cl_linear">
                 <?php echo wp_kses_post((tr_posts_field('service_hero_title') ?? '')); ?>

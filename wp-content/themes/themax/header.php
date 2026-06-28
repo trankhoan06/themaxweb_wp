@@ -47,10 +47,12 @@
                             fill="#EB4250" />
                     </svg>
                 </a>
-                <div class="header_title block_arrow txt_medium txt_16 middle">
+                <div class="header_title block_arrow txt_medium txt_16 middle" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 45vw;">
                     <?php 
                         if (is_front_page() || is_home()) {
                             echo 'Digital Marketing Agency';
+                        } elseif (is_singular('post')) {
+                            echo '<a href="/works" class="header_works_link">Works</a> &nbsp;/&nbsp; ' . esc_html(get_the_title());
                         } else {
                             echo esc_html(get_the_title());
                         }

@@ -45,6 +45,7 @@ const mainScript = () => {
       if (!this.timeline) {
         this.timeline = gsap.timeline({
           scrollTrigger: {
+            trigger: this.triggerInit,
             start: 'top top+=70%',
             end: '+=100%',
             scrub: false,
@@ -4559,9 +4560,176 @@ const mainScript = () => {
       }
     }
   };
+  
   const CaseStudyDetailPage = {};
+  
+  CaseStudyDetailPage.Animations = class {
+    constructor() {
+      this.heroMaster = null;
+      this.infoMasterList = [];
+      this.blogMasterList = [];
+      this.socialMaster = null;
+      this.relatedMasterList = [];
+    }
+
+    trigger() {
+      const hero = document.querySelector('.casestudydetail_hero');
+      if (hero) {
+        const tweenArr = [];
+        const heroImg = hero.querySelector('.casestudydetail_hero_content_img');
+        if (heroImg) tweenArr.push(new FadeIn({ el: heroImg, type: 'bottom', isDisableRevert: true }));
+        const heroTxt = hero.querySelector('.casestudydetail_hero_content_txt');
+        if (heroTxt) tweenArr.push(new FadeSplitText({ el: heroTxt }));
+        
+        if (tweenArr.length > 0) {
+          this.heroMaster = new MasterTimeline({ triggerInit: hero, tweenArr });
+        }
+      }
+
+      document.querySelectorAll('.casestudydetail_content_info_item').forEach((item) => {
+        this.infoMasterList.push(new MasterTimeline({
+          triggerInit: item,
+          tweenArr: [new FadeIn({ el: item, type: 'bottom', isDisableRevert: true })]
+        }));
+      });
+
+      document.querySelectorAll('.casestudydetail_content_blog_item').forEach((item) => {
+        this.blogMasterList.push(new MasterTimeline({
+          triggerInit: item,
+          tweenArr: [new FadeIn({ el: item, type: 'bottom', isDisableRevert: true })]
+        }));
+      });
+      
+      const socialContainer = document.querySelector('.casestudydetail_content_social');
+      if (socialContainer) {
+        const links = Array.from(socialContainer.querySelectorAll('a'));
+        if (links.length > 0) {
+          this.socialMaster = new MasterTimeline({
+            triggerInit: socialContainer,
+            tweenArr: links.map((a, i) => new FadeIn({ el: a, type: 'left', delay: i * 0.1, isDisableRevert: true }))
+          });
+        }
+      }
+
+      document.querySelectorAll('.home_case_content_list .home_case_content_item').forEach((item) => {
+        const title = item.querySelector('.home_case_content_item_txt_title');
+        const des = item.querySelector('.home_case_content_item_des_txt');
+        const tweenArr = [];
+        if (title) tweenArr.push(new FadeSplitText({ el: title }));
+        if (des) tweenArr.push(new FadeSplitText({ el: des }));
+        
+        if (tweenArr.length > 0) {
+          this.relatedMasterList.push(new MasterTimeline({
+            triggerInit: item,
+            tweenArr: tweenArr
+          }));
+        }
+      });
+    }
+
+    destroy() {
+      this.heroMaster?.destroy();
+      this.infoMasterList.forEach(m => m.destroy());
+      this.blogMasterList.forEach(m => m.destroy());
+      this.socialMaster?.destroy();
+      this.relatedMasterList.forEach(m => m.destroy());
+    }
+  };
+
+  CaseStudyDetailPage.SocialShare = class {
+    constructor() {
+      this.copyBtns = document.querySelectorAll('.btn-copy-link');
+      this.fbBtns = document.querySelectorAll('.btn-share-fb');
+      this.inBtns = document.querySelectorAll('.btn-share-in');
+      
+      this.handleCopy = this.handleCopy.bind(this);
+      this.handleShareFB = this.handleShareFB.bind(this);
+      this.handleShareIN = this.handleShareIN.bind(this);
+
+      if (this.copyBtns) this.copyBtns.forEach(btn => btn.addEventListener('click', this.handleCopy));
+      if (this.fbBtns) this.fbBtns.forEach(btn => btn.addEventListener('click', this.handleShareFB));
+      if (this.inBtns) this.inBtns.forEach(btn => btn.addEventListener('click', this.handleShareIN));
+    }
+    
+    handleCopy(e) {
+      e.preventDefault();
+      const url = e.currentTarget.dataset.url;
+      if (url) {
+        navigator.clipboard.writeText(url).then(() => {
+          alert('Đã sao chép liên kết!');
+        }).catch(err => {
+          console.error('Copy failed', err);
+        });
+      }
+    }
+
+    handleShareFB(e) {
+        e.preventDefault();
+        const url = e.currentTarget.dataset.url;
+        if (url) window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank', 'width=600,height=400');
+    }
+
+    handleShareIN(e) {
+        e.preventDefault();
+        const url = e.currentTarget.dataset.url;
+        const title = e.currentTarget.dataset.title;
+        if (url) window.open(`https://www.linkedin.com/shareArticle?mini=true&url=${url}&title=${title}`, '_blank', 'width=600,height=400');
+    }
+    
+    destroy() {
+      if (this.copyBtns) this.copyBtns.forEach(btn => btn.removeEventListener('click', this.handleCopy));
+      if (this.fbBtns) this.fbBtns.forEach(btn => btn.removeEventListener('click', this.handleShareFB));
+      if (this.inBtns) this.inBtns.forEach(btn => btn.removeEventListener('click', this.handleShareIN));
+      this.copyBtns = null;
+      this.fbBtns = null;
+      this.inBtns = null;
+    }
+  };
+
   const ContactPage = {};
   const ServicePage = {
+    Hero: class {
+      constructor() {
+        this.el = null;
+        this.titleSplit = null;
+        this.descFade = null;
+        this.btnFade = null;
+        this.bgFade = null;
+        this.master = null;
+      }
+      trigger() {
+        this.el = document.querySelector('.service_hero');
+        if (!this.el) return;
+        this.setup();
+        this.animFade();
+      }
+      setup() {
+        const title = this.el.querySelector('.service_hero_left');
+        const desc = this.el.querySelector('.service_hero_right_txt');
+        const btn = this.el.querySelector('.service_hero_right_discover');
+        const bg = this.el.querySelector('.service_hero_bg');
+
+        if (title) this.titleSplit = new FadeSplitText({ el: title });
+        if (desc) this.descFade = new FadeIn({ el: desc, type: 'bottom', isDisableRevert: true });
+        if (btn) this.btnFade = new FadeIn({ el: btn, type: 'bottom', isDisableRevert: true });
+        if (bg) this.bgFade = new FadeIn({ el: bg, type: 'none', isDisableRevert: true });
+      }
+      animFade() {
+        const tweenArr = [];
+        if (this.titleSplit) tweenArr.push(this.titleSplit);
+        if (this.descFade) tweenArr.push(this.descFade);
+        if (this.btnFade) tweenArr.push(this.btnFade);
+        if (this.bgFade) tweenArr.push(this.bgFade);
+
+        if (tweenArr.length) {
+          this.master = new MasterTimeline({ triggerInit: this.el, tweenArr, stagger: 0.1 });
+        }
+      }
+      destroy() {
+        if (this.master) { this.master.destroy(); this.master = null; }
+        [this.titleSplit, this.descFade, this.btnFade, this.bgFade].forEach(a => a?.destroy?.());
+      }
+    }
   };
 
   class PageManager {

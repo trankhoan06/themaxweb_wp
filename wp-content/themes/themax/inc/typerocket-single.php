@@ -27,15 +27,12 @@ $box->setCallback(function() {
         $form->text('title')->setLabel('Title (e.g., The Solution)'),
         $form->textarea('subtitle')->setLabel('Subtitle'),
         $form->textarea('description')->setLabel('Description'),
-        $form->image('image')->setLabel('Image')
+        $form->gallery('image')->setLabel('Images (Multiple allowed)')
     ]);
     echo $blog;
     
-    // CTA Section
-    echo "<h3>CTA Section</h3>";
-    echo "<p>Leave blank to use default values.</p>";
-    echo $form->text('cta_line1')->setLabel('CTA Line 1');
-    echo $form->text('cta_line2')->setLabel('CTA Line 2');
-    echo $form->text('cta_highlight1')->setLabel('CTA Highlight (Middle)');
-    echo $form->text('cta_highlight2')->setLabel('CTA Highlight (Red)');
 });
+
+add_action('init', function() {
+    remove_post_type_support('post', 'editor');
+}, 100);
