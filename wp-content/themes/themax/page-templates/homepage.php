@@ -19,7 +19,7 @@ get_header();
                 <?php 
                 $home_banner_video = tr_posts_field('home_banner_video') ;
                 ?>
-                <video src="<?php echo esc_url($home_banner_video); ?>" autoplay loop muted playsinline></video>
+                <video src="<?php echo get_template_directory_uri(); ?>/images/video_button.mp4" autoplay loop muted playsinline></video>
             </div>
             <div class="home_hero_overlay" data-init>
                 <div class="home_hero_overlay_txt txt_16">Scroll down</div>
