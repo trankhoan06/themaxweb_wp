@@ -5,9 +5,9 @@ add_action('edit_form_after_title', function($post) {
         $form = tr_form();
         echo '<div class="typerocket-container">';
         
-        // echo beginBox("Banner Chính",true);
-        // echo $form->text('home_banner_video')->setLabel("Banner Video URL (.mp4)");
-        // echo endBox();
+        echo beginBox("Banner Chính",true);
+        echo $form->file('home_banner_video')->setLabel("Banner Video (.mp4)");
+        echo endBox();
 
         echo beginBox("Intro Images (Giới thiệu)",true);
         echo $form->gallery('home_intro_images')->setLabel("Danh sách hình ảnh");

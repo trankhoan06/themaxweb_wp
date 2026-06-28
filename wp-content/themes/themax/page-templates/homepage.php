@@ -17,9 +17,13 @@ get_header();
         <section class="home_hero">
             <div class="home_hero_inner">
                 <?php 
-                $home_banner_video = tr_posts_field('home_banner_video') ;
+                $home_banner_video = tr_posts_field('home_banner_video');
+                $video_url = $home_banner_video ? wp_get_attachment_url($home_banner_video) : '';
                 ?>
-                <video src="<?php echo get_template_directory_uri(); ?>/images/video_button.mp4" autoplay loop muted playsinline></video>
+                <?php if ($video_url): ?>
+                <video src="<?php echo esc_url($video_url); ?>" autoplay loop muted playsinline></video>
+                <?php endif; ?>
+
             </div>
             <div class="home_hero_overlay" data-init>
                 <div class="home_hero_overlay_txt txt_16">Scroll down</div>
