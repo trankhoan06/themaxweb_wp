@@ -20,6 +20,12 @@ load_theme_textdomain( 'chloe_pallete', get_template_directory().'/languages' );
 add_theme_support( 'post-thumbnails' );
 add_theme_support( 'title-tag' );
 
+// Register Menus
+register_nav_menus( array(
+    'header_menu' => esc_html__( 'Header Menu', 'themax' ),
+    'footer_menu' => esc_html__( 'Footer Menu', 'themax' ),
+) );
+
 //Media Support
 add_image_size( 'post-default', 900, 480, true ); // 480 pixels wide by 370 pixels tall, soft proportional crop mode
 

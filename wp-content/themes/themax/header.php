@@ -69,47 +69,52 @@
                             </div>
                         </div>
                         <div class="header_menu_nav_content">
-                            <a href="/aboutus"
-                                class="header_menu_nav_content_item txt_48 cl_black hover_txt txt_medium">
-                                <div class="hover_txt_grid">
-                                    <span class="init">About Us</span>
-                                    <span class="active">About Us</span>
-                                </div>
-                            </a>
-                            <a href="/service"
-                                class="header_menu_nav_content_item txt_48 cl_black hover_txt txt_medium">
-                                <div class="hover_txt_grid">
-                                    <span class="init">Services</span>
-                                    <span class="active">Services</span>
-                                </div>
-                            </a>
-                            <a href="/case-study"
-                                class="header_menu_nav_content_item txt_48 cl_black hover_txt txt_medium">
-                                <div class="hover_txt_grid">
-                                    <span class="init">Works</span>
-                                    <span class="active">Works</span>
-                                </div>
-                            </a>
-                            <a href="/our-client"
-                                class="header_menu_nav_content_item txt_48 cl_black hover_txt txt_medium">
-                                <div class="hover_txt_grid">
-                                    <span class="init">Clients</span>
-                                    <span class="active">Clients</span>
-                                </div>
-                            </a>
-                            <a href="/career" class="header_menu_nav_content_item txt_48 cl_black hover_txt txt_medium">
-                                <div class="hover_txt_grid">
-                                    <span class="init">Careers</span>
-                                    <span class="active">Careers</span>
-                                </div>
-                            </a>
-                            <a href="/contact"
-                                class="header_menu_nav_content_item txt_48 cl_black hover_txt txt_medium">
-                                <div class="hover_txt_grid">
-                                    <span class="init">Contact</span>
-                                    <span class="active">Contact</span>
-                                </div>
-                            </a>
+                            <?php
+                            $locations = get_nav_menu_locations();
+                            $has_menu = false;
+                            if ( isset( $locations['header_menu'] ) ) {
+                                $menu = get_term( $locations['header_menu'], 'nav_menu' );
+                                if ( $menu && ! is_wp_error( $menu ) ) {
+                                    $menu_items = wp_get_nav_menu_items( $menu->term_id );
+                                    if ( $menu_items ) {
+                                        $has_menu = true;
+                                        foreach ( $menu_items as $menu_item ) {
+                                            $title = esc_html( $menu_item->title );
+                                            $url = esc_url( $menu_item->url );
+                                            $target = ! empty( $menu_item->target ) ? ' target="' . esc_attr( $menu_item->target ) . '"' : '';
+                                            echo '<a href="' . $url . '"' . $target . ' class="header_menu_nav_content_item txt_48 cl_black hover_txt txt_medium">';
+                                            echo '<div class="hover_txt_grid">';
+                                            echo '<span class="init">' . $title . '</span>';
+                                            echo '<span class="active">' . $title . '</span>';
+                                            echo '</div>';
+                                            echo '</a>';
+                                        }
+                                    }
+                                }
+                            }
+                            
+                            if ( ! $has_menu ) {
+                                // Fallback hardcoded menu if no menu is assigned
+                            ?>
+                                <a href="/aboutus" class="header_menu_nav_content_item txt_48 cl_black hover_txt txt_medium">
+                                    <div class="hover_txt_grid"><span class="init">About Us</span><span class="active">About Us</span></div>
+                                </a>
+                                <a href="/service" class="header_menu_nav_content_item txt_48 cl_black hover_txt txt_medium">
+                                    <div class="hover_txt_grid"><span class="init">Services</span><span class="active">Services</span></div>
+                                </a>
+                                <a href="/case-study" class="header_menu_nav_content_item txt_48 cl_black hover_txt txt_medium">
+                                    <div class="hover_txt_grid"><span class="init">Works</span><span class="active">Works</span></div>
+                                </a>
+                                <a href="/our-client" class="header_menu_nav_content_item txt_48 cl_black hover_txt txt_medium">
+                                    <div class="hover_txt_grid"><span class="init">Clients</span><span class="active">Clients</span></div>
+                                </a>
+                                <a href="/career" class="header_menu_nav_content_item txt_48 cl_black hover_txt txt_medium">
+                                    <div class="hover_txt_grid"><span class="init">Careers</span><span class="active">Careers</span></div>
+                                </a>
+                                <a href="/contact" class="header_menu_nav_content_item txt_48 cl_black hover_txt txt_medium">
+                                    <div class="hover_txt_grid"><span class="init">Contact</span><span class="active">Contact</span></div>
+                                </a>
+                            <?php } ?>
                         </div>
                         <div class="header_menu_nav_footer">
                             <div class="header_menu_nav_footer_hotline cl_black txt_18 txt_medium">HOTLINE</div>

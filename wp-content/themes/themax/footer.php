@@ -5,42 +5,52 @@
             <div class="footer_top">
                 <div class="grid">
                     <div class="footer_top_menu">
-                        <a href="/aboutus" class="footer_top_menu_item heading h6 cl_be hover_txt">
-                            <div class="hover_txt_grid">
-                                <span class="init">About Us</span>
-                                <span class="active">About Us</span>
-                            </div>
-                        </a>
-                        <a href="/service" class="footer_top_menu_item heading h6 cl_be hover_txt">
-                            <div class="hover_txt_grid">
-                                <span class="init">Services</span>
-                                <span class="active">Services</span>
-                            </div>
-                        </a>
-                        <a href="/case-study" class="footer_top_menu_item heading h6 cl_be hover_txt">
-                            <div class="hover_txt_grid">
-                                <span class="init">Works</span>
-                                <span class="active">Works</span>
-                            </div>
-                        </a>
-                        <a href="/our-client" class="footer_top_menu_item heading h6 cl_be hover_txt">
-                            <div class="hover_txt_grid">
-                                <span class="init">Clients</span>
-                                <span class="active">Clients</span>
-                            </div>
-                        </a>
-                        <a href="/career" class="footer_top_menu_item heading h6 cl_be hover_txt">
-                            <div class="hover_txt_grid">
-                                <span class="init">Careers</span>
-                                <span class="active">Careers</span>
-                            </div>
-                        </a>
-                        <a href="/contact" class="footer_top_menu_item heading h6 cl_be hover_txt">
-                            <div class="hover_txt_grid">
-                                <span class="init">Contact</span>
-                                <span class="active">Contact</span>
-                            </div>
-                        </a>
+                        <?php
+                        $locations = get_nav_menu_locations();
+                        $has_footer_menu = false;
+                        if ( isset( $locations['footer_menu'] ) ) {
+                            $menu = get_term( $locations['footer_menu'], 'nav_menu' );
+                            if ( $menu && ! is_wp_error( $menu ) ) {
+                                $menu_items = wp_get_nav_menu_items( $menu->term_id );
+                                if ( $menu_items ) {
+                                    $has_footer_menu = true;
+                                    foreach ( $menu_items as $menu_item ) {
+                                        $title = esc_html( $menu_item->title );
+                                        $url = esc_url( $menu_item->url );
+                                        $target = ! empty( $menu_item->target ) ? ' target="' . esc_attr( $menu_item->target ) . '"' : '';
+                                        echo '<a href="' . $url . '"' . $target . ' class="footer_top_menu_item heading h6 cl_be hover_txt">';
+                                        echo '<div class="hover_txt_grid">';
+                                        echo '<span class="init">' . $title . '</span>';
+                                        echo '<span class="active">' . $title . '</span>';
+                                        echo '</div>';
+                                        echo '</a>';
+                                    }
+                                }
+                            }
+                        }
+                        
+                        if ( ! $has_footer_menu ) {
+                            // Fallback hardcoded menu if no menu is assigned
+                        ?>
+                            <a href="/aboutus" class="footer_top_menu_item heading h6 cl_be hover_txt">
+                                <div class="hover_txt_grid"><span class="init">About Us</span><span class="active">About Us</span></div>
+                            </a>
+                            <a href="/service" class="footer_top_menu_item heading h6 cl_be hover_txt">
+                                <div class="hover_txt_grid"><span class="init">Services</span><span class="active">Services</span></div>
+                            </a>
+                            <a href="/case-study" class="footer_top_menu_item heading h6 cl_be hover_txt">
+                                <div class="hover_txt_grid"><span class="init">Works</span><span class="active">Works</span></div>
+                            </a>
+                            <a href="/our-client" class="footer_top_menu_item heading h6 cl_be hover_txt">
+                                <div class="hover_txt_grid"><span class="init">Clients</span><span class="active">Clients</span></div>
+                            </a>
+                            <a href="/career" class="footer_top_menu_item heading h6 cl_be hover_txt">
+                                <div class="hover_txt_grid"><span class="init">Careers</span><span class="active">Careers</span></div>
+                            </a>
+                            <a href="/contact" class="footer_top_menu_item heading h6 cl_be hover_txt">
+                                <div class="hover_txt_grid"><span class="init">Contact</span><span class="active">Contact</span></div>
+                            </a>
+                        <?php } ?>
                     </div>
                     <div class="footer_top_email h1 heading h3_mb">info@themax.vn</div>
                 </div>
