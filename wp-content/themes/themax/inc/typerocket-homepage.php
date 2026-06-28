@@ -10,9 +10,7 @@ add_action('edit_form_after_title', function($post) {
         // echo endBox();
 
         echo beginBox("Intro Images (Giới thiệu)",true);
-        echo $form->repeater('home_intro_images')->setLabel("Danh sách hình ảnh")->setFields([
-            $form->image('image')->setLabel("Hình ảnh")
-        ])->setLimit(8);
+        echo $form->gallery('home_intro_images')->setLabel("Danh sách hình ảnh");
         echo endBox();
 
         echo beginBox("Specialize (Lĩnh vực chuyên môn)",true);

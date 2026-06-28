@@ -2724,7 +2724,6 @@ const mainScript = () => {
 
       setup() {
         this.spans = Array.from(this.el.querySelectorAll('.home_specialize_inner_txt.main span'));
-        if (this.spans.length === 0) return;
 
         this.splits = [];
         this.originalHTMLs = [];
@@ -2885,6 +2884,7 @@ const mainScript = () => {
         }
       }
       startLoop() {
+        if (!this.spans || this.spans.length === 0) return;
         if (this.timer) {
           clearInterval(this.timer);
         }

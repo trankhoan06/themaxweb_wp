@@ -53,41 +53,40 @@ get_header();
                 <div class="home_intro_img_cms ">
 <?php
 $intro_imgs = tr_posts_field('home_intro_images');
-$default_imgs = [
-    get_template_directory_uri() . '/images/home-intro1.jpg',
-    get_template_directory_uri() . '/images/home-intro2.jpg',
-    get_template_directory_uri() . '/images/home-intro3.jpg',
-    get_template_directory_uri() . '/images/home-intro4.jpg',
-    get_template_directory_uri() . '/images/home-intro5.jpg',
-    get_template_directory_uri() . '/images/home-intro6.jpg',
-    get_template_directory_uri() . '/images/home-intro7.jpg',
-    get_template_directory_uri() . '/images/home-intro8.jpg',
-];
 $img_urls = [];
-if (is_array($intro_imgs) && !empty($intro_imgs)) {
-    foreach ($intro_imgs as $img) {
-        $img_id = isset($img['image']) ? $img['image'] : 0;
-        $img_urls[] = wp_get_attachment_image_url($img_id, 'full') ?: $default_imgs[count($img_urls) % 8];
+
+if (!empty($intro_imgs)) {
+    $img_ids = is_string($intro_imgs) ? explode(',', $intro_imgs) : (is_array($intro_imgs) ? $intro_imgs : []);
+    foreach ($img_ids as $id) {
+        if ($id) {
+            $url = wp_get_attachment_image_url($id, 'full');
+            if ($url) {
+                $img_urls[] = $url;
+            }
+        }
     }
-} else {
-    $img_urls = $default_imgs;
-}
-// Pad to 8 images if needed
-while(count($img_urls) < 8) {
-    $img_urls[] = $default_imgs[count($img_urls) % 8];
 }
 
-$columns = [
-    [0, 1, 2],
-    [2, 3, 4],
-    [4, 5, 6],
-    [6, 7, 0]
-];
-foreach($columns as $col) {
+$columns = array_fill(0, 4, []);
+$total = count($img_urls);
+
+if ($total > 0) {
+    $base = floor($total / 4);
+    $remainder = $total % 4;
+    $offset = 0;
+    
+    for ($i = 0; $i < 4; $i++) {
+        $length = $base + ($i < $remainder ? 1 : 0);
+        $columns[$i] = array_slice($img_urls, $offset, $length);
+        $offset += $length;
+    }
+}
+
+foreach($columns as $col_urls) {
     echo '<div class="home_intro_img_list">';
-    foreach($col as $idx) {
+    foreach($col_urls as $url) {
         echo '<div class="home_intro_img_item img_fullfill">';
-        echo '<img src="' . esc_url($img_urls[$idx]) . '" alt="">';
+        echo '<img src="' . esc_url($url) . '" alt="">';
         echo '</div>';
     }
     echo '</div>';
@@ -100,13 +99,13 @@ foreach($columns as $col) {
             <section class="home_specialize">
 <?php
 $specialize_bg = tr_posts_field('specialize_bg');
-$specialize_bg_url = $specialize_bg ? wp_get_attachment_image_url($specialize_bg, 'full') : get_template_directory_uri() . '/images/bg_sati.jpg';
+$specialize_bg_url = $specialize_bg ? wp_get_attachment_image_url($specialize_bg, 'full') : '';
 $specialize_icon_top = tr_posts_field('specialize_icon_top');
-$specialize_icon_top_url = $specialize_icon_top ? wp_get_attachment_image_url($specialize_icon_top, 'full') : get_template_directory_uri() . '/images/ic_sol3.svg';
+$specialize_icon_top_url = $specialize_icon_top ? wp_get_attachment_image_url($specialize_icon_top, 'full') : '';
 $specialize_icon_center = tr_posts_field('specialize_icon_center');
-$specialize_icon_center_url = $specialize_icon_center ? wp_get_attachment_image_url($specialize_icon_center, 'full') : get_template_directory_uri() . '/images/ic_sol.svg';
+$specialize_icon_center_url = $specialize_icon_center ? wp_get_attachment_image_url($specialize_icon_center, 'full') : '';
 $specialize_icon_bottom = tr_posts_field('specialize_icon_bottom');
-$specialize_icon_bottom_url = $specialize_icon_bottom ? wp_get_attachment_image_url($specialize_icon_bottom, 'full') : get_template_directory_uri() . '/images/ic_sol2.svg';
+$specialize_icon_bottom_url = $specialize_icon_bottom ? wp_get_attachment_image_url($specialize_icon_bottom, 'full') : '';
 $specialize_title = tr_posts_field('specialize_title');
 $specialize_subtitle = tr_posts_field('specialize_subtitle') ;
 ?>
@@ -134,18 +133,6 @@ $specialize_subtitle = tr_posts_field('specialize_subtitle') ;
                         <div class="home_specialize_title_wrap">
                             <?php if ($specialize_title): ?>
                                 <div class="home_specialize_inner_txt cl_black heading h1 h4_mb"><?php echo wp_kses_post($specialize_title); ?></div>
-                            <?php else: ?>
-                            <div class="home_specialize_inner_txt cl_black heading h1 h4_mb">We</div>
-                            <div class="home_specialize_inner_txt span main cl_black heading h1 h4_mb cl_main txt_uppercase">
-                                <span>maximize online power</span>
-                                <span>CREATE QUALITY RESULTS</span>
-                                <span>OFFER THE SOLUTIONS</span>
-                                <span>LONG-TERM PARTNERSHIP</span>
-                                <span>DO THE BEST</span>
-                            </div>
-                            <div class="home_specialize_inner_txt cl_black heading h1 h4_mb">for your brand's with
-                                comprehensive
-                                digital marketing services.</div>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -252,284 +239,8 @@ if (is_array($services) && !empty($services)) :
                         </div>
 <?php 
     endforeach;
-else: 
-    // Fallback static data if TypeRocket fields are empty
+    endif; 
 ?>
-                        <div class="home_services_item">
-                            <div class="home_services_item_inner">
-                                <div class="container grid">
-                                    <div class="home_services_content pa_container">
-                                        <div class="home_services_content_top">
-                                            <h3 class="home_services_content_title heading h1 h4_mb cl_linear">STRATEGY
-                                            </h3>
-                                            <div class="heading h6 home_services_content_sub">Research — Analysis —
-                                                Planning
-                                            </div>
-                                        </div>
-                                        <div class="home_services_content_bottom">
-                                            <div class="home_services_content_bottom_des heading h4 cl_eb">MARKETING
-                                                CAMPAIGN
-                                            </div>
-                                            <div class="home_services_content_bottom_list">
-                                                <div class="home_services_content_bottom_list_item h6 heading">
-                                                    <svg width="9" height="13" viewBox="0 0 9 13" fill="none"
-                                                        xmlns="http://www.w3.org/2000/svg">
-                                                        <path
-                                                            d="M4.63313 0H0.0532536L4.42012 6.44248L0 13H4.57988L9 6.44248L4.63313 0Z"
-                                                            fill="#929292" />
-                                                    </svg>
-                                                    Market Research
-                                                </div>
-                                                <div class="home_services_content_bottom_list_item h6 heading">
-                                                    <svg width="9" height="13" viewBox="0 0 9 13" fill="none"
-                                                        xmlns="http://www.w3.org/2000/svg">
-                                                        <path
-                                                            d="M4.63313 0H0.0532536L4.42012 6.44248L0 13H4.57988L9 6.44248L4.63313 0Z"
-                                                            fill="#929292" />
-                                                    </svg>
-                                                    Product/ project surveys
-                                                </div>
-                                                <div class="home_services_content_bottom_list_item h6 heading">
-                                                    <svg width="9" height="13" viewBox="0 0 9 13" fill="none"
-                                                        xmlns="http://www.w3.org/2000/svg">
-                                                        <path
-                                                            d="M4.63313 0H0.0532536L4.42012 6.44248L0 13H4.57988L9 6.44248L4.63313 0Z"
-                                                            fill="#929292" />
-                                                    </svg>
-                                                    Competitor Analysis
-                                                </div>
-                                                <div class="home_services_content_bottom_list_item h6 heading">
-                                                    <svg width="9" height="13" viewBox="0 0 9 13" fill="none"
-                                                        xmlns="http://www.w3.org/2000/svg">
-                                                        <path
-                                                            d="M4.63313 0H0.0532536L4.42012 6.44248L0 13H4.57988L9 6.44248L4.63313 0Z"
-                                                            fill="#929292" />
-                                                    </svg>
-                                                    Customer Insight
-                                                </div>
-                                                <div class="home_services_content_bottom_list_item h6 heading">
-                                                    <svg width="9" height="13" viewBox="0 0 9 13" fill="none"
-                                                        xmlns="http://www.w3.org/2000/svg">
-                                                        <path
-                                                            d="M4.63313 0H0.0532536L4.42012 6.44248L0 13H4.57988L9 6.44248L4.63313 0Z"
-                                                            fill="#929292" />
-                                                    </svg>
-                                                    Project & Product Analysis
-                                                </div>
-                                                <div class="home_services_content_bottom_list_item h6 heading">
-                                                    <svg width="9" height="13" viewBox="0 0 9 13" fill="none"
-                                                        xmlns="http://www.w3.org/2000/svg">
-                                                        <path
-                                                            d="M4.63313 0H0.0532536L4.42012 6.44248L0 13H4.57988L9 6.44248L4.63313 0Z"
-                                                            fill="#929292" />
-                                                    </svg>
-                                                    Brand Positioning
-                                                </div>
-                                                <div class="home_services_content_bottom_list_item h6 heading">
-                                                    <svg width="9" height="13" viewBox="0 0 9 13" fill="none"
-                                                        xmlns="http://www.w3.org/2000/svg">
-                                                        <path
-                                                            d="M4.63313 0H0.0532536L4.42012 6.44248L0 13H4.57988L9 6.44248L4.63313 0Z"
-                                                            fill="#929292" />
-                                                    </svg>
-                                                    Communication Strategy
-                                                </div>
-                                                <div class="home_services_content_bottom_list_item h6 heading">
-                                                    <svg width="9" height="13" viewBox="0 0 9 13" fill="none"
-                                                        xmlns="http://www.w3.org/2000/svg">
-                                                        <path
-                                                            d="M4.63313 0H0.0532536L4.42012 6.44248L0 13H4.57988L9 6.44248L4.63313 0Z"
-                                                            fill="#929292" />
-                                                    </svg>
-                                                    Integrated Marketing Plan
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="home_services_img img_fullfill right_full">
-                                        <img src="<?php echo get_template_directory_uri(); ?>/images/home_service.jpg" alt="">
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                        <div class="home_services_item bg_red">
-                            <div class="home_services_item_inner">
-                                <div class="container grid">
-                                    <div class="home_services_content pa_container">
-                                        <div class="home_services_content_top">
-                                            <h3 class="home_services_content_title heading h1 cl_linear">CREATIVE</h3>
-                                            <div class="heading h6 home_services_content_sub">Content — Design —
-                                                Development
-                                            </div>
-                                        </div>
-                                        <div class="home_services_content_bottom">
-                                            <div class="home_services_content_bottom_des heading h4 cl_eb">MARKETING
-                                                MATERIAL
-                                            </div>
-                                            <div class="home_services_content_bottom_list">
-                                                <div class="home_services_content_bottom_list_item h6 heading">
-                                                    <svg width="9" height="13" viewBox="0 0 9 13" fill="none"
-                                                        xmlns="http://www.w3.org/2000/svg">
-                                                        <path
-                                                            d="M4.63313 0H0.0532536L4.42012 6.44248L0 13H4.57988L9 6.44248L4.63313 0Z"
-                                                            fill="#929292" />
-                                                    </svg>
-                                                    Creative Concept & Content Strategy
-                                                </div>
-                                                <div class="home_services_content_bottom_list_item h6 heading">
-                                                    <svg width="9" height="13" viewBox="0 0 9 13" fill="none"
-                                                        xmlns="http://www.w3.org/2000/svg">
-                                                        <path
-                                                            d="M4.63313 0H0.0532536L4.42012 6.44248L0 13H4.57988L9 6.44248L4.63313 0Z"
-                                                            fill="#929292" />
-                                                    </svg>
-                                                    Copywriting & Content Creation
-                                                </div>
-                                                <div class="home_services_content_bottom_list_item h6 heading">
-                                                    <svg width="9" height="13" viewBox="0 0 9 13" fill="none"
-                                                        xmlns="http://www.w3.org/2000/svg">
-                                                        <path
-                                                            d="M4.63313 0H0.0532536L4.42012 6.44248L0 13H4.57988L9 6.44248L4.63313 0Z"
-                                                            fill="#929292" />
-                                                    </svg>
-                                                    KV/ Baner/ Post/Clip Ads Design
-                                                </div>
-                                                <div class="home_services_content_bottom_list_item h6 heading">
-                                                    <svg width="9" height="13" viewBox="0 0 9 13" fill="none"
-                                                        xmlns="http://www.w3.org/2000/svg">
-                                                        <path
-                                                            d="M4.63313 0H0.0532536L4.42012 6.44248L0 13H4.57988L9 6.44248L4.63313 0Z"
-                                                            fill="#929292" />
-                                                    </svg>
-                                                    Website & Landing Page Design
-                                                </div>
-                                                <div class="home_services_content_bottom_list_item h6 heading">
-                                                    <svg width="9" height="13" viewBox="0 0 9 13" fill="none"
-                                                        xmlns="http://www.w3.org/2000/svg">
-                                                        <path
-                                                            d="M4.63313 0H0.0532536L4.42012 6.44248L0 13H4.57988L9 6.44248L4.63313 0Z"
-                                                            fill="#929292" />
-                                                    </svg>
-                                                    Web App & Mobile App Development
-                                                </div>
-                                                <div class="home_services_content_bottom_list_item h6 heading">
-                                                    <svg width="9" height="13" viewBox="0 0 9 13" fill="none"
-                                                        xmlns="http://www.w3.org/2000/svg">
-                                                        <path
-                                                            d="M4.63313 0H0.0532536L4.42012 6.44248L0 13H4.57988L9 6.44248L4.63313 0Z"
-                                                            fill="#929292" />
-                                                    </svg>
-                                                    Photography, Video & Flycam Production
-                                                </div>
-                                                <div class="home_services_content_bottom_list_item h6 heading">
-                                                    <svg width="9" height="13" viewBox="0 0 9 13" fill="none"
-                                                        xmlns="http://www.w3.org/2000/svg">
-                                                        <path
-                                                            d="M4.63313 0H0.0532536L4.42012 6.44248L0 13H4.57988L9 6.44248L4.63313 0Z"
-                                                            fill="#929292" />
-                                                    </svg>
-                                                    Virtual Tour & VR 360°
-                                                </div>
-                                                <div class="home_services_content_bottom_list_item h6 heading">
-                                                    <svg width="9" height="13" viewBox="0 0 9 13" fill="none"
-                                                        xmlns="http://www.w3.org/2000/svg">
-                                                        <path
-                                                            d="M4.63313 0H0.0532536L4.42012 6.44248L0 13H4.57988L9 6.44248L4.63313 0Z"
-                                                            fill="#929292" />
-                                                    </svg>
-                                                    Project Film & CGI Rendering
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="home_services_img img_fullfill right_full">
-                                        <img src="<?php echo get_template_directory_uri(); ?>/images/home_service2.jpg" alt="">
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                        <div class="home_services_item ">
-                            <div class="home_services_item_inner">
-                                <div class="container grid">
-                                    <div class="home_services_content pa_container">
-                                        <div class="home_services_content_top">
-                                            <h3 class="home_services_content_title heading h1 cl_linear">EXECUTION</h3>
-                                            <div class="heading h6 home_services_content_sub">Implementation —
-                                                Monitoring — Optimization
-                                            </div>
-                                        </div>
-                                        <div class="home_services_content_bottom">
-                                            <div class="home_services_content_bottom_des heading h4 cl_eb">DIGITAL
-                                                MARKETING CAMPAIGN
-                                            </div>
-                                            <div class="home_services_content_bottom_list">
-                                                <div class="home_services_content_bottom_list_item h6 heading">
-                                                    <svg width="9" height="13" viewBox="0 0 9 13" fill="none"
-                                                        xmlns="http://www.w3.org/2000/svg">
-                                                        <path
-                                                            d="M4.63313 0H0.0532536L4.42012 6.44248L0 13H4.57988L9 6.44248L4.63313 0Z"
-                                                            fill="#929292" />
-                                                    </svg>
-                                                    Integrated Digital Marketing Campaign
-                                                </div>
-                                                <div class="home_services_content_bottom_list_item h6 heading">
-                                                    <svg width="9" height="13" viewBox="0 0 9 13" fill="none"
-                                                        xmlns="http://www.w3.org/2000/svg">
-                                                        <path
-                                                            d="M4.63313 0H0.0532536L4.42012 6.44248L0 13H4.57988L9 6.44248L4.63313 0Z"
-                                                            fill="#929292" />
-                                                    </svg>
-                                                    Google, Facebook, TikTok & Zalo Ads
-                                                </div>
-                                                <div class="home_services_content_bottom_list_item h6 heading">
-                                                    <svg width="9" height="13" viewBox="0 0 9 13" fill="none"
-                                                        xmlns="http://www.w3.org/2000/svg">
-                                                        <path
-                                                            d="M4.63313 0H0.0532536L4.42012 6.44248L0 13H4.57988L9 6.44248L4.63313 0Z"
-                                                            fill="#929292" />
-                                                    </svg>
-                                                    Social Media & Local Advertising
-                                                </div>
-                                                <div class="home_services_content_bottom_list_item h6 heading">
-                                                    <svg width="9" height="13" viewBox="0 0 9 13" fill="none"
-                                                        xmlns="http://www.w3.org/2000/svg">
-                                                        <path
-                                                            d="M4.63313 0H0.0532536L4.42012 6.44248L0 13H4.57988L9 6.44248L4.63313 0Z"
-                                                            fill="#929292" />
-                                                    </svg>
-                                                    Online PR & Media Booking
-                                                </div>
-                                                <div class="home_services_content_bottom_list_item h6 heading">
-                                                    <svg width="9" height="13" viewBox="0 0 9 13" fill="none"
-                                                        xmlns="http://www.w3.org/2000/svg">
-                                                        <path
-                                                            d="M4.63313 0H0.0532536L4.42012 6.44248L0 13H4.57988L9 6.44248L4.63313 0Z"
-                                                            fill="#929292" />
-                                                    </svg>
-                                                    LCD, LED & Digital Display Advertising
-                                                </div>
-                                                <div class="home_services_content_bottom_list_item h6 heading">
-                                                    <svg width="9" height="13" viewBox="0 0 9 13" fill="none"
-                                                        xmlns="http://www.w3.org/2000/svg">
-                                                        <path
-                                                            d="M4.63313 0H0.0532536L4.42012 6.44248L0 13H4.57988L9 6.44248L4.63313 0Z"
-                                                            fill="#929292" />
-                                                    </svg>
-                                                    Campaign Tracking & Data Analysis
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="home_services_img img_fullfill right_full">
-                                        <img src="<?php echo get_template_directory_uri(); ?>/images/home_service3.jpg" alt="">
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-<?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -576,249 +287,8 @@ if (is_array($cases) && !empty($cases)) :
                     </div>
 <?php 
     endforeach;
-else:
+    endif; 
 ?>
-                    <div class="home_case_content_item">
-                        <div class="home_case_content_item_des">
-                            <div class="home_case_content_item_des_txt txt_15 txt_medium">DAT XANH GROUP</div>
-                            <div class="home_case_content_item_des_txt txt_15 txt_medium">WEBSITE</div>
-                        </div>
-                        <div class="home_case_content_item_img_outer">
-                            <div class="home_case_content_item_img img_full">
-                                <img src="<?php echo get_template_directory_uri(); ?>/images/case.webp" alt="">
-                            </div>
-                        </div>
-                        <div class="home_case_content_item_txt">
-                            <div class="home_case_content_item_txt_title heading cl_be h4 h5_mb">Opal Garden</div>
-                            <div class="home_case_content_item_txt_icon">
-                                <div class="home_case_content_item_txt_icon_wrap svg_full">
-                                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <g clip-path="url(#clip0_1164_690)">
-                                            <path d="M12 12H36.0003V36.0003" stroke="#929292" stroke-width="2"
-                                                stroke-linejoin="round" />
-                                            <path d="M12 36.0003L36.0003 12" stroke="#929292" stroke-width="2"
-                                                stroke-linejoin="round" />
-                                        </g>
-                                        <defs>
-                                            <clipPath id="clip0_1164_690">
-                                                <rect width="48" height="48" fill="white" />
-                                            </clipPath>
-                                        </defs>
-                                    </svg>
-                                </div>
-                                <div class="home_case_content_item_txt_icon_wrap svg_full active">
-                                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <g clip-path="url(#clip0_1164_690)">
-                                            <path d="M12 12H36.0003V36.0003" stroke="#F32B3B" stroke-width="2"
-                                                stroke-linejoin="round" />
-                                            <path d="M12 36.0003L36.0003 12" stroke="#F32B3B" stroke-width="2"
-                                                stroke-linejoin="round" />
-                                        </g>
-                                        <defs>
-                                            <clipPath id="clip0_1164_690">
-                                                <rect width="48" height="48" fill="white" />
-                                            </clipPath>
-                                        </defs>
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="home_case_content_item">
-                        <div class="home_case_content_item_des">
-                            <div class="home_case_content_item_des_txt txt_15 txt_medium">DAT XANH GROUP</div>
-                            <div class="home_case_content_item_des_txt txt_15 txt_medium">WEBSITE</div>
-                        </div>
-                        <div class="home_case_content_item_img_outer">
-                            <div class="home_case_content_item_img img_full">
-                                <img src="<?php echo get_template_directory_uri(); ?>/images/case.webp" alt="">
-                            </div>
-                        </div>
-                        <div class="home_case_content_item_txt">
-                            <div class="home_case_content_item_txt_title heading cl_be h4 h5_mb">Opal Garden</div>
-                            <div class="home_case_content_item_txt_icon">
-                                <div class="home_case_content_item_txt_icon_wrap svg_full">
-                                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <g clip-path="url(#clip0_1164_690)">
-                                            <path d="M12 12H36.0003V36.0003" stroke="#929292" stroke-width="2"
-                                                stroke-linejoin="round" />
-                                            <path d="M12 36.0003L36.0003 12" stroke="#929292" stroke-width="2"
-                                                stroke-linejoin="round" />
-                                        </g>
-                                        <defs>
-                                            <clipPath id="clip0_1164_690">
-                                                <rect width="48" height="48" fill="white" />
-                                            </clipPath>
-                                        </defs>
-                                    </svg>
-                                </div>
-                                <div class="home_case_content_item_txt_icon_wrap svg_full active">
-                                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <g clip-path="url(#clip0_1164_690)">
-                                            <path d="M12 12H36.0003V36.0003" stroke="#F32B3B" stroke-width="2"
-                                                stroke-linejoin="round" />
-                                            <path d="M12 36.0003L36.0003 12" stroke="#F32B3B" stroke-width="2"
-                                                stroke-linejoin="round" />
-                                        </g>
-                                        <defs>
-                                            <clipPath id="clip0_1164_690">
-                                                <rect width="48" height="48" fill="white" />
-                                            </clipPath>
-                                        </defs>
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="home_case_content_item">
-                        <div class="home_case_content_item_des">
-                            <div class="home_case_content_item_des_txt txt_15 txt_medium">DAT XANH GROUP</div>
-                            <div class="home_case_content_item_des_txt txt_15 txt_medium">WEBSITE</div>
-                        </div>
-                        <div class="home_case_content_item_img_outer">
-                            <div class="home_case_content_item_img img_full">
-                                <img src="<?php echo get_template_directory_uri(); ?>/images/case.webp" alt="">
-                            </div>
-                        </div>
-                        <div class="home_case_content_item_txt">
-                            <div class="home_case_content_item_txt_title heading cl_be h4 h5_mb">Opal Garden</div>
-                            <div class="home_case_content_item_txt_icon">
-                                <div class="home_case_content_item_txt_icon_wrap svg_full">
-                                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <g clip-path="url(#clip0_1164_690)">
-                                            <path d="M12 12H36.0003V36.0003" stroke="#929292" stroke-width="2"
-                                                stroke-linejoin="round" />
-                                            <path d="M12 36.0003L36.0003 12" stroke="#929292" stroke-width="2"
-                                                stroke-linejoin="round" />
-                                        </g>
-                                        <defs>
-                                            <clipPath id="clip0_1164_690">
-                                                <rect width="48" height="48" fill="white" />
-                                            </clipPath>
-                                        </defs>
-                                    </svg>
-                                </div>
-                                <div class="home_case_content_item_txt_icon_wrap svg_full active">
-                                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <g clip-path="url(#clip0_1164_690)">
-                                            <path d="M12 12H36.0003V36.0003" stroke="#F32B3B" stroke-width="2"
-                                                stroke-linejoin="round" />
-                                            <path d="M12 36.0003L36.0003 12" stroke="#F32B3B" stroke-width="2"
-                                                stroke-linejoin="round" />
-                                        </g>
-                                        <defs>
-                                            <clipPath id="clip0_1164_690">
-                                                <rect width="48" height="48" fill="white" />
-                                            </clipPath>
-                                        </defs>
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="home_case_content_item">
-                        <div class="home_case_content_item_des">
-                            <div class="home_case_content_item_des_txt txt_15 txt_medium">DAT XANH GROUP</div>
-                            <div class="home_case_content_item_des_txt txt_15 txt_medium">WEBSITE</div>
-                        </div>
-                        <div class="home_case_content_item_img_outer">
-                            <div class="home_case_content_item_img img_full">
-                                <img src="<?php echo get_template_directory_uri(); ?>/images/case.webp" alt="">
-                            </div>
-                        </div>
-                        <div class="home_case_content_item_txt">
-                            <div class="home_case_content_item_txt_title heading cl_be h4 h5_mb">Opal Garden</div>
-                            <div class="home_case_content_item_txt_icon">
-                                <div class="home_case_content_item_txt_icon_wrap svg_full">
-                                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <g clip-path="url(#clip0_1164_690)">
-                                            <path d="M12 12H36.0003V36.0003" stroke="#929292" stroke-width="2"
-                                                stroke-linejoin="round" />
-                                            <path d="M12 36.0003L36.0003 12" stroke="#929292" stroke-width="2"
-                                                stroke-linejoin="round" />
-                                        </g>
-                                        <defs>
-                                            <clipPath id="clip0_1164_690">
-                                                <rect width="48" height="48" fill="white" />
-                                            </clipPath>
-                                        </defs>
-                                    </svg>
-                                </div>
-                                <div class="home_case_content_item_txt_icon_wrap svg_full active">
-                                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <g clip-path="url(#clip0_1164_690)">
-                                            <path d="M12 12H36.0003V36.0003" stroke="#F32B3B" stroke-width="2"
-                                                stroke-linejoin="round" />
-                                            <path d="M12 36.0003L36.0003 12" stroke="#F32B3B" stroke-width="2"
-                                                stroke-linejoin="round" />
-                                        </g>
-                                        <defs>
-                                            <clipPath id="clip0_1164_690">
-                                                <rect width="48" height="48" fill="white" />
-                                            </clipPath>
-                                        </defs>
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="home_case_content_item">
-                        <div class="home_case_content_item_des">
-                            <div class="home_case_content_item_des_txt txt_15 txt_medium">DAT XANH GROUP</div>
-                            <div class="home_case_content_item_des_txt txt_15 txt_medium">WEBSITE</div>
-                        </div>
-                        <div class="home_case_content_item_img_outer">
-                            <div class="home_case_content_item_img img_full">
-                                <img src="<?php echo get_template_directory_uri(); ?>/images/case.webp" alt="">
-                            </div>
-                        </div>
-                        <div class="home_case_content_item_txt">
-                            <div class="home_case_content_item_txt_title heading cl_be h4 h5_mb">Opal Garden</div>
-                            <div class="home_case_content_item_txt_icon">
-                                <div class="home_case_content_item_txt_icon_wrap svg_full">
-                                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <g clip-path="url(#clip0_1164_690)">
-                                            <path d="M12 12H36.0003V36.0003" stroke="#929292" stroke-width="2"
-                                                stroke-linejoin="round" />
-                                            <path d="M12 36.0003L36.0003 12" stroke="#929292" stroke-width="2"
-                                                stroke-linejoin="round" />
-                                        </g>
-                                        <defs>
-                                            <clipPath id="clip0_1164_690">
-                                                <rect width="48" height="48" fill="white" />
-                                            </clipPath>
-                                        </defs>
-                                    </svg>
-                                </div>
-                                <div class="home_case_content_item_txt_icon_wrap svg_full active">
-                                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <g clip-path="url(#clip0_1164_690)">
-                                            <path d="M12 12H36.0003V36.0003" stroke="#F32B3B" stroke-width="2"
-                                                stroke-linejoin="round" />
-                                            <path d="M12 36.0003L36.0003 12" stroke="#F32B3B" stroke-width="2"
-                                                stroke-linejoin="round" />
-                                        </g>
-                                        <defs>
-                                            <clipPath id="clip0_1164_690">
-                                                <rect width="48" height="48" fill="white" />
-                                            </clipPath>
-                                        </defs>
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-<?php endif; ?>
                 </div>
                 <a href="#" class="home_case_seeview button_hover hover_txt cl_be txt_uppercase txt_14 txt_medium">
                     <div class="hover_txt_grid">
@@ -878,17 +348,6 @@ foreach($tabs as $tab_id => $field_name) :
                         </div>
 <?php
         endforeach;
-    else:
-        // Placeholders
-        for($i=0; $i<8; $i++) :
-?>
-                        <div class="home_clients_content_item_img">
-                            <div class="home_clients_content_item_inner img_full">
-                                <img src="<?php echo get_template_directory_uri(); ?>/images/icon_tab.svg" alt="">
-                            </div>
-                        </div>
-<?php
-        endfor;
     endif;
 ?>
                     </div>
