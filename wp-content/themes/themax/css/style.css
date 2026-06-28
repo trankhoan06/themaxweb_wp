@@ -331,6 +331,17 @@ h2 {
     margin-right: calc(var(--padding-container)*-1);
 }
 
+.img_abs {
+    position: relative;
+}
+
+.img_abs img {
+    inset: 0;
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+}
+
 .img_full img {
     width: 100%;
     object-fit: cover;

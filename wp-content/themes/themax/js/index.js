@@ -4171,7 +4171,300 @@ const mainScript = () => {
       }
     }
   };
-  const CareerPage = {};
+  const CareerPage = {
+    Hero: class {
+      constructor() {
+        this.el = null;
+        this.fadeTl = null;
+        this.master = null;
+        this.titleSplit = null;
+        this.descFade = null;
+        this.btnFade = null;
+        this.bgFade = null;
+      }
+      trigger(data) {
+        this.el = document.querySelector('.service_hero');
+        if (!this.el) return;
+        this.setup();
+        this.animFade();
+      }
+      setup() {
+        this.title = this.el.querySelector('.service_hero_left');
+        this.desc = this.el.querySelector('.service_hero_right_txt');
+        this.btn = this.el.querySelector('.service_hero_right_discover');
+        this.bg = this.el.querySelector('.service_hero_bg');
+        this.careerImg = document.querySelector('.career_img');
+
+        if (this.title) {
+          this.titleSplit = new FadeSplitText({
+            el: this.title,
+            splitType: 'words',
+            isDisableRevert: true,
+            duration: 1.2,
+            stagger: 0.05,
+            ease: 'power3.out'
+          });
+        }
+        if (this.desc) {
+          this.descFade = new FadeIn({
+            el: this.desc,
+            type: 'bottom',
+            isDisableRevert: true,
+            duration: 1.2,
+            ease: 'power3.out'
+          });
+        }
+        if (this.btn) {
+          this.btnFade = new FadeIn({
+            el: this.btn,
+            type: 'bottom',
+            isDisableRevert: true,
+            duration: 1.2,
+            ease: 'power3.out'
+          });
+        }
+        if (this.bg) {
+          this.bgFade = new FadeIn({
+            el: this.bg,
+            type: 'none',
+            from: { scale: 0.8, opacity: 0 },
+            to: { scale: 1, opacity: 1 },
+            isDisableRevert: true,
+            duration: 2.0,
+            ease: 'power2.out'
+          });
+        }
+        if (this.careerImg) {
+          this.careerImgFade = new FadeIn({
+            el: this.careerImg,
+            type: 'none',
+            isDisableRevert: true,
+            duration: 2.0,
+            ease: 'power2.out'
+          });
+        }
+      }
+      animFade() {
+        this.fadeTl = gsap.timeline();
+        const tweenArr = [];
+        if (this.titleSplit) tweenArr.push(this.titleSplit);
+        if (this.descFade) tweenArr.push(this.descFade);
+        if (this.btnFade) tweenArr.push(this.btnFade);
+        if (this.bgFade) tweenArr.push(this.bgFade);
+        if (this.careerImgFade) tweenArr.push(this.careerImgFade);
+
+        if (tweenArr.length) {
+          this.master = new MasterTimeline({
+            timeline: this.fadeTl,
+            triggerInit: this.el,
+            tweenArr: tweenArr,
+            stagger: 0.15
+          });
+        }
+      }
+    },
+    Why: class {
+      constructor() {
+        this.el = null;
+        this.infoTl = null;
+        this.cardTl = null;
+        this.bgTl = null;
+
+        this.infoMaster = null;
+        this.cardMaster = null;
+
+        this.leftSubFade = null;
+        this.titleFade = null;
+        this.contentSubFade = null;
+        this.cardTweens = [];
+        this.bgImgFade = null;
+
+        this.centerImgTl = null;
+        this.listTl = null;
+        this.centerImgMaster = null;
+        this.listMaster = null;
+        this.centerImgFade = null;
+        this.centerImgTxtFade = null;
+        this.listTitleFade = null;
+        this.listItemFade = null;
+      }
+      trigger(data) {
+        let container = data && data.next && data.next.container ? data.next.container : document;
+        this.el = container.querySelector('.career_why');
+        if (!this.el) return;
+        this.setup();
+        this.animFade();
+      }
+      setup() {
+        const leftSub = this.el.querySelector('.career_why_info_subtitle');
+        const title = this.el.querySelector('.career_why_info_content_title');
+        const contentSub = this.el.querySelector('.career_why_info_content_subtitle');
+        const cards = this.el.querySelectorAll('.career_why_info_content_card_item');
+        const bgImg = this.el.querySelector('.career_why_img_bg');
+        const centerImg = this.el.querySelector('.career_why_img_inner');
+        const centerImgTxt = this.el.querySelector('.career_why_img_txt');
+        const listTitle = this.el.querySelector('.career_why_list_title');
+        const listItems = this.el.querySelectorAll('.career_why_list_item');
+
+        if (leftSub) {
+          this.leftSubFade = new FadeIn({ el: leftSub, type: 'bottom', isDisableRevert: true, duration: 1.0 });
+        }
+        if (title) {
+          this.titleFade = new FadeSplitText({ el: title, splitType: 'words', isDisableRevert: true, duration: 1.0, stagger: 0.05 });
+        }
+        if (contentSub) {
+          this.contentSubFade = new FadeIn({ el: contentSub, type: 'bottom', isDisableRevert: true, duration: 1.0 });
+        }
+        if (cards.length) {
+          cards.forEach((card, index) => {
+            const icon = card.querySelector('.career_why_info_content_card_item_icon');
+            const title = card.querySelector('.career_why_info_content_card_item_title');
+            const desc = card.querySelector('.career_why_info_content_card_item_des');
+
+            const baseTime = index * 0.15;
+
+            if (icon) {
+              const anim = new FadeIn({ el: icon, type: 'bottom', isDisableRevert: true, duration: 0.8 });
+              anim.delay = baseTime || 0.001; // Avoid falsy 0
+              this.cardTweens.push(anim);
+            }
+            if (title) {
+              const anim = new FadeSplitText({ el: title, splitType: 'words', isDisableRevert: true, duration: 0.8, stagger: 0.02 });
+              anim.delay = baseTime + 0.1;
+              this.cardTweens.push(anim);
+            }
+            if (desc) {
+              const anim = new FadeSplitText({ el: desc, splitType: 'words', isDisableRevert: true, duration: 0.8, stagger: 0.01 });
+              anim.delay = baseTime + 0.2;
+              this.cardTweens.push(anim);
+            }
+          });
+        }
+        if (bgImg) {
+          this.bgImgFade = new FadeIn({
+            el: bgImg,
+            type: 'left',
+            isDisableRevert: true,
+            duration: 1.2,
+            clearProps: 'none' // To allow toggle reversing without CSS jumping
+          });
+        }
+        if (centerImg) {
+          this.centerImgFade = new FadeIn({ el: centerImg, type: 'bottom', isDisableRevert: true, duration: 1.0 });
+        }
+        if (centerImgTxt) {
+          this.centerImgTxtFade = new FadeSplitText({ el: centerImgTxt, splitType: 'words', isDisableRevert: true, duration: 1.0, stagger: 0.05 });
+        }
+        if (listTitle) {
+          this.listTitleFade = new FadeIn({ el: listTitle, type: 'bottom', isDisableRevert: true, duration: 1.0 });
+        }
+        if (listItems.length) {
+          this.listItemFade = new FadeIn({ el: listItems, type: 'bottom', isDisableRevert: true, duration: 1.0, stagger: 0.1 });
+        }
+      }
+      animFade() {
+        // 1. Info Timeline
+        this.infoTl = gsap.timeline({
+          scrollTrigger: { trigger: this.el, start: 'top top+=75%', once: true }
+        });
+        const infoArr = [];
+        if (this.leftSubFade) infoArr.push(this.leftSubFade);
+        if (this.titleFade) infoArr.push(this.titleFade);
+        if (this.contentSubFade) infoArr.push(this.contentSubFade);
+
+        if (infoArr.length) {
+          this.infoMaster = new MasterTimeline({
+            timeline: this.infoTl,
+            triggerInit: this.el,
+            tweenArr: infoArr,
+            stagger: 0.15
+          });
+        }
+
+        // 2. Card Timeline
+        const cardContainer = this.el.querySelector('.career_why_info_content_card');
+        if (cardContainer && this.cardTweens.length) {
+          this.cardTl = gsap.timeline({
+            scrollTrigger: { trigger: cardContainer, start: 'top top+=75%', once: true }
+          });
+          this.cardMaster = new MasterTimeline({
+            timeline: this.cardTl,
+            triggerInit: cardContainer,
+            tweenArr: this.cardTweens,
+            stagger: 0
+          });
+        }
+
+        // 3. BG Image Toggle Timeline
+        const bgImg = this.el.querySelector('.career_why_img_bg');
+        if (bgImg && this.bgImgFade) {
+          this.bgTl = gsap.timeline({
+            scrollTrigger: {
+              trigger: bgImg,
+              start: 'top top+=80%',
+              end: 'bottom top+=20%',
+              toggleActions: 'play reverse play reverse'
+            }
+          });
+          this.bgTl.add(this.bgImgFade.animation, 0);
+        }
+
+        // 4. Center Image Timeline
+        const centerImgContainer = this.el.querySelector('.career_why_img');
+        if (centerImgContainer) {
+          this.centerImgTl = gsap.timeline({
+            scrollTrigger: { trigger: centerImgContainer, start: 'top top+=75%', once: true }
+          });
+          const centerImgArr = [];
+          if (this.centerImgFade) centerImgArr.push(this.centerImgFade);
+          if (this.centerImgTxtFade) centerImgArr.push(this.centerImgTxtFade);
+
+          if (centerImgArr.length) {
+            this.centerImgMaster = new MasterTimeline({
+              timeline: this.centerImgTl,
+              triggerInit: centerImgContainer,
+              tweenArr: centerImgArr,
+              stagger: 0.15
+            });
+          }
+        }
+
+        // 5. List Timeline
+        const listContainer = this.el.querySelector('.career_why_list');
+        if (listContainer) {
+          this.listTl = gsap.timeline({
+            scrollTrigger: { trigger: listContainer, start: 'top top+=75%', once: true }
+          });
+          const listArr = [];
+          if (this.listTitleFade) listArr.push(this.listTitleFade);
+          if (this.listItemFade) listArr.push(this.listItemFade);
+
+          if (listArr.length) {
+            this.listMaster = new MasterTimeline({
+              timeline: this.listTl,
+              triggerInit: listContainer,
+              tweenArr: listArr,
+              stagger: 0.15
+            });
+          }
+        }
+      }
+      destroy() {
+        if (this.infoTl) this.infoTl.kill();
+        if (this.cardTl) this.cardTl.kill();
+        if (this.bgTl) this.bgTl.kill();
+        if (this.centerImgTl) this.centerImgTl.kill();
+        if (this.listTl) this.listTl.kill();
+
+        if (this.infoMaster) this.infoMaster.destroy();
+        if (this.cardMaster) this.cardMaster.destroy();
+        if (this.centerImgMaster) this.centerImgMaster.destroy();
+        if (this.listMaster) this.listMaster.destroy();
+
+        [this.leftSubFade, this.titleFade, this.contentSubFade, ...this.cardTweens, this.bgImgFade, this.centerImgFade, this.centerImgTxtFade, this.listTitleFade, this.listItemFade].forEach(a => a?.destroy?.());
+      }
+    }
+  };
   const CareerDetailPage = {};
   const CaseStudyPage = {
     Content: class {
@@ -4269,7 +4562,6 @@ const mainScript = () => {
   const CaseStudyDetailPage = {};
   const ContactPage = {};
   const ServicePage = {
-    Services: HomePage.Services
   };
 
   class PageManager {
