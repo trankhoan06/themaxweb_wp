@@ -4313,7 +4313,7 @@ const mainScript = () => {
           this.titleFade = new FadeSplitText({ el: title, splitType: 'words', isDisableRevert: true, duration: 1.0, stagger: 0.05 });
         }
         if (contentSub) {
-          this.contentSubFade = new FadeIn({ el: contentSub, type: 'bottom', isDisableRevert: true, duration: 1.0 });
+          this.contentSubFade = new FadeSplitText({ el: contentSub, splitType: 'words', isDisableRevert: true, duration: 1.0, delay: .6 });
         }
         if (cards.length) {
           cards.forEach((card, index) => {
