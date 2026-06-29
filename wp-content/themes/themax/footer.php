@@ -28,46 +28,36 @@
                                 }
                             }
                         }
-                        
-                        if ( ! $has_footer_menu ) {
-                            // Fallback hardcoded menu if no menu is assigned
                         ?>
-                            <a href="/aboutus" class="footer_top_menu_item heading h6 cl_be hover_txt">
-                                <div class="hover_txt_grid"><span class="init">About Us</span><span class="active">About Us</span></div>
-                            </a>
-                            <a href="/service" class="footer_top_menu_item heading h6 cl_be hover_txt">
-                                <div class="hover_txt_grid"><span class="init">Services</span><span class="active">Services</span></div>
-                            </a>
-                            <a href="/case-study" class="footer_top_menu_item heading h6 cl_be hover_txt">
-                                <div class="hover_txt_grid"><span class="init">Works</span><span class="active">Works</span></div>
-                            </a>
-                            <a href="/our-client" class="footer_top_menu_item heading h6 cl_be hover_txt">
-                                <div class="hover_txt_grid"><span class="init">Clients</span><span class="active">Clients</span></div>
-                            </a>
-                            <a href="/career" class="footer_top_menu_item heading h6 cl_be hover_txt">
-                                <div class="hover_txt_grid"><span class="init">Careers</span><span class="active">Careers</span></div>
-                            </a>
-                            <a href="/contact" class="footer_top_menu_item heading h6 cl_be hover_txt">
-                                <div class="hover_txt_grid"><span class="init">Contact</span><span class="active">Contact</span></div>
-                            </a>
-                        <?php } ?>
                     </div>
-                    <div class="footer_top_email h1 heading h3_mb">info@themax.vn</div>
+                    <div class="footer_top_email h1 heading h3_mb"><?php echo esc_html(tr_options_field('tr_theme_options.footer_email') ?: 'info@themax.vn'); ?></div>
                 </div>
             </div>
+            <?php
+            $lang_suffix = (function_exists('pll_current_language') && pll_current_language() == 'vi') ? '_vi' : '';
+            $footer_vn_title = tr_options_field('tr_theme_options.footer_vn_title' . $lang_suffix) ?: tr_options_field('tr_theme_options.footer_vn_title');
+            $footer_vn_address1 = tr_options_field('tr_theme_options.footer_vn_address1' . $lang_suffix) ?: tr_options_field('tr_theme_options.footer_vn_address1');
+            $footer_vn_address2 = tr_options_field('tr_theme_options.footer_vn_address2' . $lang_suffix) ?: tr_options_field('tr_theme_options.footer_vn_address2');
+            $footer_us_title = tr_options_field('tr_theme_options.footer_us_title' . $lang_suffix) ?: tr_options_field('tr_theme_options.footer_us_title');
+            $footer_us_address1 = tr_options_field('tr_theme_options.footer_us_address1' . $lang_suffix) ?: tr_options_field('tr_theme_options.footer_us_address1');
+            $footer_us_address2 = tr_options_field('tr_theme_options.footer_us_address2' . $lang_suffix) ?: tr_options_field('tr_theme_options.footer_us_address2');
+            $footer_text_policy = tr_options_field('tr_theme_options.footer_text_policy' . $lang_suffix) ?: tr_options_field('tr_theme_options.footer_text_policy');
+            $footer_link_policy = tr_options_field('tr_theme_options.footer_link_policy' . $lang_suffix) ?: tr_options_field('tr_theme_options.footer_link_policy');
+            $footer_copyright = tr_options_field('tr_theme_options.footer_copyright' . $lang_suffix) ?: tr_options_field('tr_theme_options.footer_copyright');
+            ?>
             <div class="footer_content">
                 <div class="grid">
                     <div class="footer_content_address address1">
-                        <div class="footer_content_address_title txt_16 txt_medium">VN OFFICE</div>
-                        <div class="footer_content_address_txt txt_18">77 Hoa Lan, Cau Kieu Ward,</div>
-                        <div class="footer_content_address_txt txt_18">Ho Chi Minh City, Vietnam</div>
-                        <div class="footer_content_address_tel txt_18">0929 100 990</div>
+                        <div class="footer_content_address_title txt_16 txt_medium"><?php echo esc_html($footer_vn_title ?: 'VN OFFICE'); ?></div>
+                        <div class="footer_content_address_txt txt_18"><?php echo esc_html($footer_vn_address1 ?: '77 Hoa Lan, Cau Kieu Ward,'); ?></div>
+                        <div class="footer_content_address_txt txt_18"><?php echo esc_html($footer_vn_address2 ?: 'Ho Chi Minh City, Vietnam'); ?></div>
+                        <div class="footer_content_address_tel txt_18"><?php echo esc_html(tr_options_field('tr_theme_options.footer_vn_tel') ?: '0929 100 990'); ?></div>
                     </div>
                     <div class="footer_content_address address2">
-                        <div class="footer_content_address_title txt_16 txt_medium">US OFFICE</div>
-                        <div class="footer_content_address_txt txt_18">3975 Fair Ridge Dr, Fairfax,</div>
-                        <div class="footer_content_address_txt txt_18">VA 22033, Washington DC, USA</div>
-                        <div class="footer_content_address_tel txt_18">703-981-8080</div>
+                        <div class="footer_content_address_title txt_16 txt_medium"><?php echo esc_html($footer_us_title ?: 'US OFFICE'); ?></div>
+                        <div class="footer_content_address_txt txt_18"><?php echo esc_html($footer_us_address1 ?: '3975 Fair Ridge Dr, Fairfax,'); ?></div>
+                        <div class="footer_content_address_txt txt_18"><?php echo esc_html($footer_us_address2 ?: 'VA 22033, Washington DC, USA'); ?></div>
+                        <div class="footer_content_address_tel txt_18"><?php echo esc_html(tr_options_field('tr_theme_options.footer_us_tel') ?: '703-981-8080'); ?></div>
                     </div>
                     <div class="footer_content_form">
                         <div class="footer_form_title txt_16 txt_uppercase heading cl_be txt_16 txt_medium">GET
@@ -132,7 +122,8 @@
                     </div>
                     <div class="footer_bot_contact">
                         <div class="footer_bot_contact_social">
-                            <a href="#" class="footer_bot_contact_social_item svg_full ic_fb">
+                            <?php $fb_link = tr_options_field('tr_theme_options.footer_social_fb'); ?>
+                            <a href="<?php echo esc_url($fb_link ?: '#'); ?>" class="footer_bot_contact_social_item svg_full ic_fb" <?php if($fb_link) echo 'target="_blank"'; ?>>
                                 <svg width="48" height="48" viewBox="0 0 48 48" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <g clip-path="url(#clip0_1042_105)">
@@ -149,7 +140,8 @@
                                     </defs>
                                 </svg>
                             </a>
-                            <a href="#" class="footer_bot_contact_social_item svg_full ic_zalo">
+                            <?php $zl_link = tr_options_field('tr_theme_options.footer_social_zl'); ?>
+                            <a href="<?php echo esc_url($zl_link ?: '#'); ?>" class="footer_bot_contact_social_item svg_full ic_zalo" <?php if($zl_link) echo 'target="_blank"'; ?>>
                                 <svg width="48" height="48" viewBox="0 0 48 48" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <g clip-path="url(#clip0_749_3641)">
@@ -179,7 +171,8 @@
 
 
                             </a>
-                            <a href="#" class="footer_bot_contact_social_item svg_full ic_linkin">
+                            <?php $li_link = tr_options_field('tr_theme_options.footer_social_li'); ?>
+                            <a href="<?php echo esc_url($li_link ?: '#'); ?>" class="footer_bot_contact_social_item svg_full ic_linkin" <?php if($li_link) echo 'target="_blank"'; ?>>
                                 <svg width="48" height="48" viewBox="0 0 48 48" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <g clip-path="url(#clip0_1042_121)">
@@ -197,7 +190,8 @@
                                 </svg>
 
                             </a>
-                            <a href="#" class="footer_bot_contact_social_item svg_full ic_pret">
+                            <?php $pi_link = tr_options_field('tr_theme_options.footer_social_pi'); ?>
+                            <a href="<?php echo esc_url($pi_link ?: '#'); ?>" class="footer_bot_contact_social_item svg_full ic_pret" <?php if($pi_link) echo 'target="_blank"'; ?>>
                                 <svg width="48" height="48" viewBox="0 0 48 48" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <g clip-path="url(#clip0_1042_128)">
@@ -217,8 +211,11 @@
 
                             </a>
                         </div>
-                        <div class="footer_bot_contact_copyright txt_14">© 2018-2026 TheMax. All Right
-                            Reserved.
+                        <div class="footer_bot_contact_copyright_wrap">
+                            <a href="<?php echo esc_url($footer_link_policy ?: '#'); ?>" class="footer_bot_contact_policy txt_14"><?php echo esc_html($footer_text_policy ?: 'Privacy Policy'); ?></a>
+                            <div class="footer_bot_contact_copyright txt_14">
+                                <?php echo esc_html($footer_copyright ?: '© 2018-2026 TheMax. All Right Reserved.'); ?>
+                            </div>
                         </div>
                     </div>
                 </div>

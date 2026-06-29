@@ -67,10 +67,47 @@
                     </div>
                     <div class="header_menu_nav">
                         <div class="header_menu_nav_lang">
-                            <div class="header_menu_nav_lang_item txt_16 block_arrow txt_uppercase ">
-                                MAXIMIZE ONLINE <span class="cl_red">POWER</span>
-
-                            </div>
+                            <?php 
+                            if ( function_exists('pll_the_languages') ) {
+                                $languages = pll_the_languages( array( 'raw' => 1 ) );
+                                $current_lang = null;
+                                $other_langs = array();
+                                
+                                foreach ( $languages as $lang ) {
+                                    if ( $lang['current_lang'] ) {
+                                        $current_lang = $lang;
+                                    } else {
+                                        $other_langs[] = $lang;
+                                    }
+                                }
+                                
+                                // Hiển thị ngôn ngữ hiện tại đầu tiên
+                                if ( $current_lang ) {
+                                    $lang_slug = strtoupper( $current_lang['slug'] );
+                                    ?>
+                                    <a href="<?php echo esc_url( $current_lang['url'] ); ?>" class="header_menu_nav_lang_item active txt_16 hover_txt txt_uppercase" style="text-decoration: none;">
+                                        <div class="hover_txt_grid">
+                                            <span class="init"><?php echo esc_html( $lang_slug ); ?></span>
+                                            <span class="active"><?php echo esc_html( $lang_slug ); ?></span>
+                                        </div>
+                                    </a>
+                                    <?php
+                                }
+                                
+                                // Hiển thị các ngôn ngữ khác
+                                foreach ( $other_langs as $lang ) {
+                                    $lang_slug = strtoupper( $lang['slug'] );
+                                    ?>
+                                    <a href="<?php echo esc_url( $lang['url'] ); ?>" class="header_menu_nav_lang_item txt_16 hover_txt txt_uppercase" style="text-decoration: none;">
+                                        <div class="hover_txt_grid">
+                                            <span class="init"><?php echo esc_html( $lang_slug ); ?></span>
+                                            <span class="active"><?php echo esc_html( $lang_slug ); ?></span>
+                                        </div>
+                                    </a>
+                                    <?php
+                                }
+                            }
+                            ?>
                         </div>
                         <div class="header_menu_nav_content">
                             <?php

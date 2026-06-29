@@ -304,30 +304,6 @@ get_header();
                         <div class="about_team_card_img_wrap">
                             <?php
                             $team_cards = (tr_posts_field('about_team_cards') ?? '');
-                            if (empty($team_cards)) {
-                                // Fallback to single fields if exists, or defaults
-                                $single_img = (tr_posts_field('about_team_card_img') ?? '');
-                                $single_title = (tr_posts_field('about_team_card_title') ?? '');
-                                $single_desc = (tr_posts_field('about_team_card_desc') ?? '');
-                                $team_cards = [
-                                    [
-                                        'img' => $single_img,
-                                        'title' => $single_title,
-                                        'desc' => $single_desc
-                                    ],
-                                    [
-                                        'img' => 0,
-                                        'title' => 'Cultivating Excellence',
-                                        'desc' => 'We foster a collaborative culture that brings out the best in our team. By empowering creative minds and using data-driven logic, we build brand experiences that resonate.'
-                                    ],
-                                    [
-                                        'img' => 0,
-                                        'title' => 'Empowering Growth',
-                                        'desc' => 'Our mission is to drive digital transformation. We craft tailor-made strategies that optimize business growth, enhance user engagement, and deliver long-term value.'
-                                    ]
-                                ];
-                            }
-
                             foreach ($team_cards as $index => $card):
                                 $img_id = isset($card['img']) ? $card['img'] : 0;
                                 $card_img = wp_get_attachment_image_url($img_id, 'full') ?: get_template_directory_uri() . '/images/' . (($index % 2 === 0) ? 'card.webp' : 'card2.jpg');

@@ -76,12 +76,6 @@ get_header();
                 <?php
                 for ($i = 1; $i <= 6; $i++) {
                     $tab_name = tr_posts_field('tab' . $i . '_name');
-                    if ($i === 1 && !$tab_name)
-                        $tab_name = 'Real Estate Clients';
-                    if ($i === 2 && !$tab_name)
-                        $tab_name = 'Real Estate Projects';
-                    if ($i === 3 && !$tab_name)
-                        $tab_name = 'Web & Mobile App';
                     if (!$tab_name)
                         continue;
 
@@ -100,12 +94,6 @@ get_header();
                 <?php
                 for ($i = 1; $i <= 6; $i++) {
                     $tab_name = tr_posts_field('tab' . $i . '_name');
-                    if ($i === 1 && !$tab_name)
-                        $tab_name = 'Real Estate Clients';
-                    if ($i === 2 && !$tab_name)
-                        $tab_name = 'Real Estate Projects';
-                    if ($i === 3 && !$tab_name)
-                        $tab_name = 'Web & Mobile App';
                     if (!$tab_name)
                         continue;
 

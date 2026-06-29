@@ -12,8 +12,10 @@ require dirname( __FILE__ ) . '/inc/typerocket-casestudy.php';
 require dirname( __FILE__ ) . '/inc/typerocket-ourclient.php';
 require dirname( __FILE__ ) . '/inc/typerocket-thanks.php';
 require dirname( __FILE__ ) . '/inc/typerocket-default.php';
-require dirname( __FILE__ ) . '/inc/typerocket-single.php';
+// require dirname( __FILE__ ) . '/inc/typerocket-single.php';
 require dirname( __FILE__ ) . '/inc/typerocket-career-detail.php';
+require dirname( __FILE__ ) . '/inc/typerocket-single-work.php';
+require dirname( __FILE__ ) . '/inc/typerocket-policy.php';
 add_filter('tr_theme_options_page', function() {
     return get_template_directory() . '/theme-options.php';
 });
@@ -67,9 +69,12 @@ function themax_enqueue_assets() {
     elseif (is_page_template('page-templates/career.php')) {
         wp_enqueue_style('themax-career', $theme_dir . '/css/career.css');
     }
-    elseif (is_page_template('page-templates/case-study-detail.php') || is_singular('case-study-detail') || is_singular('post')) {
+    elseif (is_page_template('page-templates/case-study-detail.php') || is_singular('case-study-detail') || is_singular('work')) {
         wp_enqueue_style('themax-case-study-detail', $theme_dir . '/css/case-study-detail.css');
     }
+    // elseif (is_singular('post')) {
+    //     wp_enqueue_style('themax-case-study-detail', $theme_dir . '/css/case-study-detail.css');
+    // }
     elseif (is_page_template('page-templates/case-study.php')) {
         wp_enqueue_style('themax-case-study', $theme_dir . '/css/case-study.css');
     }
@@ -92,7 +97,7 @@ function themax_load_more_case_studies() {
     $paged = isset($_POST["paged"]) ? intval($_POST["paged"]) : 1;
     
     $args = array(
-        "post_type" => "post",
+        "post_type" => "work",
         "post_status" => "publish",
         "posts_per_page" => 6,
         "paged" => $paged

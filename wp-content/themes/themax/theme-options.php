@@ -35,6 +35,54 @@ $form = tr_form()->useJson()->setGroup( $this->getName() );
         echo $form->textarea('career_cta_des')->setLabel('CTA Description');
     };
 
+    // Footer Settings
+    $footer_settings = function() use ($form) {
+        echo "<h3>Footer Settings</h3>";
+        
+        echo "<h4>Email</h4>";
+        echo $form->text('footer_email')->setLabel('Email Address');
+        
+        echo "<h4>VN Office</h4>";
+        echo $form->text('footer_vn_title')->setLabel('Title')->setDefault('VN OFFICE');
+        echo $form->text('footer_vn_address1')->setLabel('Address Line 1');
+        echo $form->text('footer_vn_address2')->setLabel('Address Line 2');
+        echo $form->text('footer_vn_tel')->setLabel('Telephone');
+        
+        echo "<h4>US Office</h4>";
+        echo $form->text('footer_us_title')->setLabel('Title')->setDefault('US OFFICE');
+        echo $form->text('footer_us_address1')->setLabel('Address Line 1');
+        echo $form->text('footer_us_address2')->setLabel('Address Line 2');
+        echo $form->text('footer_us_tel')->setLabel('Telephone');
+        
+        echo "<h4>Social Links</h4>";
+        echo $form->text('footer_social_fb')->setLabel('Facebook Link');
+        echo $form->text('footer_social_zl')->setLabel('Zalo Link');
+        echo $form->text('footer_social_li')->setLabel('LinkedIn Link');
+        echo $form->text('footer_social_pi')->setLabel('Pinterest Link');
+        
+        echo "<h4>Copyright</h4>";
+        echo $form->text('footer_text_policy')->setLabel('text policy')->setDefault('Privacy Policy');
+        echo $form->text('footer_link_policy')->setLabel('Link policy')->setDefault('#');
+        echo $form->text('footer_copyright')->setLabel('Copyright Text')->setDefault('© 2018-2026 TheMax. All Right Reserved.');
+
+        echo "<hr><h3>Footer Settings (Tiếng Việt)</h3>";
+        
+        echo "<h4>VN Office (Tiếng Việt)</h4>";
+        echo $form->text('footer_vn_title_vi')->setLabel('Title (Tiếng Việt)');
+        echo $form->text('footer_vn_address1_vi')->setLabel('Address Line 1 (Tiếng Việt)');
+        echo $form->text('footer_vn_address2_vi')->setLabel('Address Line 2 (Tiếng Việt)');
+        
+        echo "<h4>US Office (Tiếng Việt)</h4>";
+        echo $form->text('footer_us_title_vi')->setLabel('Title (Tiếng Việt)');
+        echo $form->text('footer_us_address1_vi')->setLabel('Address Line 1 (Tiếng Việt)');
+        echo $form->text('footer_us_address2_vi')->setLabel('Address Line 2 (Tiếng Việt)');
+        
+        echo "<h4>Copyright (Tiếng Việt)</h4>";
+        echo $form->text('footer_text_policy_vi')->setLabel('text policy (Tiếng Việt)');
+        echo $form->text('footer_link_policy_vi')->setLabel('Link policy (Tiếng Việt)')->setDefault('#');
+        echo $form->text('footer_copyright_vi')->setLabel('Copyright Text (Tiếng Việt)');
+    };
+
     // Save
     $save = $form->submit( 'Save Options' );
 
@@ -42,6 +90,7 @@ $form = tr_form()->useJson()->setGroup( $this->getName() );
     tr_tabs()->setSidebar( $save )
         ->addTab( 'Single Case Study', $cta_single )
         ->addTab( 'Single Career', $cta_career )
+        ->addTab( 'Footer', $footer_settings )
         ->render( 'box' );
         
     echo $form->close();

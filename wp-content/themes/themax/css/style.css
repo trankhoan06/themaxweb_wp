@@ -910,6 +910,7 @@ h2 {
     display: flex;
     gap: .5rem;
     cursor: pointer;
+    position: relative;
 
     &.active {
         color: #EB4250;
@@ -926,6 +927,17 @@ h2 {
     }
 }
 
+.header_menu_nav_lang .header_menu_nav_lang_item:nth-child(1):before {
+    content: "";
+    width: 1px;
+    height: 1.2rem;
+    background-color: #7D7D7D;
+    position: absolute;
+    right: -1.3rem;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
 .header_menu_nav {
     padding-inline: 6.5rem;
 }
@@ -936,6 +948,7 @@ h2 {
     position: absolute;
     display: flex;
     color: #101010;
+    gap: 2.5rem;
 
 }
 
@@ -1163,7 +1176,7 @@ h2 {
 
 
 .footer_bot_contact {
-    grid-column: 10/13;
+    grid-column: 8/13;
     display: flex;
     gap: 3.2rem;
     justify-content: flex-end;
@@ -1174,6 +1187,29 @@ h2 {
     display: flex;
     gap: 1.2rem;
     justify-content: flex-end;
+}
+
+.footer_bot_contact_copyright_wrap {
+    display: flex;
+    align-items: center;
+    gap: 3.3rem;
+    justify-content: end;
+}
+
+.footer_bot_contact_policy {
+    position: relative;
+
+}
+
+.footer_bot_contact_policy::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1px;
+    height: 1.6rem;
+    right: -1.7rem;
+    background-color: #BEBEBE;
 }
 
 .footer_bot_contact_copyright {
@@ -1280,7 +1316,7 @@ h2 {
 .about_cta_inner_bg {
     position: absolute;
     inset: 0;
-    z-index: 1;
+    z-index: 3;
     pointer-events: none;
     width: 25rem;
 }
@@ -1291,6 +1327,7 @@ h2 {
     top: 50%;
     transform: translateY(-50%);
     width: 10rem;
+    height: auto;
 }
 
 .about_cta_bg_top {
@@ -1548,4 +1585,51 @@ h2 {
     -webkit-text-fill-color: transparent;
     background-clip: text;
     display: block;
+}
+
+/* Policy Page */
+.policy_section {
+    margin-top: 10rem;
+}
+
+.policy_wrap {
+    grid-column: 2/12;
+}
+
+.policy_title {
+    margin-bottom: 4rem;
+}
+
+.policy_content {
+    line-height: 1.6;
+}
+
+.policy_content h2 {
+    font-size: 2.4rem;
+    font-weight: 600;
+    margin: 3rem 0 1.5rem;
+}
+
+.policy_content h3 {
+    font-size: 2rem;
+    font-weight: 600;
+    margin: 2.5rem 0 1.5rem;
+}
+
+.policy_content p {
+    margin-bottom: 1.5rem;
+}
+
+.policy_content ul,
+.policy_content ol {
+    margin-bottom: 1.5rem;
+    padding-left: 2rem;
+}
+
+.policy_content li {
+    margin-bottom: 0.8rem;
+}
+
+.policy_content strong {
+    font-weight: 600;
 }

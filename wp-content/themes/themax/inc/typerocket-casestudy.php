@@ -15,7 +15,8 @@ add_action('edit_form_after_title', function($post) {
         echo endBox();
 
         echo beginBox("Call to Action (CTA)", true);
-        echo $form->text('cs_cta_text1')->setLabel("CTA Text Line 1");
+        echo $form->image('cs_cta_img')->setLabel("CTA Image");
+        echo $form->textarea('cs_cta_text1')->setLabel("CTA Text Line 1");
         echo $form->text('cs_cta_text2')->setLabel("CTA Text Highlight (white)");
         echo $form->text('cs_cta_text3')->setLabel("CTA Text Highlight (red)");
         echo $form->text('cs_cta_link')->setLabel("CTA Link");

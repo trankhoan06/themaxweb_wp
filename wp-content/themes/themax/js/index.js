@@ -5250,6 +5250,12 @@ const mainScript = () => {
       super(page);
     }
   }
+  const PolicyPage = {};
+  class PolicyPageManager extends PageManager {
+    constructor(page) {
+      super(page);
+    }
+  }
 
   const PageManagerRegistry = {
     home: new HomePageManager(HomePage),
@@ -5261,6 +5267,7 @@ const mainScript = () => {
     caseStudyDetail: new CaseStudyDetailPageManager(CaseStudyDetailPage),
     contact: new ContactPageManager(ContactPage),
     service: new ServicePageManager(ServicePage),
+    policy: new PolicyPageManager(PolicyPage),
   };
 
   const getNamespace = () => {

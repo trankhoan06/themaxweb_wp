@@ -302,11 +302,14 @@ get_header();
         </div>
     </section>
     <?php
-    $cta_img = wp_get_attachment_image_url(tr_options_field('tr_theme_options.career_cta_img'), 'full');
-    $cta_title = tr_options_field('tr_theme_options.career_cta_title');
-    $cta_des = tr_options_field('tr_theme_options.career_cta_des');
-    $cta_link = tr_options_field('tr_theme_options.career_cta_link');
-    $cta_btn_text = tr_options_field('tr_theme_options.career_cta_btn_text');
+    $lang_suffix = (function_exists('pll_current_language') && pll_current_language() == 'vi') ? '_vi' : '';
+    $cta_img_val = tr_options_field('tr_theme_options.career_cta_img' . $lang_suffix);
+    if (empty($cta_img_val)) $cta_img_val = tr_options_field('tr_theme_options.career_cta_img');
+    $cta_img = wp_get_attachment_image_url(($cta_img_val ?? ''), 'full') ?: get_template_directory_uri() . '/images/img_cta.webp';
+    $cta_link = tr_options_field('tr_theme_options.career_cta_link' . $lang_suffix) ?: tr_options_field('tr_theme_options.career_cta_link');
+    $cta_title = tr_options_field('tr_theme_options.career_cta_title' . $lang_suffix) ?: tr_options_field('tr_theme_options.career_cta_title');
+    $cta_des = tr_options_field('tr_theme_options.career_cta_des' . $lang_suffix) ?: tr_options_field('tr_theme_options.career_cta_des');
+    $cta_btn_text = tr_options_field('tr_theme_options.career_cta_btn_text' . $lang_suffix) ?: tr_options_field('tr_theme_options.career_cta_btn_text');
     ?>
     <section class="about_cta">
         <div class="about_cta_img img_full">
@@ -315,24 +318,23 @@ get_header();
         <div class="about_cta_inner_bg">
             <svg class="about_cta_bg_red" width="100" height="273" viewBox="0 0 100 273" fill="none"
                 xmlns="http://www.w3.org/2000/svg">
-                <g clip-path="url(#clip0_1742_4330)">
+                <g clip-path="url(#clip0_cta_red)">
                     <path
                         d="M-141.577 -191.969H-395.053L-153.367 136.065L-398 469.957H-144.525L100.109 136.065L-141.577 -191.969Z"
-                        fill="url(#paint0_radial_1742_4330)" />
+                        fill="url(#paint0_cta_red)" />
                 </g>
                 <defs>
-                    <radialGradient id="paint0_radial_1742_4330" cx="0" cy="0" r="1"
+                    <radialGradient id="paint0_cta_red" cx="0" cy="0" r="1"
                         gradientTransform="matrix(-249.054 330.963 -249.071 -187.403 100.109 138.994)"
                         gradientUnits="userSpaceOnUse">
-                        <stop stop-color="#E62636" />
+                        <stop stop-color="#E62636" stop-opacity="0.7" />
                         <stop offset="0.504728" stop-color="#E62636" stop-opacity="0.05" />
                     </radialGradient>
-                    <clipPath id="clip0_1742_4330">
+                    <clipPath id="clip0_cta_red">
                         <rect width="100" height="273" fill="white" />
                     </clipPath>
                 </defs>
             </svg>
-
             <svg class="about_cta_bg_top" width="243" height="171" viewBox="0 0 243 171" fill="none"
                 xmlns="http://www.w3.org/2000/svg">
                 <g clip-path="url(#clip0_cta_top)">
@@ -373,16 +375,17 @@ get_header();
             <div class=" about_cta_inner_content">
                 <div class="about_cta_inner_content_title grid">
                     <div class="about_cta_inner_content_title_txt heading h2 cl_linear h5_mb">
-                        <?php echo wp_kses_post($cta_title); ?>
+                        <?php echo nl2br(esc_html($cta_title ?? '')); ?>
                     </div>
                     <div class="about_cta_inner_content_des txt_18">
-                        <?php echo wp_kses_post($cta_des); ?>
+                        <?php echo nl2br(esc_html($cta_des ?? '')); ?>
                     </div>
-                    <a href="<?php echo esc_url($cta_link); ?>"
+                    <a href="<?php echo esc_url($cta_link ?? ''); ?>"
                         class="about_cta_inner_content_title_button hover_txt button_hover txt_uppercase txt_14 cl_be">
                         <div class="hover_txt_grid">
-                            <span class="init"><?php echo esc_html($cta_btn_text); ?></span>
-                            <span class="active"><?php echo esc_html($cta_btn_text); ?></span>
+                            <?php $cta_btn_txt_val = esc_html($cta_btn_text ?? ''); ?>
+                            <span class="init"><?php echo $cta_btn_txt_val; ?></span>
+                            <span class="active"><?php echo $cta_btn_txt_val; ?></span>
                         </div>
                     </a>
                 </div>

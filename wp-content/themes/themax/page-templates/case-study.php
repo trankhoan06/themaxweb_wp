@@ -68,7 +68,7 @@ get_header();
             <div class="home_case_content_list right_full left_full">
                 <?php
                 $args = array(
-                    'post_type' => 'post',
+                    'post_type' => 'work',
                     'post_status' => 'publish',
                     'posts_per_page' => 6,
                     'paged' => 1
@@ -98,7 +98,7 @@ get_header();
     </section>
     <section class="about_cta">
         <div class="about_cta_img img_full">
-            <?php $cta_img = wp_get_attachment_image_url((tr_posts_field('about_cta_img') ?? ''), 'full') ?: get_template_directory_uri() . '/images/img_cta.webp'; ?>
+            <?php $cta_img = wp_get_attachment_image_url((tr_posts_field('cs_cta_img') ?? ''), 'full') ?: get_template_directory_uri() . '/images/img_cta.webp'; ?>
             <img src="<?php echo esc_url($cta_img); ?>" alt="">
         </div>
         <div class="about_cta_inner_bg">
