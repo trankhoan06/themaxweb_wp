@@ -46,7 +46,7 @@ get_header();
         <div class="container">
             <div class="careerdetail_info_inner grid">
                 <div class="careerdetail_info_content">
-                    <h1 class="careerdetail_info_content_title heading h2 h4_mb txt_linear"><?php the_title(); ?></h1>
+                    <h1 class="careerdetail_info_content_title heading h2 h4_mb cl_linear"><?php the_title(); ?></h1>
                     <div class="careerdetail_info_content_job">
                         <?php
                         $job_info = tr_posts_field('job_info');
@@ -54,8 +54,12 @@ get_header();
                             foreach ($job_info as $info):
                                 ?>
                                 <div class="careerdetail_info_content_job_item">
-                                    <div class="careerdetail_info_content_job_item_name txt_uppercase txt_medium cl_gray"><?php echo esc_html($info['label'] ?? ''); ?></div>
-                                    <div class="careerdetail_info_content_job_item_txt  cl_eb txt_16"><?php echo esc_html($info['value'] ?? ''); ?></div>
+                                    <div class="careerdetail_info_content_job_item_name txt_uppercase txt_medium cl_gray">
+                                        <?php echo esc_html($info['label'] ?? ''); ?>
+                                    </div>
+                                    <div class="careerdetail_info_content_job_item_txt  cl_eb txt_16">
+                                        <?php echo esc_html($info['value'] ?? ''); ?>
+                                    </div>
                                 </div>
                                 <?php
                             endforeach;
@@ -68,8 +72,10 @@ get_header();
                         if (is_array($job_desc) && !empty($job_desc)):
                             foreach ($job_desc as $section):
                                 ?>
-                                <div class="careerdetail_info_content_des_item">
-                                    <div class="careerdetail_info_content_des_item_title h5 h6_mb heading"><?php echo esc_html($section['title'] ?? ''); ?></div>
+                                <div class="careerdetail_info_content_des_item cl_eb">
+                                    <div class="careerdetail_info_content_des_item_title h5 h6_mb heading">
+                                        <?php echo esc_html($section['title'] ?? ''); ?>
+                                    </div>
                                     <div class="careerdetail_info_content_des_item_inner">
                                         <?php
                                         $content = $section['content'] ?? '';
@@ -89,7 +95,8 @@ get_header();
                         ?>
                     </div>
                     <div class="careerdetail_info_content_form">
-                        <div class="careerdetail_info_content_form_title heading h5 h6_mb cl_red txt_uppercase">NôP đƠN ỨNG TUYểN
+                        <div class="careerdetail_info_content_form_title heading h5 h6_mb cl_red txt_uppercase">NôP đƠN
+                            ỨNG TUYểN
                             Vị TRí
                             NàY
                         </div>
@@ -219,6 +226,23 @@ get_header();
                     <div class="careerdetail_info_other_share">
                         <div class="careerdetail_info_other_subtitle txt_uppercase block_arrow txt_16">SHARE</div>
                         <div class="careerdetail_info_other_share_social">
+                            <a href="#" class="careerdetail_info_other_share_social_icon svg_full btn-copy-link"
+                                data-url="<?php echo esc_url(get_permalink()); ?>" title="Copy Link">
+                                <svg width="48" height="48" viewBox="0 0 48 48" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <rect x="0.5" y="0.5" width="47" height="47" stroke="#262626" />
+                                    <path
+                                        d="M25.4134 29.6568L23.9992 31.0711C23.0615 32.0087 21.7897 32.5355 20.4636 32.5355C19.1376 32.5355 17.8658 32.0087 16.9281 31.0711C15.9904 30.1334 15.4636 28.8616 15.4636 27.5355C15.4636 26.2094 15.9904 24.9377 16.9281 24L18.3423 22.5858"
+                                        stroke="#BEBEBE" stroke-width="1.5" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                    <path
+                                        d="M22.5859 18.3431L24.0002 16.9289C24.9378 15.9912 26.2096 15.4645 27.5357 15.4645C28.8618 15.4645 30.1335 15.9912 31.0712 16.9289C32.0089 17.8666 32.5357 19.1384 32.5357 20.4645C32.5357 21.7905 32.0089 23.0623 31.0712 24L29.657 25.4142"
+                                        stroke="#BEBEBE" stroke-width="1.5" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                    <path d="M21.1699 26.8284L26.8268 21.1715" stroke="#BEBEBE" stroke-width="1.5"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                            </a>
                             <a href="#" class="careerdetail_info_other_share_social_icon svg_full btn-share-fb"
                                 data-url="<?php echo esc_url(get_permalink()); ?>"
                                 data-title="<?php echo esc_attr(get_the_title()); ?>">
@@ -237,25 +261,6 @@ get_header();
                                     </defs>
                                 </svg>
                             </a>
-                            <a href="#" class="careerdetail_info_other_share_social_icon svg_full btn-share-tw"
-                                data-url="<?php echo esc_url(get_permalink()); ?>"
-                                data-title="<?php echo esc_attr(get_the_title()); ?>">
-                                <svg width="48" height="48" viewBox="0 0 48 48" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <g clip-path="url(#clip_twitter)">
-                                        <rect x="0.5" y="0.5" width="47" height="47" stroke="#262626" />
-                                        <path
-                                            d="M33.86 17.72c-1.07 0.48-2.22 0.8-3.42 0.95c1.23-0.74 2.17-1.9 2.61-3.29 c-1.15 0.68-2.43 1.18-3.78 1.44c-1.09-1.16-2.64-1.89-4.35-1.89c-3.29 0-5.96 2.67-5.96 5.96c0 0.47 0.05 0.92 0.15 1.36 c-4.95-0.25-9.34-2.62-12.28-6.22c-0.51 0.88-0.81 1.91-0.81 3c0 2.07 1.05 3.89 2.65 4.96c-0.98-0.03-1.9-0.3-2.7-0.75 c0 0.02 0 0.05 0 0.08c0 2.89 2.05 5.29 4.78 5.84c-0.5 0.14-1.03 0.21-1.57 0.21c-0.38 0-0.76-0.04-1.12-0.11 c0.76 2.37 2.96 4.09 5.56 4.14c-2.04 1.6-4.6 2.55-7.39 2.55c-0.48 0-0.96-0.03-1.43-0.08c2.63 1.69 5.76 2.67 9.1 2.67 c10.92 0 16.89-9.05 16.89-16.89c0-0.26-0.01-0.51-0.02-0.77C32.05 20.01 33.07 18.94 33.86 17.72z"
-                                            fill="#BEBEBE" />
-                                    </g>
-                                    <defs>
-                                        <clipPath id="clip_twitter">
-                                            <rect width="48" height="48" fill="white" />
-                                        </clipPath>
-                                    </defs>
-                                </svg>
-
-                            </a>
                             <a href="#" class="careerdetail_info_other_share_social_icon svg_full btn-share-in"
                                 data-url="<?php echo esc_url(get_permalink()); ?>"
                                 data-title="<?php echo esc_attr(get_the_title()); ?>">
@@ -273,7 +278,6 @@ get_header();
                                         </clipPath>
                                     </defs>
                                 </svg>
-
                             </a>
                         </div>
 
@@ -285,7 +289,8 @@ get_header();
     <?php
     $lang_suffix = (function_exists('pll_current_language') && pll_current_language() == 'vi') ? '_vi' : '';
     $cta_img_val = tr_options_field('tr_theme_options.career_cta_img' . $lang_suffix);
-    if (empty($cta_img_val)) $cta_img_val = tr_options_field('tr_theme_options.career_cta_img');
+    if (empty($cta_img_val))
+        $cta_img_val = tr_options_field('tr_theme_options.career_cta_img');
     $cta_img = wp_get_attachment_image_url(($cta_img_val ?? ''), 'full') ?: get_template_directory_uri() . '/images/img_cta.webp';
     $cta_link = tr_options_field('tr_theme_options.career_cta_link' . $lang_suffix) ?: tr_options_field('tr_theme_options.career_cta_link');
     $cta_title = tr_options_field('tr_theme_options.career_cta_title' . $lang_suffix) ?: tr_options_field('tr_theme_options.career_cta_title');

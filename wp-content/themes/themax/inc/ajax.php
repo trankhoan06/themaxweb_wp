@@ -148,10 +148,10 @@ function ajax_contactform(){
 
   $body  = "Xin chào,<br>";
   $body .= "<p>Bạn nhận được thông tin đăng ký của khách hàng.</p>";
-  $body .= "<strong>Họ và tên:</strong> " . $contact_name . "<br>";
+  $body .="<strong>Há» vÃ  tÃªn:</strong> ".$contact_name."<br>";
   $body .= "<strong>Điện thoại di động:</strong> " . $contact_mobile . "<br>";
-  $body .= "<strong>Email:</strong> " . $contact_email . "<br>";
-  //$body .= "<strong>Địa chỉ:</strong> " . $contact_address . "<br>";
+  $body .="<strong>Email:</strong> ".$contact_email."<br>";
+  //$body .="<strong>Äá»‹a chá»‰:</strong> ".$contact_address."<br>";
   $body .= "<strong>Sản phẩm quan tâm:</strong> " . $contact_interest . "<br>";
   $body .= "<strong>Nội dung:</strong> " . $content . "<br>";
 
@@ -350,7 +350,7 @@ function themax_email_template($section_title, $content) {
 
 function themax_verify_recaptcha($token) {
     if (empty($token)) return false;
-    $secret = tr_options_field('tr_theme_options.recaptcha_secret_key') ?: '6LcQlD0tAAAAAFe6sN3L9xt56HGT7s_O4ur7GPq5';
+    $secret = tr_options_field('tr_theme_options.recaptcha_secret_key') ?: '';
     $response = wp_remote_post('https://www.google.com/recaptcha/api/siteverify', [
         'body' => [
             'secret' => $secret,

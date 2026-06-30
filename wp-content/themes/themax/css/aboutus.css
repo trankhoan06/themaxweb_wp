@@ -157,6 +157,7 @@
 
     .about_impressive_right_list {
         flex-wrap: wrap;
+        gap: 2.4rem;
     }
 
     .about_impressive_right_list_item {

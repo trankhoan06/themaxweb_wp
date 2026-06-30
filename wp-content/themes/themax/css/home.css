@@ -64,6 +64,16 @@
     }
 }
 
+@media only screen and (max-width:767px) {
+    .home_hero {
+        height: 75dvh;
+    }
+
+    .home_hero_inner video {
+        height: 100% !important;
+    }
+}
+
 
 
 /* home_specialize */
@@ -752,6 +762,10 @@
             height: auto;
         }
     }
+
+    .home_services_des {
+        text-align: left;
+    }
 }
 
 /* home_case */
@@ -949,12 +963,12 @@
     }
 
     .home_case_content_item:hover {
-        .home_case_content_item_txt_icon_wrap {
-            transform: translate(0);
+        .home_case_content_item_txt_icon_wrap.active {
+            transform: translate(-100%, 100%);
         }
 
         .home_case_content_item_txt_icon_wrap.active {
-            transform: translate(100%, -100%);
+            transform: translate(0);
         }
 
         .home_case_content_item_txt_title {

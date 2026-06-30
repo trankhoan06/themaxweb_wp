@@ -321,8 +321,7 @@ get_header();
         </section>
         <section class="about_cta">
             <div class="about_cta_img img_full">
-                <?php $cta_img = wp_get_attachment_image_url((tr_options_field('tr_theme_options.about_cta_img') ?? ''), 'full') ?: get_template_directory_uri() . '/images/img_cta.webp'; ?>
-                <img src="<?php echo esc_url($cta_img); ?>" alt="">
+                <img src="<?php echo get_template_directory_uri(); ?>/images/img_cta.webp" alt="">
             </div>
             <div class="about_cta_inner_bg">
                 <svg class="about_cta_bg_red" width="100" height="273" viewBox="0 0 100 273" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -370,29 +369,18 @@ get_header();
             </div>
             <div class="about_cta_inner_overlay"></div>
             <div class="container grid">
-                <a href="<?php echo esc_url((tr_options_field('tr_theme_options.about_cta_link') ?? '')); ?>"
-                    class=" about_cta_inner_content h2 h5_mb heading ">
-                    <span class="cl_linear">
-                        <?php echo nl2br(esc_html((tr_options_field('tr_theme_options.about_cta_text1') ?? ''))); ?>
-                    </span>
-                    <div class="about_cta_link">
-                        <div class="about_cta_inner_content_icon svg_full">
-                            <svg width="21" height="30" viewBox="0 0 21 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M11.0342 0.000106148L0.121454 0L10.0872 14.8672L-7.74663e-05 29.9999L10.9127 30L21 14.8673L11.0342 0.000106148Z"
-                                    fill="#E62636" />
-                            </svg>
-                        </div>
-                        <div class="about_cta_link_txt">
-                            <span class=" middle cl_linear">
-                                <?php echo esc_html((tr_options_field('tr_theme_options.about_cta_text2') ?? '')); ?>
-                            </span>
-                            <span class="cl_red middle">
-                                <?php echo esc_html((tr_options_field('tr_theme_options.about_cta_text3') ?? '')); ?>
-                            </span>
-                        </div>
+                <div class=" about_cta_inner_content h2 h5_mb heading cl_linear">
+                    Have a Project in Mind,
+                    Start your project <span class=" middle">Now</span> <span class="cl_red middle">Tell Us</span>
+                    <div class="about_cta_inner_content_icon svg_full">
+                        <svg width="21" height="30" viewBox="0 0 21 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M11.0342 0.000106148L0.121454 0L10.0872 14.8672L-7.74663e-05 29.9999L10.9127 30L21 14.8673L11.0342 0.000106148Z"
+                                fill="#E62636" />
+                        </svg>
+
                     </div>
-                </a>
+                </div>
             </div>
         </section>
     </main>

@@ -74,46 +74,46 @@ get_header();
                         </div>
                         <div class="careerdetail_info_content_des">
                             <div class="careerdetail_info_content_des_item">
-                                <div class="careerdetail_info_content_des_item_title h5 h6_mb heading">M?c ti√É¬™u c√É¬¥ng
+                                <div class="careerdetail_info_content_des_item_title h5 h6_mb heading">M?c tiÍu cÙng
                                     vi?c
                                 </div>
                                 <div class="careerdetail_info_content_des_item_inner">
                                     <div class="careerdetail_info_content_des_item_txt txt_16">Thi?t k? ?n ph?m truy?n
-                                        th√É¬¥ng
-                                        s? nh?t qu√É¬°n, d?p, hi?u qu? cho social, banner ads, website/landing, √É¬Ω tu?ng
+                                        thÙng
+                                        s? nh?t qu·n, d?p, hi?u qu? cho social, banner ads, website/landing, ˝ tu?ng
                                         video
                                         clip ads...</div>
                                 </div>
                             </div>
                             <div class="careerdetail_info_content_des_item">
-                                <div class="careerdetail_info_content_des_item_title h5 h6_mb heading">Nhi?m v? ch√É¬≠nh
+                                <div class="careerdetail_info_content_des_item_title h5 h6_mb heading">Nhi?m v? chÌnh
                                 </div>
                                 <div class="careerdetail_info_content_des_item_inner">
-                                    <div class="careerdetail_info_content_des_item_txt txt_16">L√É¬™n concept, idea,
+                                    <div class="careerdetail_info_content_des_item_txt txt_16">LÍn concept, idea,
                                         moodboard,
                                         styleframe theo brief</div>
-                                    <div class="careerdetail_info_content_des_item_txt txt_16">L√É¬™n concept, idea,
+                                    <div class="careerdetail_info_content_des_item_txt txt_16">LÍn concept, idea,
                                         moodboard,
                                         styleframe theo brief</div>
-                                    <div class="careerdetail_info_content_des_item_txt txt_16">L√É¬™n concept, idea,
+                                    <div class="careerdetail_info_content_des_item_txt txt_16">LÍn concept, idea,
                                         moodboard,
                                         styleframe theo brief</div>
-                                    <div class="careerdetail_info_content_des_item_txt txt_16">L√É¬™n concept, idea,
+                                    <div class="careerdetail_info_content_des_item_txt txt_16">LÍn concept, idea,
                                         moodboard,
                                         styleframe theo brief</div>
-                                    <div class="careerdetail_info_content_des_item_txt txt_16">L√É¬™n concept, idea,
+                                    <div class="careerdetail_info_content_des_item_txt txt_16">LÍn concept, idea,
                                         moodboard,
                                         styleframe theo brief</div>
-                                    <div class="careerdetail_info_content_des_item_txt txt_16">L√É¬™n concept, idea,
+                                    <div class="careerdetail_info_content_des_item_txt txt_16">LÍn concept, idea,
                                         moodboard,
                                         styleframe theo brief</div>
                                 </div>
                             </div>
                         </div>
                         <div class="careerdetail_info_content_form">
-                            <div class="careerdetail_info_content_form_title heading h5 h6_mb cl_red">N?P √É¬êON ?NG TUY?N
-                                V? TR√É¬ç
-                                N√É‚Ç¨Y
+                            <div class="careerdetail_info_content_form_title heading h5 h6_mb cl_red">N?P –ON ?NG TUY?N
+                                V? TRÕ
+                                N¿Y
                             </div>
                             <form class="careerdetail_form">
                                 <div class="careerdetail_form_row">
@@ -377,10 +377,10 @@ get_header();
                     </div>
                 </div>
             </div>
-             <section class="about_cta">
+        </section>
+        <section class="about_cta">
             <div class="about_cta_img img_full">
-                <?php $cta_img = wp_get_attachment_image_url(tr_options_field('tr_theme_options.career_cta_img'), 'full') ?: get_template_directory_uri() . '/images/img_cta.webp'; ?>
-                <img src="<?php echo esc_url($cta_img); ?>" alt="">
+                <img src="/images/img_cta.webp" alt="">
             </div>
             <div class="about_cta_inner_bg">
                 <svg class="about_cta_bg_red" width="100" height="273" viewBox="0 0 100 273" fill="none"
@@ -442,17 +442,20 @@ get_header();
                 <div class=" about_cta_inner_content">
                     <div class="about_cta_inner_content_title grid">
                         <div class="about_cta_inner_content_title_txt heading h2 cl_linear h5_mb">
-                            <?php echo nl2br(esc_html(tr_options_field('tr_theme_options.career_cta_title'))); ?>
+                            Still havenít found
+                            the job you like?
                         </div>
-                        <div class="about_cta_inner_content_des txt_18">
-                            <?php echo nl2br(esc_html(tr_options_field('tr_theme_options.career_cta_des'))); ?>
-                        </div>
-                        <a href="<?php echo esc_url(tr_options_field('tr_theme_options.career_cta_link')); ?>"
+                        <div class="about_cta_inner_content_des txt_18">Don't hesitate to leave your application; we
+                            will
+                            contact
+                            you as
+                            soon as a suitable position
+                            becomes available.</div>
+                        <a href="#"
                             class="about_cta_inner_content_title_button hover_txt button_hover txt_uppercase txt_14 cl_be">
                             <div class="hover_txt_grid">
-                                <?php $cta_btn_txt = esc_html(tr_options_field('tr_theme_options.career_cta_btn_text')); ?>
-                                <span class="init"><?php echo $cta_btn_txt; ?></span>
-                                <span class="active"><?php echo $cta_btn_txt; ?></span>
+                                <span class="init">Apply now</span>
+                                <span class="active">Apply now</span>
                             </div>
                         </a>
                     </div>
@@ -461,5 +464,4 @@ get_header();
         </section>
     </main>
 <?php get_footer(); ?>
-
 

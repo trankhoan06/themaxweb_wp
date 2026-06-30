@@ -636,12 +636,32 @@ h2 {
 }
 
 @media only screen and (max-width: 767px) {
+    .hover_txt:hover {
+    span {
+        color: #BEBEBE;
+
+    }
+
+    .active {
+        /* bottom: 0; */
+        transform: translateY(100%);
+    }
+
+    .init {
+        /* top: -100%; */
+        transform: translateY(0%);
+    }
+}
     :root {
         --padding-container: 1.6rem;
     }
 
     .mobile {
         display: block !important;
+    }
+
+    .pa_container {
+        padding-block: 6.4rem;
     }
 
     .middle {
@@ -1031,7 +1051,7 @@ h2 {
 
     .header_menu_nav {
         padding-inline: 4.6rem;
-        width: auto;
+        width: 100%;
     }
 
     .header_menu_nav_footer {
@@ -1039,6 +1059,10 @@ h2 {
         right: 0;
         padding-left: 5.4rem;
         padding-right: 2.4rem;
+    }
+
+    .header_menu_nav_content {
+        align-items: center;
     }
 
     .header_menu {
@@ -1675,4 +1699,9 @@ body.menu-active {
         pointer-events: none !important;
         will-change: auto !important;
     }
+}
+
+.grecaptcha-badge {
+    opacity: 0;
+    pointer-events: none;
 }

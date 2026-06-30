@@ -55,7 +55,7 @@
                             fill="currentColor" />
                         <path
                             d="M110.694 6.37714H101.888L110.285 17.8971L101.786 29.6228H110.592L119.091 17.8971L110.694 6.37714Z"
-                            fill="#EB4250" />
+                            fill="#E62636" />
                     </svg>
                 </a>
                 <div class="header_title block_arrow txt_medium txt_16 middle" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 45vw;">

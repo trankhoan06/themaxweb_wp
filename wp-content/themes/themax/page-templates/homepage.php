@@ -329,13 +329,13 @@ get_header();
                 </div>
             <?php endif; ?>
             <?php if ($home_case_title): ?>
-                <div class="home_case_title heading h2 txt_center cl_linear h4_mb"><?php echo esc_html($home_case_title); ?>
+            <div class="home_case_title heading h2 txt_center cl_linear h4_mb"><?php echo esc_html($home_case_title); ?>
                 </div>
             <?php endif; ?>
             <div class="home_case_content_list right_full left_full">
                 <?php
                 $args = array(
-                    'post_type' => 'post',
+                    'post_type' => 'work',
                     'posts_per_page' => 6,
                     'post_status' => 'publish',
                     'ignore_sticky_posts' => true
@@ -346,7 +346,7 @@ get_header();
                         $query->the_post();
                         $categories = get_the_category();
                         $category_name = !empty($categories) ? $categories[0]->name : '';
-                        $img_url = get_the_post_thumbnail_url(get_the_ID(), 'full');
+                        $img_url = get_the_post_thumbnail_url(get_the_ID(), 'full') ?: get_template_directory_uri() . '/images/case.webp';
                         $post_subtitle = tr_posts_field('hero_subtitle', get_the_ID());
                         ?>
                         <a href="<?php the_permalink(); ?>" class="home_case_content_item">

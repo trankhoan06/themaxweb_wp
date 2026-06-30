@@ -247,6 +247,10 @@
 }
 
 @media only screen and (max-width:767px) {
+    .home_case_content_item_des {
+        margin-bottom: 1.6rem;
+    }
+
     .home_case_subtitle {
         margin-inline: unset;
         margin-bottom: 1.6rem;
@@ -268,15 +272,17 @@
 
     .home_case_content_item_txt_icon_wrap {
         width: 3.2rem;
+        height: 3.2rem;
     }
+
 
     .home_case_content_item:hover {
         .home_case_content_item_txt_icon_wrap {
-            transform: translate(0);
+            transform: translate(100%);
         }
 
         .home_case_content_item_txt_icon_wrap.active {
-            transform: translate(100%, -100%);
+            transform: translate(0, 0);
         }
 
         .home_case_content_item_txt_title {
