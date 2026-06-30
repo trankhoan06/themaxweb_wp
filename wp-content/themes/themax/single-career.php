@@ -46,75 +46,55 @@ get_header();
         <div class="container">
             <div class="careerdetail_info_inner grid">
                 <div class="careerdetail_info_content">
-                    <h1 class="careerdetail_info_content_title heading h2 h4_mb txt_linear">Graphic - Social - UI/UX
-                        Designer
-                    </h1>
+                    <h1 class="careerdetail_info_content_title heading h2 h4_mb txt_linear"><?php the_title(); ?></h1>
                     <div class="careerdetail_info_content_job">
-                        <div class="careerdetail_info_content_job_item">
-                            <div class="careerdetail_info_content_job_item_name txt_uppercase txt_medium cl_gray">
-                                EXPERIENCE</div>
-                            <div class="careerdetail_info_content_job_item_txt txt_16">Junior</div>
-                        </div>
-                        <div class="careerdetail_info_content_job_item">
-                            <div class="careerdetail_info_content_job_item_name txt_uppercase txt_medium cl_gray">
-                                EXPERIENCE</div>
-                            <div class="careerdetail_info_content_job_item_txt txt_16">Junior</div>
-                        </div>
-                        <div class="careerdetail_info_content_job_item">
-                            <div class="careerdetail_info_content_job_item_name txt_uppercase txt_medium cl_gray">
-                                EXPERIENCE</div>
-                            <div class="careerdetail_info_content_job_item_txt txt_16">Junior</div>
-                        </div>
-                        <div class="careerdetail_info_content_job_item">
-                            <div class="careerdetail_info_content_job_item_name txt_uppercase txt_medium cl_gray">
-                                EXPERIENCE</div>
-                            <div class="careerdetail_info_content_job_item_txt txt_16">Junior</div>
-                        </div>
+                        <?php
+                        $job_info = tr_posts_field('job_info');
+                        if (is_array($job_info) && !empty($job_info)):
+                            foreach ($job_info as $info):
+                                ?>
+                                <div class="careerdetail_info_content_job_item">
+                                    <div class="careerdetail_info_content_job_item_name txt_uppercase txt_medium cl_gray"><?php echo esc_html($info['label'] ?? ''); ?></div>
+                                    <div class="careerdetail_info_content_job_item_txt txt_16"><?php echo esc_html($info['value'] ?? ''); ?></div>
+                                </div>
+                                <?php
+                            endforeach;
+                        endif;
+                        ?>
                     </div>
                     <div class="careerdetail_info_content_des">
-                        <div class="careerdetail_info_content_des_item">
-                            <div class="careerdetail_info_content_des_item_title h5 h6_mb heading">M?c ti�u c�ng
-                                vi?c
-                            </div>
-                            <div class="careerdetail_info_content_des_item_inner">
-                                <div class="careerdetail_info_content_des_item_txt txt_16">Thi?t k? ?n ph?m truy?n
-                                    th�ng
-                                    s? nh?t qu�n, d?p, hi?u qu? cho social, banner ads, website/landing, � tu?ng
-                                    video
-                                    clip ads...</div>
-                            </div>
-                        </div>
-                        <div class="careerdetail_info_content_des_item">
-                            <div class="careerdetail_info_content_des_item_title h5 h6_mb heading">Nhi?m v? ch�nh
-                            </div>
-                            <div class="careerdetail_info_content_des_item_inner">
-                                <div class="careerdetail_info_content_des_item_txt txt_16">L�n concept, idea,
-                                    moodboard,
-                                    styleframe theo brief</div>
-                                <div class="careerdetail_info_content_des_item_txt txt_16">L�n concept, idea,
-                                    moodboard,
-                                    styleframe theo brief</div>
-                                <div class="careerdetail_info_content_des_item_txt txt_16">L�n concept, idea,
-                                    moodboard,
-                                    styleframe theo brief</div>
-                                <div class="careerdetail_info_content_des_item_txt txt_16">L�n concept, idea,
-                                    moodboard,
-                                    styleframe theo brief</div>
-                                <div class="careerdetail_info_content_des_item_txt txt_16">L�n concept, idea,
-                                    moodboard,
-                                    styleframe theo brief</div>
-                                <div class="careerdetail_info_content_des_item_txt txt_16">L�n concept, idea,
-                                    moodboard,
-                                    styleframe theo brief</div>
-                            </div>
-                        </div>
+                        <?php
+                        $job_desc = tr_posts_field('job_description');
+                        if (is_array($job_desc) && !empty($job_desc)):
+                            foreach ($job_desc as $section):
+                                ?>
+                                <div class="careerdetail_info_content_des_item">
+                                    <div class="careerdetail_info_content_des_item_title h5 h6_mb heading"><?php echo esc_html($section['title'] ?? ''); ?></div>
+                                    <div class="careerdetail_info_content_des_item_inner">
+                                        <?php
+                                        $content = $section['content'] ?? '';
+                                        $lines = explode("\n", $content);
+                                        foreach ($lines as $line) {
+                                            $line = trim($line);
+                                            if (!empty($line)) {
+                                                echo '<div class="careerdetail_info_content_des_item_txt txt_16">' . esc_html($line) . '</div>';
+                                            }
+                                        }
+                                        ?>
+                                    </div>
+                                </div>
+                                <?php
+                            endforeach;
+                        endif;
+                        ?>
                     </div>
                     <div class="careerdetail_info_content_form">
-                        <div class="careerdetail_info_content_form_title heading h5 h6_mb cl_red">N?P �ON ?NG TUY?N
-                            V? TR�
-                            N�Y
+                        <div class="careerdetail_info_content_form_title heading h5 h6_mb cl_red txt_uppercase">NôP đƠN ỨNG TUYểN
+                            Vị TRí
+                            NàY
                         </div>
                         <form class="careerdetail_form" novalidate>
+                            <input type="hidden" name="job_id" value="<?php echo get_the_ID(); ?>">
                             <div class="careerdetail_form_row">
                                 <input type="text" name="career_name" placeholder="Your name*"
                                     class="careerdetail_form_input" required>

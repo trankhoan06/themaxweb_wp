@@ -174,10 +174,10 @@ get_header();
             </div>
             <div class="career_why_list left_full right_full">
                 <div class="career_why_list_title grid middle">
-                    <div class="career_why_list_item_position">POSITION</div>
-                    <div class="career_why_list_item_level">LEVEL</div>
-                    <div class="career_why_list_item_quality">QUANTITY</div>
-                    <div class="career_why_list_item_deadline">DEADLINE</div>
+                    <div class="career_why_list_item_position"><?php echo esc_html(tr_posts_field('career_list_col1') ?: 'POSITION'); ?></div>
+                    <div class="career_why_list_item_level"><?php echo esc_html(tr_posts_field('career_list_col2') ?: 'LEVEL'); ?></div>
+                    <div class="career_why_list_item_quality"><?php echo esc_html(tr_posts_field('career_list_col3') ?: 'QUANTITY'); ?></div>
+                    <div class="career_why_list_item_deadline"><?php echo esc_html(tr_posts_field('career_list_col4') ?: 'DEADLINE'); ?></div>
                 </div>
                 <?php
                 $args = array(
@@ -195,19 +195,10 @@ get_header();
                         $quantity = '';
                         $deadline = '';
                         if (is_array($job_info) && !empty($job_info)) {
-                            $level = isset($job_info[0]['value']) ? $job_info[0]['value'] : '';
-                            $quantity = isset($job_info[1]['value']) ? $job_info[1]['value'] : '';
-                            $deadline = isset($job_info[2]['value']) ? $job_info[2]['value'] : '';
-                            foreach ($job_info as $info) {
-                                $label = mb_strtolower($info['label'] ?? '', 'UTF-8');
-                                if (strpos($label, 'level') !== false || strpos($label, 'cấp bậc') !== false || strpos($label, 'kinh nghiệm') !== false || strpos($label, 'experience') !== false) {
-                                    $level = $info['value'] ?? '';
-                                } elseif (strpos($label, 'quantity') !== false || strpos($label, 'số lượng') !== false) {
-                                    $quantity = $info['value'] ?? '';
-                                } elseif (strpos($label, 'deadline') !== false || strpos($label, 'hạn') !== false || strpos($label, 'thời hạn') !== false) {
-                                    $deadline = $info['value'] ?? '';
-                                }
-                            }
+                            $job_info_values = array_values($job_info);
+                            $level = isset($job_info_values[1]['value']) ? $job_info_values[1]['value'] : '';
+                            $quantity = isset($job_info_values[2]['value']) ? $job_info_values[2]['value'] : '';
+                            $deadline = isset($job_info_values[3]['value']) ? $job_info_values[3]['value'] : '';
                         }
                 ?>
                 <a href="<?php the_permalink(); ?>" class="career_why_list_item grid item_line">

@@ -32,6 +32,13 @@ add_action('edit_form_after_title', function($post) {
         echo $form->text('career_why_bottom_text')->setLabel("Bottom Text (Are you ready...)");
         echo endBox();
 
+        echo beginBox("Job List Settings", true);
+        echo $form->text('career_list_col1')->setLabel("Column 1 Header")->setDefault("POSITION");
+        echo $form->text('career_list_col2')->setLabel("Column 2 Header")->setDefault("LEVEL");
+        echo $form->text('career_list_col3')->setLabel("Column 3 Header")->setDefault("QUANTITY");
+        echo $form->text('career_list_col4')->setLabel("Column 4 Header")->setDefault("DEADLINE");
+        echo endBox();
+
         echo beginBox("Call to Action (CTA)", true);
         echo $form->image('career_cta_img')->setLabel("CTA Image");
         echo $form->text('career_cta_title')->setLabel("Title");

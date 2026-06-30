@@ -63,13 +63,13 @@
                         <div class="footer_form_title txt_16 txt_uppercase heading cl_be txt_16 txt_medium">GET
                             IN
                             TOUCH WITH US</div>
-                        <form class="footer_form">
+                        <form class="footer_form" novalidate>
                             <div class="footer_form_row">
-                                <input type="text" placeholder="Your name" class="footer_form_input">
-                                <input type="tel" placeholder="Phone number" class="footer_form_input">
+                                <input type="text" name="footer_name" placeholder="Your name*" class="footer_form_input" required>
+                                <input type="tel" name="footer_phone" placeholder="Phone number*" class="footer_form_input" required>
                             </div>
                             <div class="footer_form_row">
-                                <input type="text" placeholder="Your Message" class="footer_form_input">
+                                <input type="text" name="footer_message" placeholder="Your Message" class="footer_form_input">
                             </div>
                             <div class="footer_form_row">
                                 <button type="submit"

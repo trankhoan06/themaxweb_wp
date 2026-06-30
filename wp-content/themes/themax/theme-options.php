@@ -83,6 +83,22 @@ $form = tr_form()->useJson()->setGroup( $this->getName() );
         echo $form->text('footer_copyright_vi')->setLabel('Copyright Text (Tiếng Việt)');
     };
 
+    // SMTP Settings
+    $smtp_settings = function() use ($form) {
+        echo "<h3>SMTP Settings</h3>";
+        echo "<p>Cấu hình SMTP để website có thể gửi email.</p>";
+        echo $form->text('smtp_host')->setLabel('SMTP Host (vd: smtp.gmail.com)');
+        echo $form->text('smtp_port')->setLabel('SMTP Port (vd: 465 hoặc 587)');
+        echo $form->text('username')->setLabel('Username (Tài khoản Email SMTP)');
+        echo $form->password('password')->setLabel('Password (Mật khẩu ứng dụng SMTP)');
+        echo $form->checkbox('authentication')->setLabel('SMTP Authentication')->setText('Bật xác thực SMTP');
+        echo $form->select('encryption')->setLabel('Encryption (Mã hoá)')->setOptions(['SSL' => 'ssl', 'TLS' => 'tls', 'Không có' => '']);
+        echo $form->text('from_email')->setLabel('Gửi từ Email (From Email - vd: no-reply@themax.com)');
+        
+        echo "<hr><h4>Email Nhận Thông Báo</h4>";
+        echo $form->text('receive_email')->setLabel('Nhận thông báo ứng tuyển/liên hệ tại Email');
+    };
+
     // Save
     $save = $form->submit( 'Save Options' );
 
@@ -91,6 +107,7 @@ $form = tr_form()->useJson()->setGroup( $this->getName() );
         ->addTab( 'Single Case Study', $cta_single )
         ->addTab( 'Single Career', $cta_career )
         ->addTab( 'Footer', $footer_settings )
+        ->addTab( 'SMTP', $smtp_settings )
         ->render( 'box' );
         
     echo $form->close();

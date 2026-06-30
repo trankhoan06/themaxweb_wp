@@ -146,14 +146,14 @@ function ajax_contactform(){
     echo $result; die();
   }*/
 
-  $body  ="Xin chào,<br>";
-  $body .="<p>Bạn nhận được thông tin đăng ký của khách hàng.</p>";
-  $body .="<strong>Họ và tên:</strong> ".$contact_name."<br>";
-  $body .="<strong>Điện thoại di động:</strong> ".$contact_mobile."<br>";
+  $body  ="Xin chÃ o,<br>";
+  $body .="<p>Báº¡n nháº­n Ä‘Æ°á»£c thÃ´ng tin Ä‘Äƒng kÃ½ cá»§a khÃ¡ch hÃ ng.</p>";
+  $body .="<strong>Há» vÃ  tÃªn:</strong> ".$contact_name."<br>";
+  $body .="<strong>Äiá»‡n thoáº¡i di Ä‘á»™ng:</strong> ".$contact_mobile."<br>";
   $body .="<strong>Email:</strong> ".$contact_email."<br>";
-  //$body .="<strong>Địa chỉ:</strong> ".$contact_address."<br>";
-  $body .="<strong>Sản phẩm quan tâm:</strong> ".$contact_interest."<br>";
-  $body .="<strong>Nội dung:</strong> ".$content."<br>";
+  //$body .="<strong>Äá»‹a chá»‰:</strong> ".$contact_address."<br>";
+  $body .="<strong>Sáº£n pháº©m quan tÃ¢m:</strong> ".$contact_interest."<br>";
+  $body .="<strong>Ná»™i dung:</strong> ".$content."<br>";
 
   $headers = array('Content-Type: text/html; charset=UTF-8');
 
@@ -183,7 +183,7 @@ function ajax_contactform(){
   add_post_meta( $post_id, 'user_agent', $user_agent );
 
 
-  $check = wp_mail( tr_options_field('tr_theme_options.receive_email'), "Thông tin đăng ký Từ website TBS Group", $body , $headers );
+  $check = wp_mail( tr_options_field('tr_theme_options.receive_email'), "ThÃ´ng tin Ä‘Äƒng kÃ½ Tá»« website TBS Group", $body , $headers );
 
   //Mail To Customer
 
@@ -314,4 +314,256 @@ function ajax_get_prod(){
       echo json_encode(['status' => 0]);
     }
     die();
+}
+
+function themax_email_template($section_title, $content) {
+    $logo_url = get_site_url() . '/wp-content/themes/themax/images/email-logo.png';
+
+    $html = '
+    <div style="background-color: #f5f5f5; padding: 40px 10px; font-family: Arial, sans-serif; color: #333333; line-height: 1.6;">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" align="center" style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-collapse: collapse; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+            <tr>
+                <td style="background-color: #111111; padding: 20px 30px; text-align: left; vertical-align: middle;">
+                    <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                        <tr>
+                            <td style="vertical-align: middle;">
+                                <img src="' . $logo_url . '" alt="THEMAX Logo" height="24" style="height: 24px; vertical-align: middle; border: none; display: inline-block;" />
+                                <span style="color: #666666; margin: 0 10px; font-size: 18px;">|</span>
+                                <span style="color: #ffffff; font-size: 13px; font-weight: normal; text-transform: uppercase; letter-spacing: 1px;">'.$section_title.'</span>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 0; background-color: #ffffff;">
+                    <div style="padding: 40px 30px;">
+                        '.$content.'
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    ';
+    return $html;
+}
+
+add_action('wp_ajax_submit_career_application', 'ajax_submit_career_application');
+add_action('wp_ajax_nopriv_submit_career_application', 'ajax_submit_career_application');
+
+function ajax_submit_career_application() {
+    $result = ['status' => 0];
+    
+    if (!themax_check_rate_limit_ip()) {
+        $result['message'] = 'Bạn gửi quá nhiều yêu cầu. Vui lòng đợi 1 phút rồi thử lại.';
+        echo json_encode($result);
+        die();
+    }
+    
+    $name = isset($_POST['career_name']) ? sanitize_text_field($_POST['career_name']) : '';
+    $email = isset($_POST['career_email']) ? sanitize_email($_POST['career_email']) : '';
+    $phone = isset($_POST['career_phone']) ? sanitize_text_field($_POST['career_phone']) : '';
+    $portfolio = isset($_POST['career_portfolio']) ? sanitize_text_field($_POST['career_portfolio']) : '';
+    $intro = isset($_POST['career_intro']) ? sanitize_textarea_field($_POST['career_intro']) : '';
+    $job_id = isset($_POST['job_id']) ? intval($_POST['job_id']) : 0;
+    
+    $job_title = $job_id ? get_the_title($job_id) : 'Vị trí Ứng tuyển';
+
+    $to_email = tr_options_field('tr_theme_options.receive_email'); 
+    if (empty($to_email)) {
+        $to_email = get_option('admin_email');
+    }
+
+    $subject = "Ứng tuyển mới: " . $job_title . " - " . $name;
+    
+    $content = '<h2 style="margin-top:0; font-size:18px; color:#111; margin-bottom:20px;">Ứng viên ' . $name . ' vừa ứng tuyển</h2>';
+    $content .= '<table width="100%" cellpadding="8" cellspacing="0" border="0" style="font-size: 14px;">';
+    $content .= '<tr><td width="35%" style="font-weight:bold; color:#555;">Họ và tên:</td><td>' . $name . '</td></tr>';
+    $content .= '<tr><td style="font-weight:bold; color:#555;">Vị trí ứng tuyển:</td><td>' . $job_title . '</td></tr>';
+    $content .= '<tr><td style="font-weight:bold; color:#555;">Email:</td><td>' . $email . '</td></tr>';
+    $content .= '<tr><td style="font-weight:bold; color:#555;">Số điện thoại:</td><td>' . $phone . '</td></tr>';
+    $content .= '<tr><td style="font-weight:bold; color:#555;">Xem CV:</td><td>File đính kèm</td></tr>';
+    if(!empty($portfolio)) $content .= '<tr><td style="font-weight:bold; color:#555;">Link Portfolio:</td><td><a href="'.$portfolio.'" style="color:#EB4250;">'.$portfolio.'</a></td></tr>';
+    if(!empty($intro)) $content .= '<tr><td style="font-weight:bold; color:#555; vertical-align:top;">Giới thiệu:</td><td>' . nl2br($intro) . '</td></tr>';
+    $content .= '</table>';
+    
+    $body = themax_email_template('TUYỂN DỤNG', $content);
+    $headers = array('Content-Type: text/html; charset=UTF-8');
+    
+    // Handle File Upload
+    $attachments = array();
+    if (!empty($_FILES['career_cv']['name'])) {
+        $uploaded_file = $_FILES['career_cv'];
+        
+        if ($uploaded_file['error'] == 0 && $uploaded_file['size'] <= 5242880) { // 5MB limit
+            $upload_dir = wp_upload_dir();
+            $file_name = sanitize_file_name($uploaded_file['name']);
+            $target_file = $upload_dir['path'] . '/' . wp_unique_filename($upload_dir['path'], $file_name);
+            
+            if (move_uploaded_file($uploaded_file['tmp_name'], $target_file)) {
+                $attachments[] = $target_file;
+            }
+        }
+    }
+    
+    $check = wp_mail($to_email, $subject, $body, $headers, $attachments);
+
+    if ($check) {
+        $result['status'] = 1;
+        
+        // Gửi mail cảm ơn cho ứng viên
+        $thank_you_subject = 'Cảm ơn bạn đã ứng tuyển vị trí ' . $job_title;
+        $thank_you_content = '<h2 style="margin-top:0; font-size:18px; color:#111; margin-bottom:20px;">Xin chào ứng viên, ' . $name . '</h2>';
+        $thank_you_content .= '<p style="margin-bottom:15px;">Cảm ơn bạn đã quan tâm và gửi hồ sơ ứng tuyển vị trí <strong>' . $job_title . '</strong>.</p>';
+        $thank_you_content .= '<p style="margin-bottom:15px;">Chúng tôi đã nhận được thông tin và CV của bạn. Bộ phận Tuyển dụng sẽ xem xét hồ sơ và liên hệ với bạn trong thời gian sớm nhất nếu hồ sơ phù hợp.</p>';
+        $thank_you_content .= '<p style="margin-bottom:25px;">Chúc bạn một ngày tốt lành!</p>';
+        $thank_you_content .= '<p style="margin-bottom:0; color:#555;">Trân trọng,<br><strong style="color:#111;">Phòng Nhân sự TheMax</strong></p>';
+        
+        $thank_you_body = themax_email_template('TUYỂN DỤNG', $thank_you_content);
+        wp_mail($email, $thank_you_subject, $thank_you_body, $headers);
+    }
+    
+    if (!empty($attachments)) {
+        foreach ($attachments as $att) {
+            @unlink($att);
+        }
+    }
+    
+    echo json_encode($result);
+    die();
+}
+
+add_action('wp_ajax_nopriv_submit_contact_form', 'ajax_submit_contact_form');
+add_action('wp_ajax_submit_contact_form', 'ajax_submit_contact_form');
+
+function ajax_submit_contact_form() {
+    $result = ['status' => 0];
+    
+    if (!themax_check_rate_limit_ip()) {
+        $result['message'] = 'Bạn gửi quá nhiều yêu cầu. Vui lòng đợi 1 phút rồi thử lại.';
+        echo json_encode($result);
+        die();
+    }
+    
+    $name = isset($_POST['contact_name']) ? sanitize_text_field($_POST['contact_name']) : '';
+    $email = isset($_POST['contact_email']) ? sanitize_email($_POST['contact_email']) : '';
+    $phone = isset($_POST['contact_phone']) ? sanitize_text_field($_POST['contact_phone']) : '';
+    $company = isset($_POST['contact_company']) ? sanitize_text_field($_POST['contact_company']) : '';
+    $advice = isset($_POST['contact_advice']) ? sanitize_textarea_field($_POST['contact_advice']) : '';
+    
+    if (empty($name) || empty($email) || empty($phone)) {
+        echo json_encode($result);
+        die();
+    }
+    
+    $to_email = tr_options_field('tr_theme_options.receive_email') ?: get_option('admin_email');
+    $site_name = get_bloginfo('name');
+    
+    $subject = "[$site_name] Liên hệ mới từ $name";
+    
+    $content = '<h2 style="margin-top:0; font-size:18px; color:#111; margin-bottom:20px;">Có người vừa liên hệ qua trang Contact</h2>';
+    $content .= '<table width="100%" cellpadding="8" cellspacing="0" border="0" style="font-size: 14px;">';
+    $content .= '<tr><td width="35%" style="font-weight:bold; color:#555;">Họ và tên:</td><td>' . $name . '</td></tr>';
+    $content .= '<tr><td style="font-weight:bold; color:#555;">Email:</td><td>' . $email . '</td></tr>';
+    $content .= '<tr><td style="font-weight:bold; color:#555;">Số điện thoại:</td><td>' . $phone . '</td></tr>';
+    if ($company) $content .= '<tr><td style="font-weight:bold; color:#555;">Công ty:</td><td>' . $company . '</td></tr>';
+    if ($advice) $content .= '<tr><td style="font-weight:bold; color:#555; vertical-align:top;">Nội dung tư vấn:</td><td>' . nl2br($advice) . '</td></tr>';
+    $content .= '</table>';
+    
+    $body = themax_email_template('LIÊN HỆ', $content);
+    $headers = array('Content-Type: text/html; charset=UTF-8');
+    
+    // Send email to system
+    $check = wp_mail($to_email, $subject, $body, $headers);
+
+    if ($check) {
+        $result['status'] = 1;
+        
+        // Send thank you email to customer
+        $thank_you_subject = "Cảm ơn bạn đã liên hệ " . $site_name;
+        $thank_you_content = '<h2 style="margin-top:0; font-size:18px; color:#111; margin-bottom:20px;">Xin chào ' . $name . ',</h2>';
+        $thank_you_content .= '<p style="margin-bottom:15px;">Cảm ơn bạn đã quan tâm và liên hệ với <strong>' . $site_name . '</strong>.</p>';
+        $thank_you_content .= '<p style="margin-bottom:15px;">Chúng tôi đã nhận được thông tin yêu cầu tư vấn của bạn. Đội ngũ chuyên viên của chúng tôi sẽ xem xét và liên hệ lại với bạn trong thời gian sớm nhất.</p>';
+        $thank_you_content .= '<p style="margin-bottom:25px;">Chúc bạn một ngày tốt lành!</p>';
+        $thank_you_content .= '<p style="margin-bottom:0; color:#555;">Trân trọng,<br><strong style="color:#111;">TheMax</strong></p>';
+        
+        $thank_you_body = themax_email_template('LIÊN HỆ', $thank_you_content);
+        wp_mail($email, $thank_you_subject, $thank_you_body, $headers);
+    }
+    
+    echo json_encode($result);
+    die();
+}
+
+add_action('wp_ajax_nopriv_submit_footer_form', 'ajax_submit_footer_form');
+add_action('wp_ajax_submit_footer_form', 'ajax_submit_footer_form');
+
+function ajax_submit_footer_form() {
+    $result = ['status' => 0];
+    
+    if (!themax_check_rate_limit_ip()) {
+        $result['message'] = 'Bạn gửi quá nhiều yêu cầu. Vui lòng đợi 1 phút rồi thử lại.';
+        echo json_encode($result);
+        die();
+    }
+    
+    $name = isset($_POST['footer_name']) ? sanitize_text_field($_POST['footer_name']) : '';
+    $phone = isset($_POST['footer_phone']) ? sanitize_text_field($_POST['footer_phone']) : '';
+    $message = isset($_POST['footer_message']) ? sanitize_textarea_field($_POST['footer_message']) : '';
+    
+    if (empty($name) || empty($phone)) {
+        echo json_encode($result);
+        die();
+    }
+    
+    $to_email = tr_options_field('tr_theme_options.receive_email') ?: get_option('admin_email');
+    $site_name = get_bloginfo('name');
+    
+    $subject = "[$site_name] Liên hệ từ Footer - $name";
+    
+    $content = '<h2 style="margin-top:0; font-size:18px; color:#111; margin-bottom:20px;">Có người vừa liên hệ qua form ở Footer</h2>';
+    $content .= '<table width="100%" cellpadding="8" cellspacing="0" border="0" style="font-size: 14px;">';
+    $content .= '<tr><td width="35%" style="font-weight:bold; color:#555;">Họ và tên:</td><td>' . $name . '</td></tr>';
+    $content .= '<tr><td style="font-weight:bold; color:#555;">Số điện thoại:</td><td>' . $phone . '</td></tr>';
+    if ($message) $content .= '<tr><td style="font-weight:bold; color:#555; vertical-align:top;">Lời nhắn:</td><td>' . nl2br($message) . '</td></tr>';
+    $content .= '</table>';
+    
+    $body = themax_email_template('LIÊN HỆ', $content);
+    $headers = array('Content-Type: text/html; charset=UTF-8');
+    
+    // Send email to system
+    $check = wp_mail($to_email, $subject, $body, $headers);
+
+    if ($check) {
+        $result['status'] = 1;
+        
+        // No thank you email for footer form as requested (only system email)
+    }
+    
+    echo json_encode($result);
+    die();
+}
+
+function themax_check_rate_limit_ip() {
+    $ip = $_SERVER['REMOTE_ADDR'];
+    if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+        $ip = $_SERVER['HTTP_CLIENT_IP'];
+    } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+    }
+    
+    $transient_name = 'rate_limit_' . md5($ip);
+    $submit_count = get_transient($transient_name);
+    
+    if ($submit_count === false) {
+        set_transient($transient_name, 1, 60);
+        return true;
+    }
+    
+    if ($submit_count >= 2) {
+        return false;
+    }
+    
+    set_transient($transient_name, $submit_count + 1, 60);
+    return true;
 }

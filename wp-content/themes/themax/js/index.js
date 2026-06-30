@@ -362,6 +362,9 @@ const mainScript = () => {
         })
       }
     }
+    play() {
+      return this.animation ? this.animation.play() : null;
+    }
     destroy() {
       if (this.animation) this.animation.kill();
       if (this.textSplit) this.textSplit.revert();
@@ -439,6 +442,9 @@ const mainScript = () => {
       if (!this.DOM.el) return;
       gsap.set(this.DOM.el, { ...this.options[this.type]?.set || this.options.default.set });
     }
+    play() {
+      return this.animation ? this.animation.play() : null;
+    }
     destroy() {
       this.animation.kill();
     }
@@ -486,6 +492,9 @@ const mainScript = () => {
       if (!this.DOM?.el) return;
 
       gsap.set(this.DOM.el, { ...this.options[this.type]?.set || this.options.default.set });
+    }
+    play() {
+      return this.animation ? this.animation.play() : null;
     }
     destroy() {
       this.animation.kill();
@@ -535,6 +544,9 @@ const mainScript = () => {
 
       gsap.set(this.DOM.el, { ...this.options[this.type]?.set || this.options.default.set });
     }
+    play() {
+      return this.animation ? this.animation.play() : null;
+    }
     destroy() {
       this.animation.kill();
     }
@@ -563,6 +575,9 @@ const mainScript = () => {
     init() {
       if (!this.DOM.el) return;
       gsap.set(this.DOM.el, { scale: 1.08, autoAlpha: 0, y: 24 });
+    }
+    play() {
+      return this.animation ? this.animation.play() : null;
     }
     destroy() {
       this.animation.kill();
@@ -1820,6 +1835,66 @@ const mainScript = () => {
       this.addresses = this.el.querySelectorAll('.footer_content_address');
       this.form = this.el.querySelector('.footer_content_form');
       this.bot = this.el.querySelector('.footer_bot');
+      this.formEl = this.el.querySelector('.footer_form');
+
+      if (this.formEl) {
+        this.handleSubmit = (e) => {
+          e.preventDefault();
+          
+          let isValid = true;
+          const inputs = this.formEl.querySelectorAll('input[required]');
+          inputs.forEach(input => {
+            if (!input.value.trim()) {
+              isValid = false;
+              input.style.borderColor = 'red';
+            } else {
+              input.style.borderColor = '';
+            }
+          });
+          
+          if (isValid) {
+            const submitBtnInit = this.formEl.querySelector('.btn_submit .init');
+            let originalText = "SUBMIT";
+            if (submitBtnInit) {
+              originalText = submitBtnInit.innerText;
+              submitBtnInit.innerText = "SENDING...";
+            }
+            
+            const formData = new FormData(this.formEl);
+            formData.append('action', 'submit_footer_form');
+            const ajaxUrl = typeof ajax_obj !== 'undefined' ? ajax_obj.ajax_url : '/wp-admin/admin-ajax.php';
+            
+            fetch(ajaxUrl, {
+              method: 'POST',
+              body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+              if (submitBtnInit) {
+                submitBtnInit.innerText = originalText;
+              }
+              if (data.status === 1) {
+                this.formEl.style.display = 'none';
+                const successMsg = document.createElement('div');
+                successMsg.className = 'txt_18 cl_be';
+                successMsg.style.marginTop = '20px';
+                successMsg.innerHTML = '<p>Thank you for getting in touch! We will get back to you soon.</p>';
+                this.formEl.parentNode.appendChild(successMsg);
+              } else {
+                alert(data.message || 'Có lỗi xảy ra, vui lòng thử lại sau.');
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              if (submitBtnInit) {
+                submitBtnInit.innerText = originalText;
+              }
+              alert(data.message || 'Có lỗi xảy ra, vui lòng thử lại sau.');
+            });
+          }
+        };
+        this.formEl.addEventListener('submit', this.handleSubmit);
+      }
 
       if (this.menuItems.length > 0) {
         this.menuItemsFade = new FadeIn({ el: this.menuItems, isDisableRevert: true, stagger: 0.1 });
@@ -1887,6 +1962,10 @@ const mainScript = () => {
       if (this.botFade) {
         this.botFade.destroy();
         this.botFade = null;
+      }
+      if (this.formEl) {
+        this.formEl.removeEventListener('submit', this.handleSubmit);
+        this.formEl = null;
       }
     }
   }
@@ -4597,6 +4676,28 @@ const mainScript = () => {
           input.addEventListener('change', this.handleInput);
         });
 
+        const fileInput = this.formEl.querySelector('input[type="file"][name="career_cv"]');
+        if (fileInput) {
+          const fileText = this.formEl.querySelector('.careerdetail_form_upload_txt');
+          if (fileText) {
+            const originalFileText = fileText.innerText;
+            fileInput.addEventListener('change', (e) => {
+              if (e.target.files.length > 0) {
+                fileText.innerText = e.target.files[0].name;
+                fileText.style.color = '#F32B3B'; // Optional: highlight selected file name
+              } else {
+                fileText.innerText = originalFileText;
+                fileText.style.color = '';
+              }
+            });
+            // Reset text when form resets
+            this.formEl.addEventListener('reset', () => {
+              fileText.innerText = originalFileText;
+              fileText.style.color = '';
+            });
+          }
+        }
+
         this.handleSubmit = (e) => {
           e.preventDefault();
           let isValid = true;
@@ -4628,14 +4729,48 @@ const mainScript = () => {
 
           if (isValid) {
             const submitBtnInit = this.formEl.querySelector('.btn_submit .init');
+            const submitBtnActive = this.formEl.querySelector('.btn_submit .active');
             if (submitBtnInit) {
               const originalText = submitBtnInit.innerText;
-              submitBtnInit.innerText = "SENDING...";
-              setTimeout(() => {
-                submitBtnInit.innerText = "SENT SUCCESSFULLY";
-                this.formEl.reset();
-                setTimeout(() => { submitBtnInit.innerText = originalText; }, 3000);
-              }, 1500);
+              
+              const updateBtnText = (text) => {
+                submitBtnInit.innerText = text;
+                if (submitBtnActive) submitBtnActive.innerText = text;
+              };
+
+              updateBtnText("SENDING...");
+              
+              const formData = new FormData(this.formEl);
+              formData.append('action', 'submit_career_application');
+              
+              // Assuming caseStudyAjax.ajaxurl is available for all templates that include index.js
+              // If not, fallback to /wp-admin/admin-ajax.php
+              const ajaxUrl = (typeof caseStudyAjax !== 'undefined' && caseStudyAjax.ajaxurl) ? caseStudyAjax.ajaxurl : '/wp-admin/admin-ajax.php';
+              
+              fetch(ajaxUrl, {
+                method: 'POST',
+                body: formData
+              })
+              .then(response => response.json())
+              .then(data => {
+                  if (data.status === 1) {
+                    updateBtnText("SENT SUCCESSFULLY");
+                    this.formEl.style.display = 'none';
+                    const successMsg = document.createElement('div');
+                    successMsg.className = 'form_success_message';
+                    successMsg.innerHTML = '<h4 style="color:#F32B3B; margin-bottom:15px;">Ứng tuyển thành công!</h4><p>Cảm ơn bạn đã gửi hồ sơ. Chúng tôi đã gửi một email xác nhận đến địa chỉ hòm thư của bạn. Bộ phận Tuyển dụng sẽ sớm liên hệ lại nếu hồ sơ phù hợp.</p>';
+                    this.formEl.parentNode.insertBefore(successMsg, this.formEl);
+                    this.formEl.reset();
+                  } else {
+                    alert(data.message || 'Có lỗi xảy ra, vui lòng thử lại sau.');
+                    updateBtnText("SEND FAILED");
+                    setTimeout(() => { updateBtnText(originalText); }, 3000);
+                  }
+              })
+              .catch(err => {
+                  updateBtnText("ERROR");
+                  setTimeout(() => { updateBtnText(originalText); }, 3000);
+              });
             }
           }
         };
@@ -4946,17 +5081,42 @@ const mainScript = () => {
             });
 
             if (isValid) {
-              // Valid form, can submit or send AJAX here
               const submitBtnInit = this.formEl.querySelector('.btn_submit .init');
+              let originalText = "SUBMIT";
               if (submitBtnInit) {
-                const originalText = submitBtnInit.innerText;
+                originalText = submitBtnInit.innerText;
                 submitBtnInit.innerText = "SENDING...";
-                setTimeout(() => {
-                  submitBtnInit.innerText = "SENT SUCCESSFULLY";
-                  this.formEl.reset();
-                  setTimeout(() => { submitBtnInit.innerText = originalText; }, 3000);
-                }, 1500);
               }
+              
+              const formData = new FormData(this.formEl);
+              formData.append('action', 'submit_contact_form');
+              const ajaxUrl = typeof ajax_obj !== 'undefined' ? ajax_obj.ajax_url : '/wp-admin/admin-ajax.php';
+
+              fetch(ajaxUrl, {
+                method: 'POST',
+                body: formData
+              })
+              .then(response => response.json())
+              .then(data => {
+                  if (data.status === 1) {
+                    if (submitBtnInit) submitBtnInit.innerText = "SENT SUCCESSFULLY";
+                    
+                    this.formEl.style.display = 'none';
+                    const successMsg = document.createElement('div');
+                    successMsg.className = 'form_success_message';
+                    successMsg.innerHTML = '<h4 style="color:#F32B3B; margin-bottom:15px;">Gửi thông tin thành công!</h4><p>Cảm ơn bạn đã liên hệ. Chúng tôi đã gửi một email xác nhận đến địa chỉ hòm thư của bạn. Đội ngũ tư vấn sẽ sớm liên hệ lại với bạn.</p>';
+                    this.formEl.parentNode.insertBefore(successMsg, this.formEl);
+                    this.formEl.reset();
+                  } else {
+                    alert(data.message || 'Có lỗi xảy ra, vui lòng thử lại sau.');
+                    if (submitBtnInit) submitBtnInit.innerText = "SEND FAILED";
+                    setTimeout(() => { if (submitBtnInit) submitBtnInit.innerText = originalText; }, 3000);
+                  }
+              })
+              .catch(err => {
+                  if (submitBtnInit) submitBtnInit.innerText = "ERROR";
+                  setTimeout(() => { if (submitBtnInit) submitBtnInit.innerText = originalText; }, 3000);
+              });
             }
           };
           this.formEl.addEventListener('submit', this.handleSubmit);

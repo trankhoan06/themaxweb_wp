@@ -51,7 +51,7 @@
                     <?php 
                         if (is_front_page() || is_home()) {
                             echo 'Digital Marketing Agency';
-                        } elseif (is_singular('post')) {
+                        } elseif (is_singular('work')) {
                             echo '<a href="/works" class="header_works_link">Works</a> &nbsp;/&nbsp; ' . esc_html(get_the_title());
                         } elseif (is_singular('career')) {
                             echo '<a href="/career" class="header_works_link">Careers</a> &nbsp;/&nbsp; ' . esc_html(get_the_title());
@@ -133,29 +133,7 @@
                                     }
                                 }
                             }
-                            
-                            if ( ! $has_menu ) {
-                                // Fallback hardcoded menu if no menu is assigned
                             ?>
-                                <a href="/aboutus" class="header_menu_nav_content_item txt_48 cl_black hover_txt txt_medium">
-                                    <div class="hover_txt_grid"><span class="init">About Us</span><span class="active">About Us</span></div>
-                                </a>
-                                <a href="/service" class="header_menu_nav_content_item txt_48 cl_black hover_txt txt_medium">
-                                    <div class="hover_txt_grid"><span class="init">Services</span><span class="active">Services</span></div>
-                                </a>
-                                <a href="/case-study" class="header_menu_nav_content_item txt_48 cl_black hover_txt txt_medium">
-                                    <div class="hover_txt_grid"><span class="init">Works</span><span class="active">Works</span></div>
-                                </a>
-                                <a href="/our-client" class="header_menu_nav_content_item txt_48 cl_black hover_txt txt_medium">
-                                    <div class="hover_txt_grid"><span class="init">Clients</span><span class="active">Clients</span></div>
-                                </a>
-                                <a href="/career" class="header_menu_nav_content_item txt_48 cl_black hover_txt txt_medium">
-                                    <div class="hover_txt_grid"><span class="init">Careers</span><span class="active">Careers</span></div>
-                                </a>
-                                <a href="/contact" class="header_menu_nav_content_item txt_48 cl_black hover_txt txt_medium">
-                                    <div class="hover_txt_grid"><span class="init">Contact</span><span class="active">Contact</span></div>
-                                </a>
-                            <?php } ?>
                         </div>
                         <div class="header_menu_nav_footer">
                             <div class="header_menu_nav_footer_hotline cl_black txt_18 txt_medium">HOTLINE</div>

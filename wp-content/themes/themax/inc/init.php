@@ -35,7 +35,7 @@ function my_phpmailer_example( $phpmailer ) {
         $phpmailer->SMTPAutoTLS = false;
     }
     $phpmailer->From = tr_options_field('tr_theme_options.from_email');
-    $phpmailer->FromName = SITE_NAME;                     
+    $phpmailer->FromName = get_bloginfo('name');                     
 }
 
 function cc_mime_types($mimes) {
