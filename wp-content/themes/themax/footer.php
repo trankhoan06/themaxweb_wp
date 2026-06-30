@@ -71,6 +71,9 @@
                             <div class="footer_form_row">
                                 <input type="text" name="footer_message" placeholder="Your Message" class="footer_form_input">
                             </div>
+                            <div class="footer_form_row" style="margin-bottom: 2.4rem;">
+                                <div class="g-recaptcha" data-sitekey="6LcQlD0tAAAAALN2ByRRGHnl9FO9EO7UvIBf99mR" data-theme="dark"></div>
+                            </div>
                             <div class="footer_form_row">
                                 <button type="submit"
                                     class="btn_submit button_hover hover_txt txt_14 txt_uppercase cl_be">
@@ -86,39 +89,23 @@
             </div>
             <div class="footer_bot">
                 <div class="grid">
-                    <div class="footer_bot_logo img_full">
-                        <svg width="641" height="117" viewBox="0 0 641 117" fill="none"
-                            xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-
-                            <defs>
-                                <!-- Táº¡o máº·t náº¡ báº±ng cÃ¡c nÃ©t chá»¯ mÃ u tráº¯ng -->
-                                <mask id="video-mask">
-                                    <path
-                                        d="M435.777 0L393.388 95.7474V0H357.202L320.5 54.3431L283.798 0H247.612V116.967H283.798V55.8958L306.543 91.0894H320.5H334.457L357.202 55.8958V116.967H384.083H393.388H424.921L429.573 105.063L455.42 38.8165L486.436 116.967H526.757L475.581 0H435.777Z"
-                                        fill="white" />
-                                    <path d="M602.23 63.1416L580.002 93.6773L597.06 116.967H641L602.23 63.1416Z"
-                                        fill="white" />
-                                    <path d="M640.483 0H596.544L580.002 22.7724L601.713 53.308L640.483 0Z"
-                                        fill="white" />
-                                    <path
-                                        d="M160.25 0V15.0091V51.2378H102.353V0H87.3621H51.1766H36.7024H0V15.0091H36.7024V116.967H51.1766V15.0091H87.3621V51.2378V65.7293V116.967H102.353V65.7293H160.25V101.958V116.967H175.241H233.655V101.958H175.241V65.7293H233.655V51.2378H175.241V15.0091H233.655V0H175.241H160.25Z"
-                                        fill="white" />
-                                </mask>
-                            </defs>
-
-                            <!-- Lá»“ng video vÃ o trong SVG, chá»‰ hiá»ƒn thá»‹ qua máº·t náº¡ chá»¯ tráº¯ng -->
-                            <foreignObject width="100%" height="100%" mask="url(#video-mask)">
-                                <!-- ThÃªm tháº» video vá»›i Ä‘Æ°á»ng dáº«n cá»§a báº¡n, style Ä‘á»ƒ video phá»§ vá»«a vá»›i SVG -->
-                                <video src="<?php echo get_template_directory_uri(); ?>/images/video_button.mp4"
-                                    autoplay loop muted playsinline
-                                    style="width: 100%; height: 100%; object-fit: cover;"></video>
-                            </foreignObject>
-
-                            <!-- Váº½ pháº§n mÃ u Ä‘á» lÃªn trÃªn cÃ¹ng (video sáº½ khÃ´ng Ä‘Ã¨ lÃªn pháº§n nÃ y) -->
-                            <path
-                                d="M556.223 0H511.766L554.155 57.966L511.249 116.967H555.706L598.612 57.966L556.223 0Z"
-                                fill="#E62636" />
-                        </svg>
+                    <div class="footer_bot_logo svg_full">
+                        <div style="position: relative; width: 100%;">
+                            <?php
+                            $footer_vid_url = tr_options_field('tr_theme_options.footer_video_button') ?: get_template_directory_uri() . '/images/video_button.mp4';
+                            $mask_svg = '<svg width="641" height="117" viewBox="0 0 641 117" xmlns="http://www.w3.org/2000/svg"><path d="M435.777 0L393.388 95.7474V0H357.202L320.5 54.3431L283.798 0H247.612V116.967H283.798V55.8958L306.543 91.0894H320.5H334.457L357.202 55.8958V116.967H384.083H393.388H424.921L429.573 105.063L455.42 38.8165L486.436 116.967H526.757L475.581 0H435.777Z"/><path d="M602.23 63.1416L580.002 93.6773L597.06 116.967H641L602.23 63.1416Z"/><path d="M640.483 0H596.544L580.002 22.7724L601.713 53.308L640.483 0Z"/><path d="M160.25 0V15.0091V51.2378H102.353V0H87.3621H51.1766H36.7024H0V15.0091H36.7024V116.967H51.1766V15.0091H87.3621V51.2378V65.7293V116.967H102.353V65.7293H160.25V101.958V116.967H175.241H233.655V101.958H175.241V65.7293H233.655V51.2378H175.241V15.0091H233.655V0H175.241H160.25Z"/></svg>';
+                            $mask_url = "data:image/svg+xml;base64," . base64_encode($mask_svg);
+                            ?>
+                            <video src="<?php echo esc_url($footer_vid_url); ?>"
+                                autoplay loop muted playsinline
+                                style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; pointer-events: none; -webkit-mask-image: url('<?php echo $mask_url; ?>'); mask-image: url('<?php echo $mask_url; ?>'); -webkit-mask-size: 100% 100%; mask-size: 100% 100%; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;"></video>
+    
+                            <svg width="641" height="117" viewBox="0 0 641 117" fill="none"
+                                xmlns="http://www.w3.org/2000/svg" style="position: relative; z-index: 1; pointer-events: none; width: 100%; height: auto; display: block;">
+                                <!-- Red decoration -->
+                                <path d="M556.223 0H511.766L554.155 57.966L511.249 116.967H555.706L598.612 57.966L556.223 0Z" fill="#E62636" />
+                            </svg>
+                        </div>
                     </div>
                     <div class="footer_bot_contact">
                         <div class="footer_bot_contact_social">

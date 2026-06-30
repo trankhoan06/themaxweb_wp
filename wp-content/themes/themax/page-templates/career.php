@@ -173,7 +173,7 @@ get_header();
                 </div>
             </div>
             <div class="career_why_list left_full right_full">
-                <div class="career_why_list_title grid middle">
+                <div class="career_why_list_title cl_gray grid middle">
                     <div class="career_why_list_item_position"><?php echo esc_html(tr_posts_field('career_list_col1') ?: 'POSITION'); ?></div>
                     <div class="career_why_list_item_level"><?php echo esc_html(tr_posts_field('career_list_col2') ?: 'LEVEL'); ?></div>
                     <div class="career_why_list_item_quality"><?php echo esc_html(tr_posts_field('career_list_col3') ?: 'QUANTITY'); ?></div>
@@ -203,9 +203,9 @@ get_header();
                 ?>
                 <a href="<?php the_permalink(); ?>" class="career_why_list_item grid item_line">
                     <div class="career_why_list_item_position item_line_title heaeding h5 cl_linear"><?php the_title(); ?></div>
-                    <div class="career_why_list_item_level txt_16"><?php echo esc_html($level); ?></div>
-                    <div class="career_why_list_item_quality txt_16"><?php echo esc_html($quantity); ?></div>
-                    <div class="career_why_list_item_deadline txt_16"><?php echo esc_html($deadline); ?></div>
+                    <div class="career_why_list_item_level cl_eb txt_16"><?php echo esc_html($level); ?></div>
+                    <div class="career_why_list_item_quality cl_eb txt_16"><?php echo esc_html($quantity); ?></div>
+                    <div class="career_why_list_item_deadline cl_eb txt_16"><?php echo esc_html($deadline); ?></div>
                     <div class="home_case_content_item_txt_icon middle">
                         <div class="home_case_content_item_txt_icon_wrap svg_full"><svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0_1164_690)"><path d="M12 12H36.0003V36.0003" stroke="#929292" stroke-width="2" stroke-linejoin="round" /><path d="M12 36.0003L36.0003 12" stroke="#929292" stroke-width="2" stroke-linejoin="round" /></g><defs><clipPath id="clip0_1164_690"><rect width="48" height="48" fill="white" /></clipPath></defs></svg></div>
                         <div class="home_case_content_item_txt_icon_wrap svg_full active"><svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0_1164_690)"><path d="M12 12H36.0003V36.0003" stroke="#F32B3B" stroke-width="2" stroke-linejoin="round" /><path d="M12 36.0003L36.0003 12" stroke="#F32B3B" stroke-width="2" stroke-linejoin="round" /></g><defs><clipPath id="clip0_1164_690"><rect width="48" height="48" fill="white" /></clipPath></defs></svg></div>

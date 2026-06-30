@@ -455,11 +455,9 @@
 .about_team_content_item_icon {
     width: 5.6rem;
     height: 5.6rem;
+    margin-bottom: 14rem;
 }
 
-.about_team_content_item_icon {
-    margin-bottom: 3.2rem;
-}
 
 .about_team_content_item_title {
     margin-bottom: 1.2rem;

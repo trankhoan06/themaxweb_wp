@@ -55,7 +55,7 @@ get_header();
                                 ?>
                                 <div class="careerdetail_info_content_job_item">
                                     <div class="careerdetail_info_content_job_item_name txt_uppercase txt_medium cl_gray"><?php echo esc_html($info['label'] ?? ''); ?></div>
-                                    <div class="careerdetail_info_content_job_item_txt txt_16"><?php echo esc_html($info['value'] ?? ''); ?></div>
+                                    <div class="careerdetail_info_content_job_item_txt  cl_eb txt_16"><?php echo esc_html($info['value'] ?? ''); ?></div>
                                 </div>
                                 <?php
                             endforeach;
@@ -136,6 +136,9 @@ get_header();
                             <div class="careerdetail_form_row">
                                 <input type="text" name="career_intro" placeholder="A brief introduction about myself"
                                     class="careerdetail_form_input">
+                            </div>
+                            <div class="careerdetail_form_row" style="margin-top: 1.6rem; margin-bottom: 2.4rem;">
+                                <div class="g-recaptcha" data-sitekey="6LcQlD0tAAAAALN2ByRRGHnl9FO9EO7UvIBf99mR" data-theme="dark"></div>
                             </div>
                             <div class="careerdetail_form_row submit_row">
                                 <button type="submit"

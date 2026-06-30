@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Template Name: Contact
  * Description:
@@ -83,7 +83,12 @@ get_header();
                 <div class="contact_hero_content_info_name txt_medium txt_18">
                     <?php echo esc_html(tr_posts_field('contact_hero_name')); ?></div>
                 <div class="contact_hero_content_info_tel txt_16">
-                    <?php echo esc_html(tr_posts_field('contact_hero_tel')); ?></div>
+                    <?php 
+                    $hero_tel = tr_posts_field('contact_hero_tel'); 
+                    $hero_tel_clean = preg_replace('/[^0-9+]/', '', $hero_tel);
+                    ?>
+                    <a href="tel:<?php echo esc_attr($hero_tel_clean); ?>" style="color: inherit; text-decoration: none; white-space: nowrap;"><?php echo esc_html($hero_tel); ?></a>
+                </div>
             </div>
             <div class="contact_hero_form">
                 <?php $form_shortcode = tr_posts_field('contact_form_shortcode');
@@ -115,6 +120,9 @@ get_header();
                         <div class="contact_form_row">
                             <input type="text" name="contact_advice" placeholder="What area do you need advice on?"
                                 class="contact_form_input">
+                        </div>
+                        <div class="contact_form_row" style="margin-top: 2rem; margin-bottom: 2.4rem;">
+                            <div class="g-recaptcha" data-sitekey="6LcQlD0tAAAAALN2ByRRGHnl9FO9EO7UvIBf99mR" data-theme="dark"></div>
                         </div>
                         <div class="contact_form_row submit_row">
                             <button type="submit" class="btn_submit button_hover hover_txt txt_14 txt_uppercase cl_be">

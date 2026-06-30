@@ -39,6 +39,9 @@ $form = tr_form()->useJson()->setGroup( $this->getName() );
     $footer_settings = function() use ($form) {
         echo "<h3>Footer Settings</h3>";
         
+        echo "<h4>Footer Video Button</h4>";
+        echo $form->text('footer_video_button')->setLabel('Video Button Link (.mp4)');
+        
         echo "<h4>Email</h4>";
         echo $form->text('footer_email')->setLabel('Email Address');
         

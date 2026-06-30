@@ -50,12 +50,14 @@ function themax_enqueue_assets() {
     wp_enqueue_script('split-text', $theme_dir . '/js/SplitText.min.js', array('gsap'), '1.0.0', true);
     wp_enqueue_script('lenis', $theme_dir . '/js/lenis.min.js', array(), '1.0.0', true);
     wp_enqueue_script('swiper-js', $theme_dir . '/plugin/swiper/swiper-bundle.min.js', array(), '7.0.6', true);
-    $index_js_version = filemtime(get_template_directory() . '/js/index.js') ?: '1.0.0';
-    wp_enqueue_script('themax-index-js', $theme_dir . '/js/index.js', array('jquery-3.7.1', 'gsap', 'swiper-js'), $index_js_version, true);
+    $index_js_version = filemtime(get_template_directory() . '/js/index.min.js') ?: '1.0.0';
+    wp_enqueue_script('themax-index-js', $theme_dir . '/js/index.min.js', array('jquery-3.7.1', 'gsap', 'swiper-js'), $index_js_version, true);
     wp_localize_script('themax-index-js', 'caseStudyAjax', array(
         'ajaxurl' => admin_url('admin-ajax.php'),
         'loadMoreText' => 'XEM THÊM'
     ));
+
+    wp_enqueue_script('google-recaptcha', 'https://www.google.com/recaptcha/api.js', array(), null, true);
 
     // Template specific CSS
     if (is_page_template('page-templates/aboutus.php')) {
@@ -124,3 +126,26 @@ function themax_load_more_case_studies() {
 }
 add_action("wp_ajax_load_more_case_studies", "themax_load_more_case_studies");
 add_action("wp_ajax_nopriv_load_more_case_studies", "themax_load_more_case_studies");
+
+add_filter('script_loader_tag', 'themax_add_defer_to_scripts', 10, 2);
+function themax_add_defer_to_scripts($tag, $handle) {
+    $defer_scripts = array(
+        'jquery-3.7.1',
+        'gsap',
+        'scroll-trigger',
+        'split-text',
+        'lenis',
+        'swiper-js',
+        'themax-index-js'
+    );
+    
+    if (in_array($handle, $defer_scripts)) {
+        return str_replace(' src', ' defer src', $tag);
+    }
+    
+    if ('google-recaptcha' === $handle) {
+        return str_replace(' src', ' async defer src', $tag);
+    }
+    
+    return $tag;
+}

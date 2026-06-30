@@ -348,6 +348,21 @@ function themax_email_template($section_title, $content) {
     return $html;
 }
 
+function themax_verify_recaptcha($token) {
+    if (empty($token)) return false;
+    $secret = '6LcQlD0tAAAAAFe6sN3L9xt56HGT7s_O4ur7GPq5';
+    $response = wp_remote_post('https://www.google.com/recaptcha/api/siteverify', [
+        'body' => [
+            'secret' => $secret,
+            'response' => $token
+        ]
+    ]);
+    if (is_wp_error($response)) return false;
+    $body = wp_remote_retrieve_body($response);
+    $result = json_decode($body);
+    return !empty($result->success) ? true : false;
+}
+
 add_action('wp_ajax_submit_career_application', 'ajax_submit_career_application');
 add_action('wp_ajax_nopriv_submit_career_application', 'ajax_submit_career_application');
 
@@ -356,6 +371,13 @@ function ajax_submit_career_application() {
     
     if (!themax_check_rate_limit_ip()) {
         $result['message'] = 'Bạn gửi quá nhiều yêu cầu. Vui lòng đợi 1 phút rồi thử lại.';
+        echo json_encode($result);
+        die();
+    }
+    
+    $recaptcha_token = isset($_POST['g-recaptcha-response']) ? $_POST['g-recaptcha-response'] : '';
+    if (!themax_verify_recaptcha($recaptcha_token)) {
+        $result['message'] = 'Vui lòng xác nhận bạn không phải robot.';
         echo json_encode($result);
         die();
     }
@@ -445,6 +467,13 @@ function ajax_submit_contact_form() {
         die();
     }
     
+    $recaptcha_token = isset($_POST['g-recaptcha-response']) ? $_POST['g-recaptcha-response'] : '';
+    if (!themax_verify_recaptcha($recaptcha_token)) {
+        $result['message'] = 'Vui lòng xác nhận bạn không phải robot.';
+        echo json_encode($result);
+        die();
+    }
+    
     $name = isset($_POST['contact_name']) ? sanitize_text_field($_POST['contact_name']) : '';
     $email = isset($_POST['contact_email']) ? sanitize_email($_POST['contact_email']) : '';
     $phone = isset($_POST['contact_phone']) ? sanitize_text_field($_POST['contact_phone']) : '';
@@ -503,6 +532,13 @@ function ajax_submit_footer_form() {
     
     if (!themax_check_rate_limit_ip()) {
         $result['message'] = 'Bạn gửi quá nhiều yêu cầu. Vui lòng đợi 1 phút rồi thử lại.';
+        echo json_encode($result);
+        die();
+    }
+    
+    $recaptcha_token = isset($_POST['g-recaptcha-response']) ? $_POST['g-recaptcha-response'] : '';
+    if (!themax_verify_recaptcha($recaptcha_token)) {
+        $result['message'] = 'Vui lòng xác nhận bạn không phải robot.';
         echo json_encode($result);
         die();
     }

@@ -1712,6 +1712,14 @@ const mainScript = () => {
           menuBtn.classList.toggle("active");
           menuNav.classList.toggle("active");
           this.isOpen = menuBtn.classList.contains("active");
+
+          if (this.isOpen) {
+            document.body.classList.add("menu-active");
+            if (typeof smoothScroll !== "undefined") smoothScroll.stop();
+          } else {
+            document.body.classList.remove("menu-active");
+            if (typeof smoothScroll !== "undefined") smoothScroll.start();
+          }
         });
 
         document.addEventListener("click", (e) => {
@@ -1719,6 +1727,9 @@ const mainScript = () => {
             menuBtn.classList.remove("active");
             menuNav.classList.remove("active");
             this.isOpen = false;
+
+            document.body.classList.remove("menu-active");
+            if (typeof smoothScroll !== "undefined") smoothScroll.start();
           }
         });
       }
