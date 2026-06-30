@@ -236,7 +236,7 @@ get_header();
                                             $fallback_img = get_template_directory_uri() . '/images/home_service' . ($index == 0 ? '' : ($index + 1)) . '.jpg';
                                             $img_url = wp_get_attachment_image_url($img_id, 'full') ?: $fallback_img;
                                             ?>
-                                            <img src="<?php echo esc_url($img_url); ?>" alt="">
+                                            <img src="<?php echo esc_url($img_url); ?>" alt="" loading="lazy">
                                         </div>
                                     </div>
                                 </div>
@@ -256,7 +256,7 @@ get_header();
     <section class="about_cta">
         <div class="about_cta_img img_full">
             <?php $cta_img = wp_get_attachment_image_url((tr_posts_field('about_cta_img') ?? ''), 'full') ?: get_template_directory_uri() . '/images/img_cta.webp'; ?>
-            <img src="<?php echo esc_url($cta_img); ?>" alt="">
+            <img src="<?php echo esc_url($cta_img); ?>" alt="" loading="lazy">
         </div>
         <div class="about_cta_inner_bg">
             <svg class="about_cta_bg_red" width="100" height="273" viewBox="0 0 100 273" fill="none"

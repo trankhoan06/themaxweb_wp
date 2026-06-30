@@ -107,7 +107,7 @@ if (have_posts()):
                                                                 if ($img_url):
                                                                     ?>
                                                                     <div class="casestudydetail_content_blog_item_img_wrap img_full">
-                                                                        <img src="<?php echo esc_url($img_url); ?>" alt="">
+                                                                        <img src="<?php echo esc_url($img_url); ?>" alt="" loading="lazy">
                                                                     </div>
                                                                 <?php endif; endforeach; ?>
                                                         </div>
@@ -203,7 +203,7 @@ if (have_posts()):
                                     </div>
                                     <div class="home_case_content_item_img_outer">
                                         <div class="home_case_content_item_img img_full">
-                                            <img src="<?php echo esc_url($img_url); ?>" alt="<?php echo esc_attr($title); ?>">
+                                            <img src="<?php echo esc_url($img_url); ?>" alt="<?php echo esc_attr($title); ?>" loading="lazy">
                                         </div>
                                     </div>
                                     <div class="home_case_content_item_txt">
@@ -285,7 +285,7 @@ if (have_posts()):
     ?>
     <section class="about_cta">
         <div class="about_cta_img img_full">
-            <img src="<?php echo esc_url($cta_img); ?>" alt="">
+            <img src="<?php echo esc_url($cta_img); ?>" alt="" loading="lazy">
         </div>
         <div class="about_cta_inner_bg">
             <svg class="about_cta_bg_red" width="100" height="273" viewBox="0 0 100 273" fill="none"

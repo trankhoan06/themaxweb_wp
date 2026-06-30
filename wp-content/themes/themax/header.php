@@ -20,6 +20,17 @@
 <head>
     <meta charset="<?php bloginfo('charset'); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preload" href="<?php echo get_template_directory_uri(); ?>/fonts/GoogleSans-Regular.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="<?php echo get_template_directory_uri(); ?>/fonts/GoogleSans-Medium.woff2" as="font" type="font/woff2" crossorigin>
+    <?php 
+    if (is_front_page() || is_home() || is_page_template('page-templates/homepage.php')) {
+        $home_banner_video = tr_posts_field('home_banner_video');
+        $video_url = $home_banner_video ? wp_get_attachment_url($home_banner_video) : '';
+        if ($video_url) {
+            echo '<link rel="preload" href="' . esc_url($video_url) . '" as="video" type="video/mp4">';
+        }
+    }
+    ?>
 
         <?php wp_head(); ?>
 </head>

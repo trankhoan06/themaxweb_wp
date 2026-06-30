@@ -102,6 +102,14 @@ $form = tr_form()->useJson()->setGroup( $this->getName() );
         echo $form->text('receive_email')->setLabel('Nhận thông báo ứng tuyển/liên hệ tại Email');
     };
 
+    // reCAPTCHA Settings
+    $recaptcha_settings = function() use ($form) {
+        echo "<h3>reCAPTCHA v3 Settings</h3>";
+        echo "<p>Cấu hình Google reCAPTCHA v3 để bảo mật các form gửi thông tin.</p>";
+        echo $form->text('recaptcha_site_key')->setLabel('reCAPTCHA Site Key');
+        echo $form->text('recaptcha_secret_key')->setLabel('reCAPTCHA Secret Key');
+    };
+
     // Save
     $save = $form->submit( 'Save Options' );
 
@@ -111,6 +119,7 @@ $form = tr_form()->useJson()->setGroup( $this->getName() );
         ->addTab( 'Single Career', $cta_career )
         ->addTab( 'Footer', $footer_settings )
         ->addTab( 'SMTP', $smtp_settings )
+        ->addTab( 'reCAPTCHA', $recaptcha_settings )
         ->render( 'box' );
         
     echo $form->close();

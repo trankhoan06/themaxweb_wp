@@ -35,7 +35,7 @@ if ($hero_bg_id) {
     </div>
     <div class="home_case_content_item_img_outer">
         <div class="home_case_content_item_img img_full">
-            <img src="<?php echo esc_url($item_img); ?>" alt="<?php the_title_attribute(); ?>">
+            <img src="<?php echo esc_url($item_img); ?>" alt="<?php the_title_attribute(); ?>" loading="lazy">
         </div>
     </div>
     <div class="home_case_content_item_txt">

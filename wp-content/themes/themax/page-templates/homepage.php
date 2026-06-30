@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Template Name: HomePage
  * Description:
@@ -21,8 +21,9 @@ get_header();
             $video_url = $home_banner_video ? wp_get_attachment_url($home_banner_video) : '';
             ?>
             <?php if ($video_url): ?>
-                <video src="<?php echo esc_url($video_url); ?>" autoplay loop muted playsinline preload="metadata" style="max-width: 100%; height: auto;"></video>
-                <!-- <video src="<?php echo get_template_directory_uri(); ?>/images/video_button.mp4" autoplay loop muted playsinline preload="metadata" style="max-width: 100%; height: auto;"></video> -->
+                <video src="<?php echo esc_url($video_url); ?>" autoplay loop muted playsinline preload="auto"
+                    style="max-width: 100%; height: auto;"></video>
+                <!-- <video src="<?php echo get_template_directory_uri(); ?>/images/video_button.mp4" autoplay loop muted playsinline preload="auto" style="max-width: 100%; height: auto;"></video> -->
             <?php endif; ?>
 
         </div>
@@ -48,19 +49,22 @@ get_header();
                         <?php if ($home_intro_text_1): ?>
                             <div class="home_intro_line">
                                 <div class="home_intro_txt heading h0 h1_mb cl_linear">
-                                    <?php echo wp_kses_post($home_intro_text_1); ?></div>
+                                    <?php echo wp_kses_post($home_intro_text_1); ?>
+                                </div>
                             </div>
                         <?php endif; ?>
                         <?php if ($home_intro_text_2): ?>
                             <div class="home_intro_line">
                                 <div class="home_intro_txt heading h0 h1_mb cl_linear item_translate">
-                                    <?php echo wp_kses_post($home_intro_text_2); ?></div>
+                                    <?php echo wp_kses_post($home_intro_text_2); ?>
+                                </div>
                             </div>
                         <?php endif; ?>
                         <?php if ($home_intro_text_3): ?>
                             <div class="home_intro_line">
                                 <div class="home_intro_txt heading h0 h1_mb cl_red">
-                                    <?php echo wp_kses_post($home_intro_text_3); ?></div>
+                                    <?php echo wp_kses_post($home_intro_text_3); ?>
+                                </div>
                             </div>
                         <?php endif; ?>
                         <?php if ($home_intro_subtext): ?>
@@ -108,7 +112,7 @@ get_header();
                     echo '<div class="home_intro_img_list">';
                     foreach ($col_urls as $url) {
                         echo '<div class="home_intro_img_item img_fullfill">';
-                        echo '<img src="' . esc_url($url) . '" alt="">';
+                        echo '<img src="' . esc_url($url) . '" alt="" loading="lazy">';
                         echo '</div>';
                     }
                     echo '</div>';
@@ -125,6 +129,8 @@ get_header();
             $specialize_icon_top_url = get_template_directory_uri() . '/images/ic_sol3.svg';
             $specialize_icon_center_url = get_template_directory_uri() . '/images/ic_sol.svg';
             $specialize_icon_bottom_url = get_template_directory_uri() . '/images/ic_sol2.svg';
+            $specialize_icon_top_mb_url = get_template_directory_uri() . '/images/ic_sol3_mb.svg';
+            $specialize_icon_bottom_mb_url = get_template_directory_uri() . '/images/ic_sol2_mb.svg';
             $specialize_title = tr_posts_field('specialize_title');
             $specialize_subtitle = tr_posts_field('specialize_subtitle');
             ?>
@@ -134,16 +140,20 @@ get_header();
             <div class="home_specialize_bg_color">
                 <div class="home_specialize_bg_color_inner"></div>
                 <div class="home_specialize_bg_deco">
-                    <div class="home_specialize_bg_deco_item top img_full">
-                        <img class="middle" src="<?php echo esc_url($specialize_icon_top_url); ?>" alt="" loading="lazy">
-                        <img class="mobile" src="<?php echo esc_url($specialize_icon_top_url); ?>" alt="" loading="lazy">
+                    <div class="home_specialize_bg_deco_item top img_height">
+                        <img class="middle" src="<?php echo esc_url($specialize_icon_top_url); ?>" alt=""
+                            loading="lazy">
+                        <img class="mobile" src="<?php echo esc_url($specialize_icon_top_mb_url); ?>" alt=""
+                            loading="lazy">
                     </div>
                     <div class="home_specialize_bg_deco_item center img_full">
                         <img src="<?php echo esc_url($specialize_icon_center_url); ?>" alt="" loading="lazy">
                     </div>
-                    <div class="home_specialize_bg_deco_item bottom img_full">
-                        <img class="middle" src="<?php echo esc_url($specialize_icon_bottom_url); ?>" alt="" loading="lazy">
-                        <img class="mobile" src="<?php echo esc_url($specialize_icon_bottom_url); ?>" alt="" loading="lazy">
+                    <div class="home_specialize_bg_deco_item bottom img_height">
+                        <img class="middle" src="<?php echo esc_url($specialize_icon_bottom_url); ?>" alt=""
+                            loading="lazy">
+                        <img class="mobile" src="<?php echo esc_url($specialize_icon_bottom_mb_url); ?>" alt=""
+                            loading="lazy">
                     </div>
                 </div>
             </div>
@@ -160,7 +170,7 @@ get_header();
                                 <?php echo wp_kses_post($specialize_title_1); ?>
                             </div>
                         <?php endif; ?>
-                        
+
                         <?php if (is_array($specialize_red_texts) && !empty($specialize_red_texts)): ?>
                             <div class="home_specialize_inner_txt main cl_red heading h1 h4_mb">
                                 <?php foreach ($specialize_red_texts as $red_text): ?>
@@ -168,7 +178,7 @@ get_header();
                                 <?php endforeach; ?>
                             </div>
                         <?php endif; ?>
-                        
+
                         <?php if ($specialize_title_2): ?>
                             <div class="home_specialize_inner_txt cl_black heading h1 h4_mb">
                                 <?php echo wp_kses_post(nl2br($specialize_title_2)); ?>
@@ -223,19 +233,19 @@ get_header();
                 $home_services_desc = tr_posts_field('home_services_desc');
                 ?>
                 <?php if ($home_services_subtitle): ?>
-                <div class="home_services_sub txt_16 txt_medium block_arrow cl_fb">
-                    <?php echo esc_html($home_services_subtitle); ?>
-                </div>
+                    <div class="home_services_sub txt_16 txt_medium block_arrow cl_fb">
+                        <?php echo esc_html($home_services_subtitle); ?>
+                    </div>
                 <?php endif; ?>
                 <?php if ($home_services_title): ?>
-                <h2 class="heading h2 h4_mb home_services_title txt_center cl_white">
-                    <?php echo wp_kses_post(nl2br($home_services_title)); ?>
-                </h2>
+                    <h2 class="heading h2 h4_mb home_services_title txt_center cl_white">
+                        <?php echo wp_kses_post(nl2br($home_services_title)); ?>
+                    </h2>
                 <?php endif; ?>
                 <?php if ($home_services_desc): ?>
-                <div class=" home_services_des cl_fb heading h6 txt_uppercase txt_center">
-                    <?php echo wp_kses_post(nl2br($home_services_desc)); ?>
-                </div>
+                    <div class=" home_services_des cl_fb heading h6 txt_uppercase txt_center">
+                        <?php echo wp_kses_post(nl2br($home_services_desc)); ?>
+                    </div>
                 <?php endif; ?>
             </div>
         </div>
@@ -257,13 +267,16 @@ get_header();
                                         <div class="home_services_content pa_container">
                                             <div class="home_services_content_top">
                                                 <h3 class="home_services_content_title heading h1 h4_mb cl_linear">
-                                                    <?php echo esc_html($srv['title'] ?? ''); ?></h3>
+                                                    <?php echo esc_html($srv['title'] ?? ''); ?>
+                                                </h3>
                                                 <div class="heading h6 home_services_content_sub">
-                                                    <?php echo esc_html($srv['description'] ?? ''); ?></div>
+                                                    <?php echo esc_html($srv['description'] ?? ''); ?>
+                                                </div>
                                             </div>
                                             <div class="home_services_content_bottom">
                                                 <div class="home_services_content_bottom_des heading h4 cl_eb">
-                                                    <?php echo esc_html($srv['bottom_des'] ?? ''); ?></div>
+                                                    <?php echo esc_html($srv['bottom_des'] ?? ''); ?>
+                                                </div>
                                                 <div class="home_services_content_bottom_list">
                                                     <?php
                                                     $service_list = $srv['service_list'] ?? [];
@@ -279,7 +292,7 @@ get_header();
                                                                 </svg>
                                                                 <?php echo esc_html($sl['item'] ?? ''); ?>
                                                             </div>
-                                                        <?php
+                                                            <?php
                                                         endforeach;
                                                     endif;
                                                     ?>
@@ -296,7 +309,7 @@ get_header();
                                     </div>
                                 </div>
                             </div>
-                        <?php
+                            <?php
                         endforeach;
                     endif;
                     ?>
@@ -312,12 +325,12 @@ get_header();
             $home_case_title = tr_posts_field('home_case_title');
             ?>
             <?php if ($home_case_subtitle): ?>
-            <div class="home_case_subtitle txt_16 txt_medium block_arrow"><?php echo esc_html($home_case_subtitle); ?>
-            </div>
+                <div class="home_case_subtitle txt_16 txt_medium block_arrow"><?php echo esc_html($home_case_subtitle); ?>
+                </div>
             <?php endif; ?>
             <?php if ($home_case_title): ?>
-            <div class="home_case_title heading h2 txt_center cl_linear h4_mb"><?php echo esc_html($home_case_title); ?>
-            </div>
+                <div class="home_case_title heading h2 txt_center cl_linear h4_mb"><?php echo esc_html($home_case_title); ?>
+                </div>
             <?php endif; ?>
             <div class="home_case_content_list right_full left_full">
                 <?php
@@ -338,9 +351,12 @@ get_header();
                         ?>
                         <a href="<?php the_permalink(); ?>" class="home_case_content_item">
                             <div class="home_case_content_item_des">
-                                <div class="home_case_content_item_des_txt txt_15 txt_medium"><?php echo esc_html($post_subtitle); ?></div>
                                 <div class="home_case_content_item_des_txt txt_15 txt_medium">
-                                    <?php echo esc_html($category_name); ?></div>
+                                    <?php echo esc_html($post_subtitle); ?>
+                                </div>
+                                <div class="home_case_content_item_des_txt txt_15 txt_medium">
+                                    <?php echo esc_html($category_name); ?>
+                                </div>
                             </div>
                             <div class="home_case_content_item_img_outer">
                                 <div class="home_case_content_item_img img_full">
@@ -387,7 +403,7 @@ get_header();
                                 </div>
                             </div>
                         </a>
-                    <?php
+                        <?php
                     endwhile;
                     wp_reset_postdata();
                 endif;
@@ -398,12 +414,13 @@ get_header();
             $home_case_btn_link = tr_posts_field('home_case_btn_link');
             ?>
             <?php if ($home_case_btn_text && $home_case_btn_link): ?>
-            <a href="<?php echo esc_url($home_case_btn_link); ?>" class="home_case_seeview button_hover hover_txt cl_be txt_uppercase txt_14 txt_medium">
-                <div class="hover_txt_grid">
-                    <span class="init"><?php echo esc_html($home_case_btn_text); ?></span>
-                    <span class="active"><?php echo esc_html($home_case_btn_text); ?></span>
-                </div>
-            </a>
+                <a href="<?php echo esc_url($home_case_btn_link); ?>"
+                    class="home_case_seeview button_hover hover_txt cl_be txt_uppercase txt_14 txt_medium">
+                    <div class="hover_txt_grid">
+                        <span class="init"><?php echo esc_html($home_case_btn_text); ?></span>
+                        <span class="active"><?php echo esc_html($home_case_btn_text); ?></span>
+                    </div>
+                </a>
             <?php endif; ?>
         </div>
     </section>
@@ -425,39 +442,41 @@ get_header();
                 <img src="./images/pattern-blur.svg" alt="" loading="lazy">
             </div>
             <?php if ($home_clients_subtitle): ?>
-            <div class="home_clients_subtitle block_arrow"><?php echo esc_html($home_clients_subtitle); ?></div>
+                <div class="home_clients_subtitle block_arrow"><?php echo esc_html($home_clients_subtitle); ?></div>
             <?php endif; ?>
             <?php if ($home_clients_title): ?>
-            <div class="home_clients_title heading h2 h4_mb cl_linear txt_center"><?php echo wp_kses_post(nl2br($home_clients_title)); ?></div>
+                <div class="home_clients_title heading h2 h4_mb cl_linear txt_center">
+                    <?php echo wp_kses_post(nl2br($home_clients_title)); ?>
+                </div>
             <?php endif; ?>
-            
+
             <?php if ($home_clients_tab1_name || $home_clients_tab2_name || $home_clients_tab3_name): ?>
-            <div class="home_clients_tab">
-                <?php if ($home_clients_tab1_name): ?>
-                <div class="home_clients_tab_item hover_txt txt_16 txt_medium active" data-tabs="tab1">
-                    <div class="hover_txt_grid">
-                        <span class="init"><?php echo esc_html($home_clients_tab1_name); ?></span>
-                        <span class="active"><?php echo esc_html($home_clients_tab1_name); ?></span>
-                    </div>
+                <div class="home_clients_tab">
+                    <?php if ($home_clients_tab1_name): ?>
+                        <div class="home_clients_tab_item hover_txt txt_16 txt_medium active" data-tabs="tab1">
+                            <div class="hover_txt_grid">
+                                <span class="init"><?php echo esc_html($home_clients_tab1_name); ?></span>
+                                <span class="active"><?php echo esc_html($home_clients_tab1_name); ?></span>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                    <?php if ($home_clients_tab2_name): ?>
+                        <div class="home_clients_tab_item hover_txt txt_16 txt_medium" data-tabs="tab2">
+                            <div class="hover_txt_grid">
+                                <span class="init"><?php echo esc_html($home_clients_tab2_name); ?></span>
+                                <span class="active"><?php echo esc_html($home_clients_tab2_name); ?></span>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                    <?php if ($home_clients_tab3_name): ?>
+                        <div class="home_clients_tab_item hover_txt txt_16 txt_medium" data-tabs="tab3">
+                            <div class="hover_txt_grid">
+                                <span class="init"><?php echo esc_html($home_clients_tab3_name); ?></span>
+                                <span class="active"><?php echo esc_html($home_clients_tab3_name); ?></span>
+                            </div>
+                        </div>
+                    <?php endif; ?>
                 </div>
-                <?php endif; ?>
-                <?php if ($home_clients_tab2_name): ?>
-                <div class="home_clients_tab_item hover_txt txt_16 txt_medium" data-tabs="tab2">
-                    <div class="hover_txt_grid">
-                        <span class="init"><?php echo esc_html($home_clients_tab2_name); ?></span>
-                        <span class="active"><?php echo esc_html($home_clients_tab2_name); ?></span>
-                    </div>
-                </div>
-                <?php endif; ?>
-                <?php if ($home_clients_tab3_name): ?>
-                <div class="home_clients_tab_item hover_txt txt_16 txt_medium" data-tabs="tab3">
-                    <div class="hover_txt_grid">
-                        <span class="init"><?php echo esc_html($home_clients_tab3_name); ?></span>
-                        <span class="active"><?php echo esc_html($home_clients_tab3_name); ?></span>
-                    </div>
-                </div>
-                <?php endif; ?>
-            </div>
             <?php endif; ?>
             <div class="home_clients_content">
                 <?php
@@ -484,12 +503,14 @@ get_header();
                 <?php endforeach; ?>
             </div>
             <?php if ($home_clients_btn_text && $home_clients_btn_link): ?>
-            <a href="<?php echo esc_url($home_clients_btn_link); ?>" class="home_clients_button button_hover txt_uppercase hover_txt txt_14 txt_medium" style="display:inline-flex;">
-                <div class="hover_txt_grid">
-                    <span class="init"><?php echo esc_html($home_clients_btn_text); ?></span>
-                    <span class="active"><?php echo esc_html($home_clients_btn_text); ?></span>
-                </div>
-            </a>
+                <a href="<?php echo esc_url($home_clients_btn_link); ?>"
+                    class="home_clients_button button_hover txt_uppercase hover_txt txt_14 txt_medium"
+                    style="display:inline-flex;">
+                    <div class="hover_txt_grid">
+                        <span class="init"><?php echo esc_html($home_clients_btn_text); ?></span>
+                        <span class="active"><?php echo esc_html($home_clients_btn_text); ?></span>
+                    </div>
+                </a>
             <?php endif; ?>
         </div>
     </section>

@@ -21,27 +21,30 @@ const mainScript = () => {
   }
   class MasterTimeline {
     constructor({ triggerInit, timeline, tweenArr, stagger = .1, scrollTrigger, allowMobile }) {
+      if (getScreenType().isMobile) return;
       this.timeline = timeline;
       this.triggerInit = triggerInit;
       this.scrollTrigger = scrollTrigger;
       this.tweenArr = tweenArr;
       this.stagger = stagger;
       this.allowMobile = getScreenType().isMobile ? allowMobile : true;
-      document.fonts.ready.then(() => this.setup());
-    }
-    setup() {
-      gsap.timeline({
-        scrollTrigger: {
-          trigger: this.triggerInit,
-          start: 'top bottom+=100vh',
-          end: 'bottom top',
-          once: true,
-          scrub: false,
-          onEnter: () => {
-            this.tweenArr.forEach((item) => item.init?.())
-          }
+
+      // Defer all animation initialization and setup until the element is within 100vh of the viewport
+      this.deferTrigger = ScrollTrigger.create({
+        trigger: this.triggerInit,
+        start: 'top bottom+=100vh',
+        once: true,
+        onEnter: () => {
+          document.fonts.ready.then(() => {
+            if (this.tweenArr) {
+              this.tweenArr.forEach((item) => item.init?.());
+            }
+            this.setup();
+          });
         }
       });
+    }
+    setup() {
       if (!this.timeline) {
         this.timeline = gsap.timeline({
           scrollTrigger: {
@@ -54,11 +57,20 @@ const mainScript = () => {
           }
         })
       };
-      this.tweenArr.forEach((item) => this.timeline.add(item.animation, item.delay || `<=${this.stagger}` || "<=.1"));
+      if (this.tweenArr) {
+        this.tweenArr.forEach((item) => {
+          if (item.animation) {
+            this.timeline.add(item.animation, item.delay || `<=${this.stagger}` || "<=.1");
+          }
+        });
+      }
     }
     destroy() {
-      this.timeline.kill();
-      this.tweenArr.forEach((item) => item.destroy?.());
+      if (this.deferTrigger) this.deferTrigger.kill();
+      if (this.timeline) this.timeline.kill();
+      if (this.tweenArr) {
+        this.tweenArr.forEach((item) => item.destroy?.());
+      }
     }
   }
   const useSplitPretext = ({ selector, type, isMask }) => {
@@ -237,7 +249,7 @@ const mainScript = () => {
     }
   }
   class FadeSplitText {
-    constructor({ el, delay, headingType, splitType, duration, stagger, isDisableRevert, isDisableAnim, ...props }) {
+    constructor({ el, delay, headingType, splitType, duration, stagger, isDisableRevert, isDisableAnim, forceSplitOnMobile, ...props }) {
       if (!el || el.textContent === '') return;
       this.DOM = { el: el };
       this.delay = delay;
@@ -246,9 +258,18 @@ const mainScript = () => {
       this.headingType = headingType || 'false';
       this.duration = duration || .8;
       this.stagger = stagger || .02;
-
+      this.isDisableRevert = isDisableRevert;
+      this.isDisableAnim = isDisableAnim;
+      this.forceSplitOnMobile = forceSplitOnMobile;
+      this.props = props;
+    }
+    init() {
       const screen = getScreenType();
-      if (screen.isMobile || screen.isTablet) {
+      if (screen.isMobile && !this.forceSplitOnMobile) {
+        this.animation = gsap.timeline();
+        return;
+      }
+      if (screen.isTablet && !this.forceSplitOnMobile) {
         this.isFallback = true;
         this.animation = gsap.fromTo(this.DOM.el,
           { opacity: 0, y: parseRem(45) },
@@ -258,114 +279,105 @@ const mainScript = () => {
             duration: this.duration,
             ease: 'power2.out',
             clearProps: 'all',
-            ...props
+            ...this.props
           }
         );
+        gsap.set(this.DOM.el, { opacity: 0, y: parseRem(32) });
         return;
       }
 
+      if (this.animation) return; // avoid duplicate initialization
+
       let animation;
-      document.fonts.ready.then(() => {
-        this.textSplit = SplitText.create(this.DOM.el, {
-          type: this.splitType === 'chars' ? "lines words chars" : (this.splitType === 'words' ? "lines words" : 'lines'),
-          mask: "lines",
-          linesClass: headingType ? 'bp-line heading-line' : 'bp-line',
-          autoSplit: true,
-          onSplit: (self) => {
-            const computedStyle = window.getComputedStyle(self.elements[0]);
+      this.textSplit = SplitText.create(this.DOM.el, {
+        type: this.splitType === 'chars' ? "lines words chars" : (this.splitType === 'words' ? "lines words" : 'lines'),
+        mask: "lines",
+        linesClass: this.headingType ? 'bp-line heading-line' : 'bp-line',
+        autoSplit: true,
+        onSplit: (self) => {
+          const computedStyle = window.getComputedStyle(self.elements[0]);
+          const bgImage = computedStyle.backgroundImage;
+          const hasGradient = bgImage && bgImage !== 'none' && bgImage.includes('gradient');
 
+          // Force red color explicitly on red text nodes before processing gradients
+          const redNodes = self.elements[0].querySelectorAll('.txt_red, .cl_red, .cl_main');
+          redNodes.forEach(node => {
+            node.style.setProperty('-webkit-text-fill-color', '#E62636', 'important');
+            node.style.setProperty('color', '#E62636', 'important');
+          });
 
-
-            const bgImage = computedStyle.backgroundImage;
-            const hasGradient = bgImage && bgImage !== 'none' && bgImage.includes('gradient');
-
-            // Force red color explicitly on red text nodes before processing gradients
-            const redNodes = self.elements[0].querySelectorAll('.txt_red, .cl_red, .cl_main');
-            redNodes.forEach(node => {
-              node.style.setProperty('-webkit-text-fill-color', '#E62636', 'important');
-              node.style.setProperty('color', '#E62636', 'important');
+          if (hasGradient) {
+            const parentRect = self.elements[0].getBoundingClientRect();
+            const parentWidth = parentRect.width;
+            self[this.splitType].forEach(child => {
+              if (child.classList.contains('txt_red') || child.classList.contains('cl_red') || child.classList.contains('cl_main') || child.classList.contains('cl_linear_red') || child.querySelector('.txt_red, .cl_red, .cl_main, .cl_linear_red') || child.closest('.txt_red, .cl_red, .cl_main, .cl_linear_red')) {
+                return;
+              }
+              const childRect = child.getBoundingClientRect();
+              const offsetX = childRect.left - parentRect.left;
+              child.style.backgroundImage = bgImage;
+              child.style.backgroundSize = `${parentWidth}px 100%`;
+              child.style.backgroundPosition = `-${offsetX}px 0px`;
+              child.style.webkitBackgroundClip = 'text';
+              child.style.webkitTextFillColor = 'transparent';
+              child.style.backgroundClip = 'text';
             });
-
-            if (hasGradient) {
-              const parentRect = self.elements[0].getBoundingClientRect();
-              const parentWidth = parentRect.width;
-              self[this.splitType].forEach(child => {
-                if (child.classList.contains('txt_red') || child.classList.contains('cl_red') || child.classList.contains('cl_main') || child.classList.contains('cl_linear_red') || child.querySelector('.txt_red, .cl_red, .cl_main, .cl_linear_red') || child.closest('.txt_red, .cl_red, .cl_main, .cl_linear_red')) {
-                  return;
-                }
-                const childRect = child.getBoundingClientRect();
-                const offsetX = childRect.left - parentRect.left;
-                child.style.backgroundImage = bgImage;
-                child.style.backgroundSize = `${parentWidth}px 100%`;
-                child.style.backgroundPosition = `-${offsetX}px 0px`;
-                child.style.webkitBackgroundClip = 'text';
-                child.style.webkitTextFillColor = 'transparent';
-                child.style.backgroundClip = 'text';
-              });
-            }
-            if (isDisableAnim) {
-              gsap.set(self[this.splitType], { autoAlpha: 1, yPercent: 100 });
-              return;
-            }
-            gsap.set(self[this.splitType], { autoAlpha: 0, yPercent: 100 });
-            const hasTranslate = self.elements[0].classList.contains('item_translate');
-            if (hasTranslate) {
-              gsap.set(self.elements[0], { x: 0 });
-              const tl = gsap.timeline();
-              tl.to(self[this.splitType], {
-                autoAlpha: 1,
-                yPercent: 0,
-                stagger: this.stagger,
-                duration: this.duration,
-                ease: 'power2.out',
-                ...props
-              });
-              tl.to(self.elements[0], {
-                x: viewport.w > 992 ? 100 : 32,
-                duration: 0.6,
-                ease: 'power2.out',
-                onComplete: () => {
-                  if (!isDisableRevert) {
-                    self.revert();
-                    convertHyphenDOM(self.elements[0]);
-                  }
-                }
-              }, ">-=0.2");
-              animation = tl;
-            } else {
-              animation = gsap.to(self[this.splitType], {
-                autoAlpha: 1,
-                yPercent: 0,
-                stagger: this.stagger,
-                duration: this.duration,
-                ease: 'power2.out',
-                onComplete: () => {
-                  if (!isDisableRevert) {
-                    self.revert();
-                    convertHyphenDOM(self.elements[0]);
-                  }
-                },
-                ...props
-              });
-            }
           }
-        });
-        this.animation = animation;
-      })
-    }
-    init() {
-      if (this.isFallback) {
-        gsap.set(this.DOM.el, { opacity: 0, y: parseRem(32) });
-      } else {
-        document.fonts.ready.then(() => {
-
-        })
-      }
+          if (this.isDisableAnim) {
+            gsap.set(self[this.splitType], { autoAlpha: 1, yPercent: 100 });
+            return;
+          }
+          gsap.set(self[this.splitType], { autoAlpha: 0, yPercent: 100 });
+          const hasTranslate = self.elements[0].classList.contains('item_translate');
+          if (hasTranslate) {
+            gsap.set(self.elements[0], { x: 0 });
+            const tl = gsap.timeline();
+            tl.to(self[this.splitType], {
+              autoAlpha: 1,
+              yPercent: 0,
+              stagger: this.stagger,
+              duration: this.duration,
+              ease: 'power2.out',
+              ...this.props
+            });
+            tl.to(self.elements[0], {
+              x: viewport.w > 992 ? 100 : 32,
+              duration: 0.6,
+              ease: 'power2.out',
+              onComplete: () => {
+                if (!this.isDisableRevert) {
+                  self.revert();
+                  convertHyphenDOM(self.elements[0]);
+                }
+              }
+            }, ">-=0.2");
+            animation = tl;
+          } else {
+            animation = gsap.to(self[this.splitType], {
+              autoAlpha: 1,
+              yPercent: 0,
+              stagger: this.stagger,
+              duration: this.duration,
+              ease: 'power2.out',
+              onComplete: () => {
+                if (!this.isDisableRevert) {
+                  self.revert();
+                  convertHyphenDOM(self.elements[0]);
+                }
+              },
+              ...this.props
+            });
+          }
+        }
+      });
+      this.animation = animation;
     }
     play() {
+      if (getScreenType().isMobile) return null;
       return this.animation ? this.animation.play() : null;
     }
     destroy() {
+      if (getScreenType().isMobile) return;
       if (this.animation) this.animation.kill();
       if (this.textSplit) this.textSplit.revert();
     }
@@ -400,6 +412,10 @@ const mainScript = () => {
       this.DOM = { el: el };
       this.type = type || 'default';
       this.delay = delay;
+      this.isDisableRevert = isDisableRevert;
+      this.from = from;
+      this.to = to;
+      this.props = props;
       this.options = {
         bottom: {
           set: { opacity: 0, y: parseRem(100), ...from },
@@ -426,8 +442,13 @@ const mainScript = () => {
           to: { opacity: 1, y: 0, ...to }
         }
       };
+    }
+    init() {
+      if (!this.DOM.el || getScreenType().isMobile) return;
+      if (this.animation) return; // avoid duplicate initialization
 
-      if (!this.DOM.el) return;
+      gsap.set(this.DOM.el, { ...this.options[this.type]?.set || this.options.default.set });
+
       this.animation = gsap.fromTo(this.DOM.el,
         { ...this.options[this.type]?.set || this.options.default.set },
         {
@@ -435,18 +456,16 @@ const mainScript = () => {
           duration: 1,
           ease: 'power3',
           clearProps: 'all',
-          ...props
+          ...this.props
         });
     }
-    init() {
-      if (!this.DOM.el) return;
-      gsap.set(this.DOM.el, { ...this.options[this.type]?.set || this.options.default.set });
-    }
     play() {
+      if (getScreenType().isMobile) return null;
       return this.animation ? this.animation.play() : null;
     }
     destroy() {
-      this.animation.kill();
+      if (getScreenType().isMobile) return;
+      if (this.animation) this.animation.kill();
     }
   }
   class ScaleDash {
@@ -454,50 +473,56 @@ const mainScript = () => {
       this.DOM = { el: el };
       this.type = type || 'default';
       this.delay = delay;
+      this.isCenter = isCenter;
+      this.isDisableRevert = isDisableRevert;
+      this.props = props;
+    }
+    init() {
+      if (!this.DOM?.el || getScreenType().isMobile) return;
+      if (this.animation) return; // avoid duplicate initialization
+
       this.widthItem = this.DOM.el.offsetWidth || 0;
       this.heightItem = this.DOM.el.offsetHeight || 0;
       this.options = {
         top: {
-          set: { height: 0, transformOrigin: isCenter ? 'center center' : 'top left' },
+          set: { height: 0, transformOrigin: this.isCenter ? 'center center' : 'top left' },
           to: { height: this.heightItem }
         },
         bottom: {
-          set: { height: 0, transformOrigin: isCenter ? 'center center' : 'bottom left' },
+          set: { height: 0, transformOrigin: this.isCenter ? 'center center' : 'bottom left' },
           to: { height: this.heightItem }
         },
         left: {
-          set: { width: 0, transformOrigin: isCenter ? 'center center' : 'top left' },
+          set: { width: 0, transformOrigin: this.isCenter ? 'center center' : 'top left' },
           to: { width: this.widthItem }
         },
         right: {
-          set: { width: 0, transformOrigin: isCenter ? 'center center' : 'top right' },
+          set: { width: 0, transformOrigin: this.isCenter ? 'center center' : 'top right' },
           to: { width: this.widthItem }
         },
         default: {
-          set: { height: 0, transformOrigin: isCenter ? 'center center' : 'top left' },
+          set: { height: 0, transformOrigin: this.isCenter ? 'center center' : 'top left' },
           to: { height: this.heightItem }
         }
       };
+
+      gsap.set(this.DOM.el, { ...this.options[this.type]?.set || this.options.default.set });
+
       this.animation = gsap.fromTo(this.DOM.el,
         { ...this.options[this.type]?.set || this.options.default.set },
         {
           ...this.options[this.type]?.to || this.options.default.to,
           duration: 1.2,
           ease: 'power1.out',
-          clearProps: isDisableRevert ? '' : 'all',
-          ...props
+          clearProps: this.isDisableRevert ? '' : 'all',
+          ...this.props
         });
-    }
-    init() {
-      if (!this.DOM?.el) return;
-
-      gsap.set(this.DOM.el, { ...this.options[this.type]?.set || this.options.default.set });
     }
     play() {
       return this.animation ? this.animation.play() : null;
     }
     destroy() {
-      this.animation.kill();
+      if (this.animation) this.animation.kill();
     }
   }
   class ScaleLine {
@@ -507,6 +532,9 @@ const mainScript = () => {
       this.DOM = { el: el };
       this.type = type || 'default';
       this.delay = delay;
+      this.isCenter = isCenter;
+      this.isDisableRevert = isDisableRevert;
+      this.props = props;
       this.options = {
         top: {
           set: { scaleY: 0, transformOrigin: isCenter ? 'center center' : 'top left' },
@@ -529,58 +557,64 @@ const mainScript = () => {
           to: { scaleX: 1 }
         }
       };
+    }
+    init() {
+      if (!this.DOM?.el || getScreenType().isMobile) return;
+      if (this.animation) return; // avoid duplicate initialization
+
+      gsap.set(this.DOM.el, { ...this.options[this.type]?.set || this.options.default.set });
+
       this.animation = gsap.fromTo(this.DOM.el,
         { ...this.options[this.type]?.set || this.options.default.set },
         {
           ...this.options[this.type]?.to || this.options.default.to,
           duration: 1.2,
           ease: 'none',
-          clearProps: isDisableRevert ? '' : 'all',
-          ...props
+          clearProps: this.isDisableRevert ? '' : 'all',
+          ...this.props
         });
-    }
-    init() {
-      if (!this.DOM?.el) return;
-
-      gsap.set(this.DOM.el, { ...this.options[this.type]?.set || this.options.default.set });
     }
     play() {
       return this.animation ? this.animation.play() : null;
     }
     destroy() {
-      this.animation.kill();
+      if (this.animation) this.animation.kill();
     }
   }
   class ScaleInset {
     constructor({ el, delay, duration, isDisableRevert, onComplete }) {
       this.DOM = { el: el };
       this.delay = delay;
+      this.duration = duration;
+      this.isDisableRevert = isDisableRevert;
+      this.onComplete = onComplete;
+    }
+    init() {
+      if (!this.DOM.el || getScreenType().isMobile) return;
+      if (this.animation) return; // avoid duplicate initialization
 
-      const d = duration || 1.4;
+      gsap.set(this.DOM.el, { scale: 1.08, autoAlpha: 0, y: 24 });
 
+      const d = this.duration || 1.4;
       const tl = gsap.timeline();
 
-      tl.to(el, {
+      tl.to(this.DOM.el, {
         scale: 1,
         autoAlpha: 1,
         y: 0,
         duration: d,
         ease: 'expo.out',
-        clearProps: isDisableRevert ? '' : 'all',
+        clearProps: this.isDisableRevert ? '' : 'all',
       }, 0);
 
-      if (onComplete) tl.eventCallback('onComplete', onComplete);
+      if (this.onComplete) tl.eventCallback('onComplete', this.onComplete);
       this.animation = tl;
-    }
-    init() {
-      if (!this.DOM.el) return;
-      gsap.set(this.DOM.el, { scale: 1.08, autoAlpha: 0, y: 24 });
     }
     play() {
       return this.animation ? this.animation.play() : null;
     }
     destroy() {
-      this.animation.kill();
+      if (this.animation) this.animation.kill();
     }
   }
 
@@ -927,7 +961,8 @@ const mainScript = () => {
           }, 1000);
         } else {
           setTimeout(() => {
-            $(".body-inner").animate(
+            const $scroller = $(".body-inner").length ? $(".body-inner") : $("html, body");
+            $scroller.animate(
               {
                 scrollTop: $(window.location.hash).offset().top,
               },
@@ -958,9 +993,10 @@ const mainScript = () => {
               });
             }, 500);
           } else {
-            $(".body-inner").animate(
+            const $scroller = $(".body-inner").length ? $(".body-inner") : $("html, body");
+            $scroller.animate(
               {
-                scrollTop: $(window.location.hash).offset().top,
+                scrollTop: $(target).offset().top,
               },
               1200,
               "exponentialEaseOut",
@@ -1019,6 +1055,7 @@ const mainScript = () => {
   class SmoothScroll {
     constructor() {
       this.lenis = null;
+      this.nativeScrollHandler = null;
       this.scroller = {
         scrollX: window.scrollX,
         scrollY: window.scrollY,
@@ -1041,6 +1078,14 @@ const mainScript = () => {
       };
     }
 
+    get scroll() {
+      return this.scroller.scrollY;
+    }
+
+    get direction() {
+      return this.scroller.direction;
+    }
+
     init(data) {
       this.reInit(data);
 
@@ -1048,75 +1093,75 @@ const mainScript = () => {
         return Math.min(1, 1.001 - Math.pow(2, -10 * t));
       };
 
-      gsap.ticker.add((time) => {
+      this.tickerCb = (time) => {
         if (this.lenis) {
           this.lenis.raf(time * 1000);
         }
-      });
+      };
+      gsap.ticker.add(this.tickerCb);
       gsap.ticker.lagSmoothing(0);
     }
 
     reInit(data) {
       if (this.lenis) {
         this.lenis.destroy();
+        this.lenis = null;
+      }
+      if (this.nativeScrollHandler) {
+        window.removeEventListener("scroll", this.nativeScrollHandler);
+        this.nativeScrollHandler = null;
       }
 
       let namespace = data
         ? data.next.namespace
         : $('[data-barba="container"]').attr("data-barba-namespace");
 
-      const CONFIG_INSTANT = {
-        lerp: 1,
-        duration: 0,
-        normalizeWheel: false,
-        syncTouch: false,
-        smoothWheel: true,
-        smoothTouch: false,
-        infinite: false,
-      };
-
-      this.lenis = new Lenis({
-        content: document.documentElement,
-        wrapper: document.documentElement,
-        ...(viewport.w <= 767 && CONFIG_INSTANT),
-      });
-      if (viewport.w <= 767) {
-        const lenis = this.lenis;
-        const bodyInner = document.querySelector(".body-inner");
-        ScrollTrigger.scrollerProxy(bodyInner, {
-          scrollTop(value) {
-            if (arguments.length) {
-              lenis.scrollTo(value, { immediate: true, duration: 0 });
-            }
-            return lenis.scroll;
-          },
-          getBoundingClientRect() {
-            return {
-              top: 0,
-              left: 0,
-              width: window.innerWidth,
-              height: window.innerHeight,
-            };
-          },
+      if (viewport.w > 767) {
+        this.lenis = new Lenis({
+          content: document.documentElement,
+          wrapper: document.documentElement,
         });
 
-        // Config global
-        ScrollTrigger.addEventListener("refresh", () => lenis.resize());
+        // Đồng bộ scroll event
+        this.lenis.on("scroll", ScrollTrigger.update);
 
-        ScrollTrigger.refresh();
+        this.lenis.on("scroll", (e) => {
+          this.updateOnScroll(e);
+        });
+      } else {
+        // On mobile, use native scrolling. Reset ScrollTrigger defaults to window.
+        ScrollTrigger.defaults({
+          scroller: window,
+        });
         ScrollTrigger.config({ ignoreMobileResize: true });
 
-        ScrollTrigger.defaults({
-          scroller: bodyInner,
+        let ticking = false;
+        this.nativeScrollHandler = () => {
+          if (!ticking) {
+            window.requestAnimationFrame(() => {
+              const scrollY = window.scrollY || document.documentElement.scrollTop;
+              const direction = scrollY > this.scroller.scrollY ? 1 : (scrollY < this.scroller.scrollY ? -1 : 0);
+              this.updateOnScroll({
+                scroll: scrollY,
+                velocity: 0,
+                direction: direction
+              });
+              ticking = false;
+            });
+            ticking = true;
+          }
+        };
+
+        window.addEventListener("scroll", this.nativeScrollHandler, { passive: true });
+
+        // Trigger initial update
+        const initialScrollY = window.scrollY || document.documentElement.scrollTop;
+        this.updateOnScroll({
+          scroll: initialScrollY,
+          velocity: 0,
+          direction: 0
         });
       }
-
-      // Đồng bộ scroll event
-      this.lenis.on("scroll", ScrollTrigger.update);
-
-      this.lenis.on("scroll", (e) => {
-        this.updateOnScroll(e);
-      });
     }
     reachedThreshold(threshold) {
       if (!threshold) return false;
@@ -1141,7 +1186,7 @@ const mainScript = () => {
       this.scroller.direction = e.direction;
 
       if (header) {
-        header.updateOnScroll(smoothScroll.lenis);
+        header.updateOnScroll(this);
       }
     }
 
@@ -1191,6 +1236,8 @@ const mainScript = () => {
         const bodyInner = document.querySelector(".body-inner");
         if (bodyInner) {
           bodyInner.scrollTop = target;
+        } else {
+          window.scrollTo(0, target);
         }
       } else {
         window.scrollTo(0, target);
@@ -1210,12 +1257,16 @@ const mainScript = () => {
     }
 
     destroy() {
+      if (this.tickerCb) {
+        gsap.ticker.remove(this.tickerCb);
+      }
       if (this.lenis) {
-        gsap.ticker.remove((time) => {
-          this.lenis.raf(time * 1000);
-        });
         this.lenis.destroy();
         this.lenis = null;
+      }
+      if (this.nativeScrollHandler) {
+        window.removeEventListener("scroll", this.nativeScrollHandler);
+        this.nativeScrollHandler = null;
       }
     }
   }
@@ -1735,7 +1786,7 @@ const mainScript = () => {
       }
     }
     update(data) {
-      this.updateOnScroll(smoothScroll.lenis);
+      this.updateOnScroll(smoothScroll);
     }
     onHideDependent() {
       let heightHeader = $(this.el).outerHeight();
@@ -1833,6 +1884,7 @@ const mainScript = () => {
       this.addressFade = null;
       this.formFade = null;
       this.botFade = null;
+      this.videoObserver = null;
     }
     init(data) {
       this.el = document.querySelector("footer");
@@ -1851,7 +1903,7 @@ const mainScript = () => {
       if (this.formEl) {
         this.handleSubmit = (e) => {
           e.preventDefault();
-          
+
           let isValid = true;
           const inputs = this.formEl.querySelectorAll('input[required]');
           inputs.forEach(input => {
@@ -1862,7 +1914,7 @@ const mainScript = () => {
               input.style.borderColor = '';
             }
           });
-          
+
           if (isValid) {
             const submitBtnInit = this.formEl.querySelector('.btn_submit .init');
             let originalText = "SUBMIT";
@@ -1870,38 +1922,59 @@ const mainScript = () => {
               originalText = submitBtnInit.innerText;
               submitBtnInit.innerText = "SENDING...";
             }
-            
-            const formData = new FormData(this.formEl);
-            formData.append('action', 'submit_footer_form');
-            const ajaxUrl = typeof ajax_obj !== 'undefined' ? ajax_obj.ajax_url : '/wp-admin/admin-ajax.php';
-            
-            fetch(ajaxUrl, {
-              method: 'POST',
-              body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-              if (submitBtnInit) {
-                submitBtnInit.innerText = originalText;
+
+            const submitForm = (token = '') => {
+              const formData = new FormData(this.formEl);
+              formData.append('action', 'submit_footer_form');
+              if (token) {
+                formData.append('g-recaptcha-response', token);
               }
-              if (data.status === 1) {
-                this.formEl.style.display = 'none';
-                const successMsg = document.createElement('div');
-                successMsg.className = 'txt_18 cl_be';
-                successMsg.style.marginTop = '20px';
-                successMsg.innerHTML = '<p>Thank you for getting in touch! We will get back to you soon.</p>';
-                this.formEl.parentNode.appendChild(successMsg);
-              } else {
-                alert(data.message || 'Có lỗi xảy ra, vui lòng thử lại sau.');
-              }
-            })
-            .catch(error => {
-              console.error('Error:', error);
-              if (submitBtnInit) {
-                submitBtnInit.innerText = originalText;
-              }
-              alert(data.message || 'Có lỗi xảy ra, vui lòng thử lại sau.');
-            });
+              const ajaxUrl = typeof ajax_obj !== 'undefined' ? ajax_obj.ajax_url : '/wp-admin/admin-ajax.php';
+
+              fetch(ajaxUrl, {
+                method: 'POST',
+                body: formData
+              })
+                .then(response => response.json())
+                .then(data => {
+                  if (submitBtnInit) {
+                    submitBtnInit.innerText = originalText;
+                  }
+                  if (data.status === 1) {
+                    this.formEl.style.display = 'none';
+                    const successMsg = document.createElement('div');
+                    successMsg.className = 'txt_18 cl_be';
+                    successMsg.style.marginTop = '20px';
+                    successMsg.innerHTML = '<p>Thank you for getting in touch! We will get back to you soon.</p>';
+                    this.formEl.parentNode.appendChild(successMsg);
+                  } else {
+                    alert(data.message || 'Có lỗi xảy ra, vui lòng thử lại sau.');
+                  }
+                })
+                .catch(error => {
+                  console.error('Error:', error);
+                  if (submitBtnInit) {
+                    submitBtnInit.innerText = originalText;
+                  }
+                  alert('Có lỗi xảy ra, vui lòng thử lại sau.');
+                });
+            };
+
+            const siteKey = typeof caseStudyAjax !== 'undefined' ? caseStudyAjax.recaptchaSiteKey : '';
+            if (typeof grecaptcha !== 'undefined' && siteKey) {
+              grecaptcha.ready(() => {
+                grecaptcha.execute(siteKey, { action: 'submit_footer_form' })
+                  .then(token => {
+                    submitForm(token);
+                  })
+                  .catch(err => {
+                    console.error('reCAPTCHA error:', err);
+                    submitForm();
+                  });
+              });
+            } else {
+              submitForm();
+            }
           }
         };
         this.formEl.addEventListener('submit', this.handleSubmit);
@@ -1921,6 +1994,35 @@ const mainScript = () => {
       }
       if (this.bot) {
         this.botFade = new FadeIn({ el: this.bot, type: 'bottom', isDisableRevert: true });
+      }
+
+      // Lazy load footer video when scroll is near (within 2000px / ~200vh)
+      const lazyVideo = this.el.querySelector('.lazy-footer-video');
+      if (lazyVideo) {
+        if ('IntersectionObserver' in window) {
+          this.videoObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                const dataSrc = lazyVideo.getAttribute('data-src');
+                if (dataSrc) {
+                  lazyVideo.setAttribute('src', dataSrc);
+                  lazyVideo.load();
+                  lazyVideo.play().catch(e => console.log("Video play interrupted:", e));
+                }
+                observer.unobserve(lazyVideo);
+              }
+            });
+          }, {
+            rootMargin: '2000px 0px 2000px 0px' // Load when video is within 2000px of viewport
+          });
+          this.videoObserver.observe(lazyVideo);
+        } else {
+          // Fallback if IntersectionObserver is not supported
+          const dataSrc = lazyVideo.getAttribute('data-src');
+          if (dataSrc) {
+            lazyVideo.setAttribute('src', dataSrc);
+          }
+        }
       }
     }
     animFade() {
@@ -1977,6 +2079,10 @@ const mainScript = () => {
       if (this.formEl) {
         this.formEl.removeEventListener('submit', this.handleSubmit);
         this.formEl = null;
+      }
+      if (this.videoObserver) {
+        this.videoObserver.disconnect();
+        this.videoObserver = null;
       }
     }
   }
@@ -2056,6 +2162,7 @@ const mainScript = () => {
       this.master = new MasterTimeline({ timeline: this.fadeTl, triggerInit: this.el, tweenArr, stagger: 0.2 });
     }
     animBgDecorators() {
+      if (viewport.w <= 767) return; // Skip on mobile
       const tweenArr = [];
       if (this.bgTopFade) tweenArr.push(this.bgTopFade);
       if (this.bgBotFade) tweenArr.push(this.bgBotFade);
@@ -2205,148 +2312,164 @@ const mainScript = () => {
       }
       animScrub() {
         // ── home_intro_main: horizontal scroll panel ──
-        this.introTl = gsap.timeline({
-          scrollTrigger: {
-            trigger: '.home_intro_wrap',
-            start: 'top+=5% top',
-            end: () => `bottom bottom`,
-            scrub: true,
-            invalidateOnRefresh: true,
+        if (viewport.w > 767) {
+          this.introTl = gsap.timeline({
+            scrollTrigger: {
+              trigger: '.home_intro_wrap',
+              start: 'top+=5% top',
+              end: () => `bottom bottom`,
+              scrub: true,
+              invalidateOnRefresh: true,
+            }
+          });
+          if (viewport.w >= 992) {
+            this.introTl.to('.home_intro_main', {
+              x: () => -viewport.w * .95,
+              ease: 'none',
+            });
+
+            this.introTl
+              .to('.home_intro_img_list:nth-child(1)', {
+                x: '-=90%',
+                ease: 'none',
+              }, 0)
+              .to('.home_intro_img_list:nth-child(2)', {
+                x: '+=55%',
+                ease: 'none',
+              }, 0)
+              .to('.home_intro_img_list:nth-child(3)', {
+                x: '-=45%',
+                ease: 'none',
+              }, 0)
+              .to('.home_intro_img_list:nth-child(4)', {
+                x: '+=80%',
+                ease: 'none',
+              }, 0);
           }
-        });
-        if (viewport.w >= 992) {
-          this.introTl.to('.home_intro_main', {
-            x: () => -viewport.w * .95,
-            ease: 'none',
-          });
+          else {
+            this.introTl.to('.home_intro_main', {
+              x: () => -viewport.w * 1.8,
+              ease: 'none',
+            });
 
-          this.introTl
-            .to('.home_intro_img_list:nth-child(1)', {
-              x: '-=90%',
-              ease: 'none',
-            }, 0)
-            .to('.home_intro_img_list:nth-child(2)', {
-              x: '+=55%',
-              ease: 'none',
-            }, 0)
-            .to('.home_intro_img_list:nth-child(3)', {
-              x: '-=45%',
-              ease: 'none',
-            }, 0)
-            .to('.home_intro_img_list:nth-child(4)', {
-              x: '+=80%',
-              ease: 'none',
-            }, 0);
-        }
-        else if (viewport.w > 767) {
-          this.introTl.to('.home_intro_main', {
-            x: () => -viewport.w * 1.8,
-            ease: 'none',
-          });
-
-          this.introTl
-            .to('.home_intro_img_list:nth-child(1)', {
-              x: '-=90%',
-              ease: 'none',
-            }, 0)
-            .to('.home_intro_img_list:nth-child(2)', {
-              x: '+=45%',
-              ease: 'none',
-            }, 0)
-            .to('.home_intro_img_list:nth-child(3)', {
-              x: '-=40%',
-              ease: 'none',
-            }, 0)
-            .to('.home_intro_img_list:nth-child(4)', {
-              x: '+=70%',
-              ease: 'none',
-            }, 0);
-        }
-        else {
-          this.introTl
-            .to('.home_intro_img_list:nth-child(1)', {
-              x: '-=60%',
-              ease: 'none',
-            }, 0)
-            .to('.home_intro_img_list:nth-child(2)', {
-              x: '+=35%',
-              ease: 'none',
-            }, 0)
-            .to('.home_intro_img_list:nth-child(3)', {
-              x: '-=30%',
-              ease: 'none',
-            }, 0)
-            .to('.home_intro_img_list:nth-child(4)', {
-              x: '+=30%',
-              ease: 'none',
-            }, 0);
+            this.introTl
+              .to('.home_intro_img_list:nth-child(1)', {
+                x: '-=90%',
+                ease: 'none',
+              }, 0)
+              .to('.home_intro_img_list:nth-child(2)', {
+                x: '+=45%',
+                ease: 'none',
+              }, 0)
+              .to('.home_intro_img_list:nth-child(3)', {
+                x: '-=40%',
+                ease: 'none',
+              }, 0)
+              .to('.home_intro_img_list:nth-child(4)', {
+                x: '+=70%',
+                ease: 'none',
+              }, 0);
+          }
         }
 
         // Helper trigger to control exit/entry locking and animation without scrub conflicts
-        this.boundaryTrigger = ScrollTrigger.create({
-          trigger: '.home_intro_wrap',
-          start: 'top+=5% top',
-          end: () => `bottom bottom`,
-          onLeave: () => {
-            smoothScroll.stop();
-            if (this.boundaryTrigger) {
-              smoothScroll.scrollToPosition(this.boundaryTrigger.end + 5);
-            }
-            if (this.introTl && this.introTl.scrollTrigger) {
-              this.introTl.scrollTrigger.disable(false);
-            }
-
-            gsap.timeline({
-              onComplete: () => {
-                smoothScroll.start();
+        if (viewport.w > 767) {
+          this.boundaryTrigger = ScrollTrigger.create({
+            trigger: '.home_intro_wrap',
+            start: 'top+=5% top',
+            end: () => `bottom bottom`,
+            onLeave: () => {
+              smoothScroll.stop();
+              if (this.boundaryTrigger) {
+                smoothScroll.scrollToPosition(this.boundaryTrigger.end + 5);
               }
-            })
-              .to('.home_intro_img_list:nth-child(1)', { x: '-180%', duration: 1.6, ease: 'power2.inOut', overwrite: 'auto' }, 0)
-              .to('.home_intro_img_list:nth-child(2)', { x: '220%', duration: 1.6, ease: 'power2.inOut', overwrite: 'auto' }, 0)
-              .to('.home_intro_img_list:nth-child(3)', { x: '-180%', duration: 1.6, ease: 'power2.inOut', overwrite: 'auto' }, 0)
-              .to('.home_intro_img_list:nth-child(4)', { x: '240%', duration: 1.6, ease: 'power2.inOut', overwrite: 'auto' }, 0);
-          },
-          onEnterBack: () => {
-            smoothScroll.stop();
-            if (this.boundaryTrigger) {
-              smoothScroll.scrollToPosition(this.boundaryTrigger.end - 5);
-            }
-            if (this.introTl && this.introTl.scrollTrigger) {
-              this.introTl.scrollTrigger.disable(false);
-            }
+              if (this.introTl && this.introTl.scrollTrigger) {
+                this.introTl.scrollTrigger.disable(false);
+              }
 
-            let targetX1, targetX2, targetX3, targetX4;
-            if (viewport.w >= 992) {
-              targetX1 = '-30%';
-              targetX2 = '70%';
-              targetX3 = '-20%';
-              targetX4 = '90%';
-            } else if (viewport.w > 767) {
-              targetX1 = '-30%';
-              targetX2 = '45%';
-              targetX3 = '-15%';
-              targetX4 = '80%';
-            } else {
-              targetX1 = '-40%';
-              targetX2 = '35%';
-              targetX3 = '-25%';
-              targetX4 = '35%';
-            }
-
-            gsap.timeline({
-              onComplete: () => {
-                if (this.introTl && this.introTl.scrollTrigger) {
-                  this.introTl.scrollTrigger.enable(false);
+              gsap.timeline({
+                onComplete: () => {
+                  smoothScroll.start();
                 }
-                smoothScroll.start();
+              })
+                .to('.home_intro_img_list:nth-child(1)', { x: '-180%', duration: 1.6, ease: 'power2.inOut', overwrite: 'auto' }, 0)
+                .to('.home_intro_img_list:nth-child(2)', { x: '220%', duration: 1.6, ease: 'power2.inOut', overwrite: 'auto' }, 0)
+                .to('.home_intro_img_list:nth-child(3)', { x: '-180%', duration: 1.6, ease: 'power2.inOut', overwrite: 'auto' }, 0)
+                .to('.home_intro_img_list:nth-child(4)', { x: '240%', duration: 1.6, ease: 'power2.inOut', overwrite: 'auto' }, 0);
+            },
+            onEnterBack: () => {
+              smoothScroll.stop();
+              if (this.boundaryTrigger) {
+                smoothScroll.scrollToPosition(this.boundaryTrigger.end - 5);
               }
-            })
-              .to('.home_intro_img_list:nth-child(1)', { x: targetX1, duration: 1, ease: 'power2.out', overwrite: 'auto' }, 0)
-              .to('.home_intro_img_list:nth-child(2)', { x: targetX2, duration: 1, ease: 'power2.out', overwrite: 'auto' }, 0)
-              .to('.home_intro_img_list:nth-child(3)', { x: targetX3, duration: 1, ease: 'power2.out', overwrite: 'auto' }, 0)
-              .to('.home_intro_img_list:nth-child(4)', { x: targetX4, duration: 1, ease: 'power2.out', overwrite: 'auto' }, 0);
+              if (this.introTl && this.introTl.scrollTrigger) {
+                this.introTl.scrollTrigger.disable(false);
+              }
+
+              let targetX1, targetX2, targetX3, targetX4;
+              if (viewport.w >= 992) {
+                targetX1 = '-30%';
+                targetX2 = '70%';
+                targetX3 = '-20%';
+                targetX4 = '90%';
+              } else {
+                targetX1 = '-30%';
+                targetX2 = '45%';
+                targetX3 = '-15%';
+                targetX4 = '80%';
+              }
+
+              gsap.timeline({
+                onComplete: () => {
+                  if (this.introTl && this.introTl.scrollTrigger) {
+                    this.introTl.scrollTrigger.enable(false);
+                  }
+                  smoothScroll.start();
+                }
+              })
+                .to('.home_intro_img_list:nth-child(1)', { x: targetX1, duration: 1, ease: 'power2.out', overwrite: 'auto' }, 0)
+                .to('.home_intro_img_list:nth-child(2)', { x: targetX2, duration: 1, ease: 'power2.out', overwrite: 'auto' }, 0)
+                .to('.home_intro_img_list:nth-child(3)', { x: targetX3, duration: 1, ease: 'power2.out', overwrite: 'auto' }, 0)
+                .to('.home_intro_img_list:nth-child(4)', { x: targetX4, duration: 1, ease: 'power2.out', overwrite: 'auto' }, 0);
+            }
+          });
+        } else {
+          // Mobile: trigger exit when .home_specialize top-=10% touches viewport top
+          const specEl = document.querySelector('.home_specialize');
+          if (specEl) {
+            ScrollTrigger.refresh();
+            this.boundaryTrigger = ScrollTrigger.create({
+              trigger: specEl,
+              start: 'top-=40% top',
+              onEnter: () => {
+                if (this.introTl && this.introTl.scrollTrigger) {
+                  this.introTl.scrollTrigger.disable(false);
+                }
+                gsap.timeline()
+                  .to('.home_intro_img_list:nth-child(1)', { x: '-180%', duration: 1.6, ease: 'power2.inOut', overwrite: 'auto' }, 0)
+                  .to('.home_intro_img_list:nth-child(2)', { x: '220%', duration: 1.6, ease: 'power2.inOut', overwrite: 'auto' }, 0)
+                  .to('.home_intro_img_list:nth-child(3)', { x: '-180%', duration: 1.6, ease: 'power2.inOut', overwrite: 'auto' }, 0)
+                  .to('.home_intro_img_list:nth-child(4)', { x: '240%', duration: 1.6, ease: 'power2.inOut', overwrite: 'auto' }, 0);
+              },
+              onLeaveBack: () => {
+                if (this.introTl && this.introTl.scrollTrigger) {
+                  this.introTl.scrollTrigger.disable(false);
+                }
+                gsap.timeline({
+                  onComplete: () => {
+                    if (this.introTl && this.introTl.scrollTrigger) {
+                      this.introTl.scrollTrigger.enable(false);
+                    }
+                  }
+                })
+                  .to('.home_intro_img_list:nth-child(1)', { x: '-25%', duration: 1, ease: 'power2.out', overwrite: 'auto' }, 0)
+                  .to('.home_intro_img_list:nth-child(2)', { x: '30%', duration: 1, ease: 'power2.out', overwrite: 'auto' }, 0)
+                  .to('.home_intro_img_list:nth-child(3)', { x: '-20%', duration: 1, ease: 'power2.out', overwrite: 'auto' }, 0)
+                  .to('.home_intro_img_list:nth-child(4)', { x: '30%', duration: 1, ease: 'power2.out', overwrite: 'auto' }, 0);
+              }
+            });
           }
-        });
+        }
       }
       destroy() {
         super.cleanTrigger();
@@ -2492,6 +2615,7 @@ const mainScript = () => {
         }
       }
       animScrub() {
+        if (viewport.w <= 767) return; // Skip on mobile
         if (!this.pattern) return;
 
         this.scrubTl = gsap.timeline({
@@ -2847,15 +2971,17 @@ const mainScript = () => {
           span.style.display = 'inline-block';
 
           if (index === 0) {
-            this.fadeSplitActive = new FadeSplitText({ el: span, splitType: 'chars', isDisableRevert: true, delay: '<=0.2' });
+            this.fadeSplitActive = new FadeSplitText({ el: span, splitType: 'chars', isDisableRevert: true, delay: '<=0.2', forceSplitOnMobile: true });
+            this.fadeSplitActive.init();
             this.splits.push(this.fadeSplitActive);
+            gsap.set(span, { opacity: 1 });
           } else {
-            const inactiveSplit = new FadeSplitText({ el: span, splitType: 'chars', isDisableRevert: true, isDisableAnim: true });
+            const inactiveSplit = new FadeSplitText({ el: span, splitType: 'chars', isDisableRevert: true, isDisableAnim: true, forceSplitOnMobile: true });
+            inactiveSplit.init();
             this.splits.push(inactiveSplit);
+            // Hide inactive spans on mobile/tablet since SplitText/GSAP translates are bypassed
+            gsap.set(span, { opacity: (inactiveSplit.textSplit ? 1 : 0) });
           }
-
-          // Ensure the span itself is fully opaque now that GSAP handles overflow/visibility
-          gsap.set(span, { opacity: 1 });
         });
 
         // Query background decorative elements
@@ -2902,6 +3028,18 @@ const mainScript = () => {
           triggerInit: this.el,
           tweenArr: tweenArr
         });
+
+        // Mobile fallback to trigger startLoop since MasterTimeline is disabled on mobile
+        if (getScreenType().isMobile) {
+          this.mobileLoopTrigger = ScrollTrigger.create({
+            trigger: this.el,
+            start: 'top bottom-=20%',
+            once: true,
+            onEnter: () => {
+              this.startLoop();
+            }
+          });
+        }
       }
       animScrub() {
         // Find parallax and rotating elements inside the sticky section
@@ -2990,6 +3128,28 @@ const mainScript = () => {
         const currentSplit = this.splits[this.currentIndex];
         const nextSplit = this.splits[nextIndex];
 
+        // Fallback for mobile/tablet where text splitting is disabled
+        if (!currentSplit || !nextSplit || !currentSplit.textSplit || !nextSplit.textSplit) {
+          const currentSpan = this.spans[this.currentIndex];
+          const nextSpan = this.spans[nextIndex];
+
+          if (currentSpan && nextSpan) {
+            gsap.set(nextSpan, { display: 'inline-block' });
+            const tl = gsap.timeline({
+              onComplete: () => {
+                this.currentIndex = nextIndex;
+                this.isAnimating = false;
+              }
+            });
+            tl.to(currentSpan, { opacity: 0, duration: 0.5 });
+            tl.to(nextSpan, { opacity: 1, duration: 0.5 }, "<");
+          } else {
+            this.currentIndex = nextIndex;
+            this.isAnimating = false;
+          }
+          return;
+        }
+
         // Ensure next characters are prepared at yPercent: 100 before animating
         gsap.set(nextSplit.textSplit.chars, { yPercent: 100 });
 
@@ -3064,6 +3224,10 @@ const mainScript = () => {
             }
           });
           this.originalHTMLs = [];
+        }
+        if (this.mobileLoopTrigger) {
+          this.mobileLoopTrigger.kill();
+          this.mobileLoopTrigger = null;
         }
       }
     },
@@ -3639,6 +3803,19 @@ const mainScript = () => {
           stagger: 0.3
         });
 
+        if (getScreenType().isMobile) {
+          this.mobileNumTrigger = ScrollTrigger.create({
+            trigger: this.el,
+            start: 'top bottom-=20%',
+            once: true,
+            onEnter: () => {
+              this.numAnims.forEach((tween, index) => {
+                gsap.delayedCall(index * 0.1, () => tween.play());
+              });
+            }
+          });
+        }
+
         const imgEl = this.img?.querySelector('img');
         if (imgEl) {
           this.imgTl = gsap.timeline({ paused: true });
@@ -3676,6 +3853,10 @@ const mainScript = () => {
         if (this.master) {
           this.master.destroy();
           this.master = null;
+        }
+        if (this.mobileNumTrigger) {
+          this.mobileNumTrigger.kill();
+          this.mobileNumTrigger = null;
         }
         if (this.imgTl) {
           this.imgTl.kill();
@@ -4499,7 +4680,8 @@ const mainScript = () => {
 
         // 3. BG Image Toggle Timeline
         const bgImg = this.el.querySelector('.career_why_img_bg');
-        if (bgImg && this.bgImgFade) {
+        if (viewport.w > 767 && bgImg && this.bgImgFade) {
+          this.bgImgFade.init();
           this.bgTl = gsap.timeline({
             scrollTrigger: {
               trigger: bgImg,
@@ -4676,12 +4858,12 @@ const mainScript = () => {
         if (!this.formEl) return;
 
         this.inputs = this.formEl.querySelectorAll('input[required]');
-        
+
         this.handleInput = (e) => {
           const parent = e.target.closest('.careerdetail_form_col') || e.target.closest('.careerdetail_form_row');
           if (parent) parent.classList.remove('has-error');
         };
-        
+
         this.inputs.forEach(input => {
           input.addEventListener('input', this.handleInput);
           input.addEventListener('change', this.handleInput);
@@ -4712,7 +4894,7 @@ const mainScript = () => {
         this.handleSubmit = (e) => {
           e.preventDefault();
           let isValid = true;
-          
+
           this.inputs.forEach(input => {
             const parent = input.closest('.careerdetail_form_col') || input.closest('.careerdetail_form_row');
             const type = input.getAttribute('type');
@@ -4743,45 +4925,64 @@ const mainScript = () => {
             const submitBtnActive = this.formEl.querySelector('.btn_submit .active');
             if (submitBtnInit) {
               const originalText = submitBtnInit.innerText;
-              
+
               const updateBtnText = (text) => {
                 submitBtnInit.innerText = text;
                 if (submitBtnActive) submitBtnActive.innerText = text;
               };
 
               updateBtnText("SENDING...");
-              
-              const formData = new FormData(this.formEl);
-              formData.append('action', 'submit_career_application');
-              
-              // Assuming caseStudyAjax.ajaxurl is available for all templates that include index.js
-              // If not, fallback to /wp-admin/admin-ajax.php
-              const ajaxUrl = (typeof caseStudyAjax !== 'undefined' && caseStudyAjax.ajaxurl) ? caseStudyAjax.ajaxurl : '/wp-admin/admin-ajax.php';
-              
-              fetch(ajaxUrl, {
-                method: 'POST',
-                body: formData
-              })
-              .then(response => response.json())
-              .then(data => {
-                  if (data.status === 1) {
-                    updateBtnText("SENT SUCCESSFULLY");
-                    this.formEl.style.display = 'none';
-                    const successMsg = document.createElement('div');
-                    successMsg.className = 'form_success_message';
-                    successMsg.innerHTML = '<h4 style="color:#F32B3B; margin-bottom:15px;">Ứng tuyển thành công!</h4><p>Cảm ơn bạn đã gửi hồ sơ. Chúng tôi đã gửi một email xác nhận đến địa chỉ hòm thư của bạn. Bộ phận Tuyển dụng sẽ sớm liên hệ lại nếu hồ sơ phù hợp.</p>';
-                    this.formEl.parentNode.insertBefore(successMsg, this.formEl);
-                    this.formEl.reset();
-                  } else {
-                    alert(data.message || 'Có lỗi xảy ra, vui lòng thử lại sau.');
-                    updateBtnText("SEND FAILED");
+
+              const submitForm = (token = '') => {
+                const formData = new FormData(this.formEl);
+                formData.append('action', 'submit_career_application');
+                if (token) {
+                  formData.append('g-recaptcha-response', token);
+                }
+
+                const ajaxUrl = (typeof caseStudyAjax !== 'undefined' && caseStudyAjax.ajaxurl) ? caseStudyAjax.ajaxurl : '/wp-admin/admin-ajax.php';
+
+                fetch(ajaxUrl, {
+                  method: 'POST',
+                  body: formData
+                })
+                  .then(response => response.json())
+                  .then(data => {
+                    if (data.status === 1) {
+                      updateBtnText("SENT SUCCESSFULLY");
+                      this.formEl.style.display = 'none';
+                      const successMsg = document.createElement('div');
+                      successMsg.className = 'form_success_message';
+                      successMsg.innerHTML = '<h4 style="color:#F32B3B; margin-bottom:15px;">Ứng tuyển thành công!</h4><p>Cảm ơn bạn đã gửi hồ sơ. Chúng tôi đã gửi một email xác nhận đến địa chỉ hòm thư của bạn. Bộ phận Tuyển dụng sẽ sớm liên hệ lại nếu hồ sơ phù hợp.</p>';
+                      this.formEl.parentNode.insertBefore(successMsg, this.formEl);
+                      this.formEl.reset();
+                    } else {
+                      alert(data.message || 'Có lỗi xảy ra, vui lòng thử lại sau.');
+                      updateBtnText("SEND FAILED");
+                      setTimeout(() => { updateBtnText(originalText); }, 3000);
+                    }
+                  })
+                  .catch(err => {
+                    updateBtnText("ERROR");
                     setTimeout(() => { updateBtnText(originalText); }, 3000);
-                  }
-              })
-              .catch(err => {
-                  updateBtnText("ERROR");
-                  setTimeout(() => { updateBtnText(originalText); }, 3000);
-              });
+                  });
+              };
+
+              const siteKey = typeof caseStudyAjax !== 'undefined' ? caseStudyAjax.recaptchaSiteKey : '';
+              if (typeof grecaptcha !== 'undefined' && siteKey) {
+                grecaptcha.ready(() => {
+                  grecaptcha.execute(siteKey, { action: 'submit_career_application' })
+                    .then(token => {
+                      submitForm(token);
+                    })
+                    .catch(err => {
+                      console.error('reCAPTCHA error:', err);
+                      submitForm();
+                    });
+                });
+              } else {
+                submitForm();
+              }
             }
           }
         };
@@ -5056,12 +5257,12 @@ const mainScript = () => {
         this.formEl = this.el.querySelector('.contact_form');
         if (this.formEl) {
           this.inputs = this.formEl.querySelectorAll('input[required]');
-          
+
           this.handleInput = (e) => {
             const parent = e.target.closest('.contact_form_col') || e.target.closest('.contact_form_row');
             if (parent) parent.classList.remove('has-error');
           };
-          
+
           this.inputs.forEach(input => {
             input.addEventListener('input', this.handleInput);
           });
@@ -5069,7 +5270,7 @@ const mainScript = () => {
           this.handleSubmit = (e) => {
             e.preventDefault();
             let isValid = true;
-            
+
             this.inputs.forEach(input => {
               const parent = input.closest('.contact_form_col') || input.closest('.contact_form_row');
               const type = input.getAttribute('type');
@@ -5098,36 +5299,57 @@ const mainScript = () => {
                 originalText = submitBtnInit.innerText;
                 submitBtnInit.innerText = "SENDING...";
               }
-              
-              const formData = new FormData(this.formEl);
-              formData.append('action', 'submit_contact_form');
-              const ajaxUrl = typeof ajax_obj !== 'undefined' ? ajax_obj.ajax_url : '/wp-admin/admin-ajax.php';
 
-              fetch(ajaxUrl, {
-                method: 'POST',
-                body: formData
-              })
-              .then(response => response.json())
-              .then(data => {
-                  if (data.status === 1) {
-                    if (submitBtnInit) submitBtnInit.innerText = "SENT SUCCESSFULLY";
-                    
-                    this.formEl.style.display = 'none';
-                    const successMsg = document.createElement('div');
-                    successMsg.className = 'form_success_message';
-                    successMsg.innerHTML = '<h4 style="color:#F32B3B; margin-bottom:15px;">Gửi thông tin thành công!</h4><p>Cảm ơn bạn đã liên hệ. Chúng tôi đã gửi một email xác nhận đến địa chỉ hòm thư của bạn. Đội ngũ tư vấn sẽ sớm liên hệ lại với bạn.</p>';
-                    this.formEl.parentNode.insertBefore(successMsg, this.formEl);
-                    this.formEl.reset();
-                  } else {
-                    alert(data.message || 'Có lỗi xảy ra, vui lòng thử lại sau.');
-                    if (submitBtnInit) submitBtnInit.innerText = "SEND FAILED";
+              const submitForm = (token = '') => {
+                const formData = new FormData(this.formEl);
+                formData.append('action', 'submit_contact_form');
+                if (token) {
+                  formData.append('g-recaptcha-response', token);
+                }
+                const ajaxUrl = typeof ajax_obj !== 'undefined' ? ajax_obj.ajax_url : '/wp-admin/admin-ajax.php';
+
+                fetch(ajaxUrl, {
+                  method: 'POST',
+                  body: formData
+                })
+                  .then(response => response.json())
+                  .then(data => {
+                    if (data.status === 1) {
+                      if (submitBtnInit) submitBtnInit.innerText = "SENT SUCCESSFULLY";
+
+                      this.formEl.style.display = 'none';
+                      const successMsg = document.createElement('div');
+                      successMsg.className = 'form_success_message';
+                      successMsg.innerHTML = '<h4 style="color:#F32B3B; margin-bottom:15px;">Gửi thông tin thành công!</h4><p>Cảm ơn bạn đã liên hệ. Chúng tôi đã gửi một email xác nhận đến địa chỉ hòm thư của bạn. Đội ngũ tư vấn sẽ sớm liên hệ lại với bạn.</p>';
+                      this.formEl.parentNode.insertBefore(successMsg, this.formEl);
+                      this.formEl.reset();
+                    } else {
+                      alert(data.message || 'Có lỗi xảy ra, vui lòng thử lại sau.');
+                      if (submitBtnInit) submitBtnInit.innerText = "SEND FAILED";
+                      setTimeout(() => { if (submitBtnInit) submitBtnInit.innerText = originalText; }, 3000);
+                    }
+                  })
+                  .catch(err => {
+                    if (submitBtnInit) submitBtnInit.innerText = "ERROR";
                     setTimeout(() => { if (submitBtnInit) submitBtnInit.innerText = originalText; }, 3000);
-                  }
-              })
-              .catch(err => {
-                  if (submitBtnInit) submitBtnInit.innerText = "ERROR";
-                  setTimeout(() => { if (submitBtnInit) submitBtnInit.innerText = originalText; }, 3000);
-              });
+                  });
+              };
+
+              const siteKey = typeof caseStudyAjax !== 'undefined' ? caseStudyAjax.recaptchaSiteKey : '';
+              if (typeof grecaptcha !== 'undefined' && siteKey) {
+                grecaptcha.ready(() => {
+                  grecaptcha.execute(siteKey, { action: 'submit_contact_form' })
+                    .then(token => {
+                      submitForm(token);
+                    })
+                    .catch(err => {
+                      console.error('reCAPTCHA error:', err);
+                      submitForm();
+                    });
+                });
+              } else {
+                submitForm();
+              }
             }
           };
           this.formEl.addEventListener('submit', this.handleSubmit);
@@ -5152,7 +5374,7 @@ const mainScript = () => {
       destroy() {
         if (this.master) { this.master.destroy(); this.master = null; }
         [this.titleSplit, this.subFade, this.infoFade, this.formFade, this.bgFade, this.vectoFade].forEach(a => a?.destroy?.());
-        
+
         if (this.formEl) {
           this.formEl.removeEventListener('submit', this.handleSubmit);
           if (this.inputs) {

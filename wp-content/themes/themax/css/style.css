@@ -126,6 +126,7 @@ p {
     font-family: "GoogleSans";
     font-weight: 400;
     font-style: normal;
+    font-display: swap;
     src: url("../fonts/GoogleSans-Regular.woff2");
 }
 
@@ -133,6 +134,7 @@ p {
     font-family: "GoogleSans";
     font-weight: 500;
     font-style: normal;
+    font-display: swap;
     src: url("../fonts/GoogleSans-Medium.woff2");
 }
 
@@ -346,6 +348,10 @@ h2 {
 .img_full img {
     width: 100%;
     object-fit: cover;
+}
+
+.img_height img {
+    height: 100%;
 }
 
 .img_fullfill img {
@@ -1019,6 +1025,10 @@ h2 {
 }
 
 @media only screen and (max-width: 767px) {
+    [data-init] {
+        opacity: 1;
+    }
+
     .header_menu_nav {
         padding-inline: 4.6rem;
         width: auto;
@@ -1644,4 +1654,25 @@ h2 {
 
 body.menu-active {
     overflow: hidden;
+}
+
+@media only screen and (max-width: 767px) {
+
+    /* Disable heavy blurs and backdrop filters on mobile for decorative graphics */
+    [class*="_bg"],
+    [class*="-bg"],
+    [class*="_pattern"],
+    .home_services_top_bg,
+    .home_clients_bg,
+    .home_clients_pattern,
+    .about_cta_inner_bg,
+    .about_cta_bg_red,
+    .about_cta_bg_top,
+    .about_cta_bg_bot {
+        filter: none !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        pointer-events: none !important;
+        will-change: auto !important;
+    }
 }

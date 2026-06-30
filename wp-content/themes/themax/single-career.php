@@ -137,9 +137,7 @@ get_header();
                                 <input type="text" name="career_intro" placeholder="A brief introduction about myself"
                                     class="careerdetail_form_input">
                             </div>
-                            <div class="careerdetail_form_row" style="margin-top: 1.6rem; margin-bottom: 2.4rem;">
-                                <div class="g-recaptcha" data-sitekey="6LcQlD0tAAAAALN2ByRRGHnl9FO9EO7UvIBf99mR" data-theme="dark"></div>
-                            </div>
+
                             <div class="careerdetail_form_row submit_row">
                                 <button type="submit"
                                     class="btn_submit button_hover hover_txt txt_14 txt_uppercase cl_be">
@@ -296,7 +294,7 @@ get_header();
     ?>
     <section class="about_cta">
         <div class="about_cta_img img_full">
-            <img src="<?php echo esc_url($cta_img); ?>" alt="">
+            <img src="<?php echo esc_url($cta_img); ?>" alt="" loading="lazy">
         </div>
         <div class="about_cta_inner_bg">
             <svg class="about_cta_bg_red" width="100" height="273" viewBox="0 0 100 273" fill="none"

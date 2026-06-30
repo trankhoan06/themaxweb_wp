@@ -52,12 +52,16 @@ function themax_enqueue_assets() {
     wp_enqueue_script('swiper-js', $theme_dir . '/plugin/swiper/swiper-bundle.min.js', array(), '7.0.6', true);
     $index_js_version = filemtime(get_template_directory() . '/js/index.min.js') ?: '1.0.0';
     wp_enqueue_script('themax-index-js', $theme_dir . '/js/index.min.js', array('jquery-3.7.1', 'gsap', 'swiper-js'), $index_js_version, true);
+
+    $recaptcha_site_key = tr_options_field('tr_theme_options.recaptcha_site_key') ?: '6LcQlD0tAAAAALN2ByRRGHnl9FO9EO7UvIBf99mR';
+
     wp_localize_script('themax-index-js', 'caseStudyAjax', array(
         'ajaxurl' => admin_url('admin-ajax.php'),
-        'loadMoreText' => 'XEM THÊM'
+        'loadMoreText' => 'XEM THÊM',
+        'recaptchaSiteKey' => $recaptcha_site_key
     ));
 
-    wp_enqueue_script('google-recaptcha', 'https://www.google.com/recaptcha/api.js', array(), null, true);
+    wp_enqueue_script('google-recaptcha', 'https://www.google.com/recaptcha/api.js?render=' . esc_attr($recaptcha_site_key), array(), null, true);
 
     // Template specific CSS
     if (is_page_template('page-templates/aboutus.php')) {

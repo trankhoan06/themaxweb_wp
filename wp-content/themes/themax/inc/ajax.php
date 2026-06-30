@@ -18,7 +18,7 @@ function ajax_policysubmit(){
       $request_id='';
       while ( $the_query->have_posts() ) {
           $the_query->the_post();
-          $request_id = tr_posts_field('request_id',$post->ID);
+          $request_id = tr_posts_field('request_id', get_the_ID());
       }
       $result= json_encode(['status' => 1,'request_id'=>$request_id]);
     }
@@ -146,14 +146,14 @@ function ajax_contactform(){
     echo $result; die();
   }*/
 
-  $body  ="Xin chÃ o,<br>";
-  $body .="<p>Báº¡n nháº­n Ä‘Æ°á»£c thÃ´ng tin Ä‘Äƒng kÃ½ cá»§a khÃ¡ch hÃ ng.</p>";
-  $body .="<strong>Há» vÃ  tÃªn:</strong> ".$contact_name."<br>";
-  $body .="<strong>Äiá»‡n thoáº¡i di Ä‘á»™ng:</strong> ".$contact_mobile."<br>";
-  $body .="<strong>Email:</strong> ".$contact_email."<br>";
-  //$body .="<strong>Äá»‹a chá»‰:</strong> ".$contact_address."<br>";
-  $body .="<strong>Sáº£n pháº©m quan tÃ¢m:</strong> ".$contact_interest."<br>";
-  $body .="<strong>Ná»™i dung:</strong> ".$content."<br>";
+  $body  = "Xin chào,<br>";
+  $body .= "<p>Bạn nhận được thông tin đăng ký của khách hàng.</p>";
+  $body .= "<strong>Họ và tên:</strong> " . $contact_name . "<br>";
+  $body .= "<strong>Điện thoại di động:</strong> " . $contact_mobile . "<br>";
+  $body .= "<strong>Email:</strong> " . $contact_email . "<br>";
+  //$body .= "<strong>Địa chỉ:</strong> " . $contact_address . "<br>";
+  $body .= "<strong>Sản phẩm quan tâm:</strong> " . $contact_interest . "<br>";
+  $body .= "<strong>Nội dung:</strong> " . $content . "<br>";
 
   $headers = array('Content-Type: text/html; charset=UTF-8');
 
@@ -183,7 +183,7 @@ function ajax_contactform(){
   add_post_meta( $post_id, 'user_agent', $user_agent );
 
 
-  $check = wp_mail( tr_options_field('tr_theme_options.receive_email'), "ThÃ´ng tin Ä‘Äƒng kÃ½ Tá»« website TBS Group", $body , $headers );
+  $check = wp_mail( tr_options_field('tr_theme_options.receive_email'), "Thông tin đăng ký từ website TBS Group", $body , $headers );
 
   //Mail To Customer
 
@@ -204,7 +204,7 @@ function ajax_pagination_data() {
     $query_vars['post_type'] = "post";
     $query_vars['post_status'] = "publish"; 
     $query_vars['paged'] = $paged;
-    $query_vars['cat'] = $_POST['cat'];
+    $query_vars['cat'] = !empty($_POST['cat']) ? $_POST['cat'] : '';
     $query_vars['posts_per_page'] = !empty($_POST['posts_per_page'])?$_POST['posts_per_page']:4;
 
     $posts = new WP_Query( $query_vars );
@@ -254,7 +254,7 @@ add_action('wp_ajax_nopriv_get_news', 'ajax_get_news');
 function ajax_get_news(){
 
     $id = isset($_POST['id'])?$_POST['id']:"";
-    $post= wp_get_single_post($id);
+    $post= get_post($id);
 
     if(!empty($post)){
       echo json_encode(['status' => 1,
@@ -300,7 +300,7 @@ add_action('wp_ajax_nopriv_get_prod', 'ajax_get_prod');
 function ajax_get_prod(){
 
     $id = isset($_POST['id'])?$_POST['id']:"";
-    $post= wp_get_single_post($id);
+    $post= get_post($id);
 
     if(!empty($post)){
       $thap = isset($_POST['thap'])?$_POST['thap']:"";
@@ -350,7 +350,7 @@ function themax_email_template($section_title, $content) {
 
 function themax_verify_recaptcha($token) {
     if (empty($token)) return false;
-    $secret = '6LcQlD0tAAAAAFe6sN3L9xt56HGT7s_O4ur7GPq5';
+    $secret = tr_options_field('tr_theme_options.recaptcha_secret_key') ?: '6LcQlD0tAAAAAFe6sN3L9xt56HGT7s_O4ur7GPq5';
     $response = wp_remote_post('https://www.google.com/recaptcha/api/siteverify', [
         'body' => [
             'secret' => $secret,
@@ -360,7 +360,7 @@ function themax_verify_recaptcha($token) {
     if (is_wp_error($response)) return false;
     $body = wp_remote_retrieve_body($response);
     $result = json_decode($body);
-    return !empty($result->success) ? true : false;
+    return (!empty($result->success) && (!isset($result->score) || $result->score >= 0.5)) ? true : false;
 }
 
 add_action('wp_ajax_submit_career_application', 'ajax_submit_career_application');
@@ -377,7 +377,7 @@ function ajax_submit_career_application() {
     
     $recaptcha_token = isset($_POST['g-recaptcha-response']) ? $_POST['g-recaptcha-response'] : '';
     if (!themax_verify_recaptcha($recaptcha_token)) {
-        $result['message'] = 'Vui lòng xác nhận bạn không phải robot.';
+        $result['message'] = 'Xác thực bảo mật thất bại. Vui lòng thử lại.';
         echo json_encode($result);
         die();
     }
@@ -417,7 +417,11 @@ function ajax_submit_career_application() {
     if (!empty($_FILES['career_cv']['name'])) {
         $uploaded_file = $_FILES['career_cv'];
         
-        if ($uploaded_file['error'] == 0 && $uploaded_file['size'] <= 5242880) { // 5MB limit
+        $allowed_exts = ['pdf', 'doc', 'docx'];
+        $file_info = pathinfo($uploaded_file['name']);
+        $extension = isset($file_info['extension']) ? strtolower($file_info['extension']) : '';
+        
+        if (in_array($extension, $allowed_exts) && $uploaded_file['error'] == 0 && $uploaded_file['size'] <= 5242880) { // 5MB limit
             $upload_dir = wp_upload_dir();
             $file_name = sanitize_file_name($uploaded_file['name']);
             $target_file = $upload_dir['path'] . '/' . wp_unique_filename($upload_dir['path'], $file_name);
@@ -469,7 +473,7 @@ function ajax_submit_contact_form() {
     
     $recaptcha_token = isset($_POST['g-recaptcha-response']) ? $_POST['g-recaptcha-response'] : '';
     if (!themax_verify_recaptcha($recaptcha_token)) {
-        $result['message'] = 'Vui lòng xác nhận bạn không phải robot.';
+        $result['message'] = 'Xác thực bảo mật thất bại. Vui lòng thử lại.';
         echo json_encode($result);
         die();
     }
@@ -538,7 +542,7 @@ function ajax_submit_footer_form() {
     
     $recaptcha_token = isset($_POST['g-recaptcha-response']) ? $_POST['g-recaptcha-response'] : '';
     if (!themax_verify_recaptcha($recaptcha_token)) {
-        $result['message'] = 'Vui lòng xác nhận bạn không phải robot.';
+        $result['message'] = 'Xác thực bảo mật thất bại. Vui lòng thử lại.';
         echo json_encode($result);
         die();
     }
