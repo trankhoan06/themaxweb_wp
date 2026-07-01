@@ -87,6 +87,14 @@ a:hover {
     line-height: 1.4em;
 }
 
+.bp-line,
+.heading-line {
+    padding-top: 0.25em !important;
+    padding-bottom: 0.5em !important;
+    margin-top: -0.25em !important;
+    margin-bottom: -0.55em !important;
+}
+
 .item_line {
     position: relative;
 }
@@ -636,22 +644,30 @@ h2 {
 }
 
 @media only screen and (max-width: 767px) {
+
+    .bp-line,
+    .heading-line {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
     .hover_txt:hover {
-    span {
-        color: #BEBEBE;
+        span {
+            color: #BEBEBE;
 
+        }
+
+        .active {
+            /* bottom: 0; */
+            transform: translateY(100%);
+        }
+
+        .init {
+            /* top: -100%; */
+            transform: translateY(0%);
+        }
     }
 
-    .active {
-        /* bottom: 0; */
-        transform: translateY(100%);
-    }
-
-    .init {
-        /* top: -100%; */
-        transform: translateY(0%);
-    }
-}
     :root {
         --padding-container: 1.6rem;
     }
@@ -895,7 +911,7 @@ h2 {
     opacity: 0;
     transform: translateX(100%);
     width: 48rem;
-    height: 100vh;
+    height: 100svh;
     background-color: #fff;
     position: fixed;
     z-index: 1110;
@@ -1062,7 +1078,7 @@ h2 {
     }
 
     .header_menu_nav_content {
-        align-items: center;
+        align-items: start;
     }
 
     .header_menu {
@@ -1574,7 +1590,10 @@ h2 {
         grid-column: 1/5;
     }
 
-    .footer_bot,
+    .footer_bot {
+        margin-top: 4.8rem;
+    }
+
     .footer_bot_contact {
         margin-top: 2.4rem;
 

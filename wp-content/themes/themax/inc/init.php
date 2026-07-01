@@ -26,7 +26,7 @@ function my_phpmailer_example( $phpmailer ) {
     $phpmailer->SMTPAuth = tr_options_field('tr_theme_options.authentication');  // Force it to use Username and Password to authenticate
     $phpmailer->Port = tr_options_field('tr_theme_options.smtp_port');
     $phpmailer->Username = tr_options_field('tr_theme_options.username');
-    $phpmailer->Password = tr_options_field('tr_theme_options.password');
+    $phpmailer->Password = tr_options_field('tr_theme_options.smtp_password');
 
     // Additional settings…
     $encryption= tr_options_field('tr_theme_options.encryption');

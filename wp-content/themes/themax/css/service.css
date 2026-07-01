@@ -109,6 +109,14 @@
         margin-bottom: 3.2rem;
     }
 
+    .service_hero_left br {
+        display: none;
+    }
+
+    .service_hero_left span {
+        margin-right: .5rem;
+    }
+
     .service_hero_right_txt {
         margin-bottom: 6.4rem;
         text-align: left;

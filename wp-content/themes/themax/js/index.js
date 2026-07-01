@@ -2371,19 +2371,19 @@ const mainScript = () => {
                 else {
                     this.introTl
                         .to('.home_intro_img_list:nth-child(1)', {
-                            x: '-=60%',
+                            x: '-150%',
                             ease: 'none',
                         }, 0)
                         .to('.home_intro_img_list:nth-child(2)', {
-                            x: '+=35%',
+                            x: '150%',
                             ease: 'none',
                         }, 0)
                         .to('.home_intro_img_list:nth-child(3)', {
-                            x: '-=30%',
+                            x: '-150%',
                             ease: 'none',
                         }, 0)
                         .to('.home_intro_img_list:nth-child(4)', {
-                            x: '+=30%',
+                            x: '150%',
                             ease: 'none',
                         }, 0);
                 }
@@ -2966,7 +2966,11 @@ const mainScript = () => {
                     }
 
                     // Ensure the span itself is fully opaque now that GSAP handles overflow/visibility
-                    gsap.set(span, { opacity: 1 });
+                    if (!this.splits[index].textSplit) {
+                        gsap.set(span, { opacity: index === 0 ? 1 : 0 });
+                    } else {
+                        gsap.set(span, { opacity: 1 });
+                    }
                 });
 
                 // Query background decorative elements
@@ -3495,15 +3499,18 @@ const mainScript = () => {
                     let targetContent = $(_thisEl).find('.home_clients_content_item[data-tabs="' + tabId + '"]');
                     targetContent.css('display', 'flex');
 
-                    const items = targetContent[0].querySelectorAll('.home_clients_content_item_img');
-                    if (items.length) {
-                        new FadeIn({
-                            el: items,
-                            type: 'bottom',
-                            isDisableRevert: true,
-                            duration: 0.8,
-                            stagger: 0.1
-                        });
+                    const items = targetContent.find('.home_clients_content_item_img').get();
+                    if (items.length > 0) {
+                        gsap.fromTo(items,
+                            { opacity: 0, y: 15 },
+                            {
+                                opacity: 1,
+                                y: 0,
+                                duration: 0.6,
+                                ease: 'power2.out',
+                                stagger: 0.05
+                            }
+                        );
                     }
                 };
 
@@ -4716,6 +4723,160 @@ const mainScript = () => {
 
                 [this.leftSubFade, this.titleFade, this.contentSubFade, ...this.cardTweens, this.bgImgFade, this.centerImgFade, this.centerImgTxtFade, this.listTitleFade, this.listItemFade].forEach(a => a?.destroy?.());
             }
+        },
+        Popup: class {
+            constructor() {
+                this.overlay = null;
+                this.closeBtn = null;
+                this.openBtn = null;
+                this.fileInput = null;
+                this.formEl = null;
+                this.handleOpen = this.handleOpen.bind(this);
+                this.handleClose = this.handleClose.bind(this);
+                this.handleOutsideClick = this.handleOutsideClick.bind(this);
+                this.handleFileChange = this.handleFileChange.bind(this);
+                this.handleSubmit = this.handleSubmit.bind(this);
+            }
+            trigger(data) {
+                this.overlay = document.getElementById('careerPopupOverlay');
+                this.closeBtn = document.getElementById('careerPopupClose');
+                this.openBtn = document.querySelector('.about_cta_inner_content_title_button');
+                this.fileInput = document.querySelector('input[name="upload_cv"]');
+                this.formEl = document.querySelector('.career_popup_form');
+
+                if (this.openBtn && this.overlay && this.closeBtn) {
+                    this.openBtn.addEventListener('click', this.handleOpen);
+                    this.closeBtn.addEventListener('click', this.handleClose);
+                    this.overlay.addEventListener('click', this.handleOutsideClick);
+                }
+
+                if (this.fileInput) {
+                    this.fileInput.addEventListener('change', this.handleFileChange);
+                }
+
+                if (this.formEl) {
+                    this.formEl.addEventListener('submit', this.handleSubmit);
+                }
+            }
+            handleOpen(e) {
+                e.preventDefault();
+                this.overlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+            handleClose(e) {
+                e.preventDefault();
+                this.overlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+            handleOutsideClick(e) {
+                if (e.target === this.overlay) {
+                    this.overlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            }
+            handleFileChange(e) {
+                if (e.target.files.length > 0) {
+                    const fileName = e.target.files[0].name;
+                    const uploadNote = document.querySelector('.career_popup_upload_note');
+                    if (uploadNote) {
+                        uploadNote.textContent = fileName;
+                    }
+                }
+            }
+            handleSubmit(e) {
+                e.preventDefault();
+                let isValid = true;
+                const inputs = this.formEl.querySelectorAll('input[required], select[required]');
+                inputs.forEach(input => {
+                    if (input.type === 'file') {
+                        if (input.files.length === 0) isValid = false;
+                    } else if (!input.value.trim()) {
+                        isValid = false;
+                    }
+                });
+
+                if (!isValid) {
+                    alert('Vui lòng điền đầy đủ thông tin bắt buộc.');
+                    return;
+                }
+
+                const submitBtnInit = this.formEl.querySelector('.career_popup_submit_btn .init');
+                const submitBtnActive = this.formEl.querySelector('.career_popup_submit_btn .active');
+                const originalText = submitBtnInit ? submitBtnInit.innerText : '';
+
+                const updateBtnText = (text) => {
+                    if (submitBtnInit) submitBtnInit.innerText = text;
+                    if (submitBtnActive) submitBtnActive.innerText = text;
+                };
+
+                updateBtnText("SENDING...");
+
+                const submitForm = (token = '') => {
+                    const formData = new FormData(this.formEl);
+                    formData.append('action', 'submit_career_popup_application');
+                    if (token) {
+                        formData.append('g-recaptcha-response', token);
+                    }
+
+                    const ajaxUrl = (typeof caseStudyAjax !== 'undefined' && caseStudyAjax.ajaxurl) ? caseStudyAjax.ajaxurl : '/wp-admin/admin-ajax.php';
+
+                    fetch(ajaxUrl, {
+                        method: 'POST',
+                        body: formData
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status === 1) {
+                                updateBtnText("SENT SUCCESSFULLY");
+                                this.formEl.style.display = 'none';
+                                const successMsg = document.createElement('div');
+                                successMsg.className = 'form_success_message';
+                                successMsg.style.textAlign = 'center';
+                                successMsg.innerHTML = '<h4 style="color:#F32B3B; margin-bottom:15px; font-size: 2rem;">Ứng tuyển thành công!</h4><p style="font-size: 1.6rem;">Cảm ơn bạn đã gửi hồ sơ. Chúng tôi đã nhận được thông tin và sẽ sớm liên hệ lại với bạn.</p>';
+                                this.formEl.parentNode.insertBefore(successMsg, this.formEl);
+                                this.formEl.reset();
+                            } else {
+                                alert(data.message || 'Có lỗi xảy ra, vui lòng thử lại sau.');
+                                updateBtnText("SEND FAILED");
+                                setTimeout(() => { updateBtnText(originalText); }, 3000);
+                            }
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            updateBtnText("ERROR");
+                            setTimeout(() => { updateBtnText(originalText); }, 3000);
+                        });
+                };
+
+                const siteKey = typeof caseStudyAjax !== 'undefined' ? caseStudyAjax.recaptchaSiteKey : '';
+                if (typeof grecaptcha !== 'undefined' && siteKey) {
+                    grecaptcha.ready(() => {
+                        grecaptcha.execute(siteKey, { action: 'submit_career_popup_application' })
+                            .then(token => {
+                                submitForm(token);
+                            })
+                            .catch(err => {
+                                console.error('reCAPTCHA error:', err);
+                                submitForm();
+                            });
+                    });
+                } else {
+                    submitForm();
+                }
+            }
+            destroy() {
+                if (this.openBtn && this.overlay && this.closeBtn) {
+                    this.openBtn.removeEventListener('click', this.handleOpen);
+                    this.closeBtn.removeEventListener('click', this.handleClose);
+                    this.overlay.removeEventListener('click', this.handleOutsideClick);
+                }
+                if (this.fileInput) {
+                    this.fileInput.removeEventListener('change', this.handleFileChange);
+                }
+                if (this.formEl) {
+                    this.formEl.removeEventListener('submit', this.handleSubmit);
+                }
+            }
         }
     };
     const CareerDetailPage = {
@@ -4966,6 +5127,160 @@ const mainScript = () => {
                             input.removeEventListener('change', this.handleInput);
                         });
                     }
+                }
+            }
+        },
+        Popup: class {
+            constructor() {
+                this.overlay = null;
+                this.closeBtn = null;
+                this.openBtn = null;
+                this.fileInput = null;
+                this.formEl = null;
+                this.handleOpen = this.handleOpen.bind(this);
+                this.handleClose = this.handleClose.bind(this);
+                this.handleOutsideClick = this.handleOutsideClick.bind(this);
+                this.handleFileChange = this.handleFileChange.bind(this);
+                this.handleSubmit = this.handleSubmit.bind(this);
+            }
+            trigger(data) {
+                this.overlay = document.getElementById('careerPopupOverlay');
+                this.closeBtn = document.getElementById('careerPopupClose');
+                this.openBtn = document.querySelector('.about_cta_inner_content_title_button');
+                this.fileInput = document.querySelector('input[name="upload_cv"]');
+                this.formEl = document.querySelector('.career_popup_form');
+
+                if (this.openBtn && this.overlay && this.closeBtn) {
+                    this.openBtn.addEventListener('click', this.handleOpen);
+                    this.closeBtn.addEventListener('click', this.handleClose);
+                    this.overlay.addEventListener('click', this.handleOutsideClick);
+                }
+
+                if (this.fileInput) {
+                    this.fileInput.addEventListener('change', this.handleFileChange);
+                }
+
+                if (this.formEl) {
+                    this.formEl.addEventListener('submit', this.handleSubmit);
+                }
+            }
+            handleOpen(e) {
+                e.preventDefault();
+                this.overlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+            handleClose(e) {
+                e.preventDefault();
+                this.overlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+            handleOutsideClick(e) {
+                if (e.target === this.overlay) {
+                    this.overlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            }
+            handleFileChange(e) {
+                if (e.target.files.length > 0) {
+                    const fileName = e.target.files[0].name;
+                    const uploadNote = document.querySelector('.career_popup_upload_note');
+                    if (uploadNote) {
+                        uploadNote.textContent = fileName;
+                    }
+                }
+            }
+            handleSubmit(e) {
+                e.preventDefault();
+                let isValid = true;
+                const inputs = this.formEl.querySelectorAll('input[required], select[required]');
+                inputs.forEach(input => {
+                    if (input.type === 'file') {
+                        if (input.files.length === 0) isValid = false;
+                    } else if (!input.value.trim()) {
+                        isValid = false;
+                    }
+                });
+
+                if (!isValid) {
+                    alert('Vui lòng điền đầy đủ thông tin bắt buộc.');
+                    return;
+                }
+
+                const submitBtnInit = this.formEl.querySelector('.career_popup_submit_btn .init');
+                const submitBtnActive = this.formEl.querySelector('.career_popup_submit_btn .active');
+                const originalText = submitBtnInit ? submitBtnInit.innerText : '';
+
+                const updateBtnText = (text) => {
+                    if (submitBtnInit) submitBtnInit.innerText = text;
+                    if (submitBtnActive) submitBtnActive.innerText = text;
+                };
+
+                updateBtnText("SENDING...");
+
+                const submitForm = (token = '') => {
+                    const formData = new FormData(this.formEl);
+                    formData.append('action', 'submit_career_popup_application');
+                    if (token) {
+                        formData.append('g-recaptcha-response', token);
+                    }
+
+                    const ajaxUrl = (typeof caseStudyAjax !== 'undefined' && caseStudyAjax.ajaxurl) ? caseStudyAjax.ajaxurl : '/wp-admin/admin-ajax.php';
+
+                    fetch(ajaxUrl, {
+                        method: 'POST',
+                        body: formData
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status === 1) {
+                                updateBtnText("SENT SUCCESSFULLY");
+                                this.formEl.style.display = 'none';
+                                const successMsg = document.createElement('div');
+                                successMsg.className = 'form_success_message';
+                                successMsg.style.textAlign = 'center';
+                                successMsg.innerHTML = '<h4 style="color:#F32B3B; margin-bottom:15px; font-size: 2rem;">Ứng tuyển thành công!</h4><p style="font-size: 1.6rem;">Cảm ơn bạn đã gửi hồ sơ. Chúng tôi đã nhận được thông tin và sẽ sớm liên hệ lại với bạn.</p>';
+                                this.formEl.parentNode.insertBefore(successMsg, this.formEl);
+                                this.formEl.reset();
+                            } else {
+                                alert(data.message || 'Có lỗi xảy ra, vui lòng thử lại sau.');
+                                updateBtnText("SEND FAILED");
+                                setTimeout(() => { updateBtnText(originalText); }, 3000);
+                            }
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            updateBtnText("ERROR");
+                            setTimeout(() => { updateBtnText(originalText); }, 3000);
+                        });
+                };
+
+                const siteKey = typeof caseStudyAjax !== 'undefined' ? caseStudyAjax.recaptchaSiteKey : '';
+                if (typeof grecaptcha !== 'undefined' && siteKey) {
+                    grecaptcha.ready(() => {
+                        grecaptcha.execute(siteKey, { action: 'submit_career_popup_application' })
+                            .then(token => {
+                                submitForm(token);
+                            })
+                            .catch(err => {
+                                console.error('reCAPTCHA error:', err);
+                                submitForm();
+                            });
+                    });
+                } else {
+                    submitForm();
+                }
+            }
+            destroy() {
+                if (this.openBtn && this.overlay && this.closeBtn) {
+                    this.openBtn.removeEventListener('click', this.handleOpen);
+                    this.closeBtn.removeEventListener('click', this.handleClose);
+                    this.overlay.removeEventListener('click', this.handleOutsideClick);
+                }
+                if (this.fileInput) {
+                    this.fileInput.removeEventListener('change', this.handleFileChange);
+                }
+                if (this.formEl) {
+                    this.formEl.removeEventListener('submit', this.handleSubmit);
                 }
             }
         }

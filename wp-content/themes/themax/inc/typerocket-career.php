@@ -10,7 +10,7 @@ add_action('edit_form_after_title', function($post) {
         echo $form->textarea('career_hero_title')->setLabel("Hero Title");
         echo $form->textarea('career_hero_desc')->setLabel("Hero Description");
         echo $form->text('career_hero_btn_text')->setLabel("Button Text");
-        echo $form->text('career_hero_btn_link')->setLabel("Button Link");
+        // echo $form->text('career_hero_btn_link')->setLabel("Button Link");
         echo endBox();
 
         echo beginBox("Career Images", true);
@@ -21,6 +21,7 @@ add_action('edit_form_after_title', function($post) {
         echo beginBox("Why Choose TheMax", true);
         echo $form->text('career_why_subtitle')->setLabel("Subtitle");
         echo $form->textarea('career_why_title')->setLabel("Title");
+        echo $form->text('career_why_desc')->setLabel("Description");
         echo $form->repeater('career_why_list')->setLabel("Why Items")->setFields([
             $form->image('icon')->setLabel("Icon"),
             $form->text('title')->setLabel("Title"),
@@ -44,7 +45,7 @@ add_action('edit_form_after_title', function($post) {
         echo $form->text('career_cta_title')->setLabel("Title");
         echo $form->textarea('career_cta_desc')->setLabel("Description");
         echo $form->text('career_cta_btn_text')->setLabel("Button Text");
-        echo $form->text('career_cta_btn_link')->setLabel("Button Link");
+        // echo $form->text('career_cta_btn_link')->setLabel("Button Link");
         echo endBox();
 
         echo '</div>';

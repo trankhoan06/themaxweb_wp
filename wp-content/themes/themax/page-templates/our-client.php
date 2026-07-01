@@ -74,8 +74,8 @@ get_header();
             </div> -->
             <div class="home_clients_tab">
                 <?php
-                for ($i = 1; $i <= 6; $i++) {
-                    $tab_name = tr_posts_field('tab' . $i . '_name');
+                for ($i = 1; $i <= 3; $i++) {
+                    $tab_name = tr_options_field('tr_theme_options.home_clients_tab' . $i . '_name');
                     if (!$tab_name)
                         continue;
 
@@ -92,12 +92,12 @@ get_header();
             </div>
             <div class="home_clients_content">
                 <?php
-                for ($i = 1; $i <= 6; $i++) {
-                    $tab_name = tr_posts_field('tab' . $i . '_name');
+                for ($i = 1; $i <= 3; $i++) {
+                    $tab_name = tr_options_field('tr_theme_options.home_clients_tab' . $i . '_name');
                     if (!$tab_name)
                         continue;
 
-                    $tab_logos = tr_posts_field('tab' . $i . '_logos');
+                    $tab_logos = tr_options_field('tr_theme_options.home_clients_tab' . $i);
                     ?>
                     <div class="home_clients_content_item" data-tabs="tab<?php echo $i; ?>">
                         <?php

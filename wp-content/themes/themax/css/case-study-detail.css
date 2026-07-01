@@ -112,6 +112,10 @@
     grid-column: 5/11;
 }
 
+.casestudydetail_content_blog_item_info_content_subtitle {
+    margin-bottom: 1.6rem;
+}
+
 .casestudydetail_content_blog {
 
     padding-block: 10rem;
@@ -220,7 +224,7 @@
 }
 
 .home_case_content_item::before {
-    background-color: #262626;
+    background-color: #131313;
     content: "";
     top: 0;
     bottom: 0;
@@ -418,6 +422,7 @@
     .home_case_content_item {
         width: 100%;
         padding: 2.4rem var(--padding-container) !important;
+        border-right: none !important;
     }
 
     .home_case_content_item_txt_icon_wrap {

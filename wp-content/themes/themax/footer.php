@@ -59,25 +59,30 @@
                         <div class="footer_content_address_txt txt_18"><?php echo esc_html($footer_us_address2 ?: 'VA 22033, Washington DC, USA'); ?></div>
                         <div class="footer_content_address_tel txt_18"><?php echo esc_html(tr_options_field('tr_theme_options.footer_us_tel') ?: '703-981-8080'); ?></div>
                     </div>
+                    <?php
+                    $f_title = tr_options_field('tr_theme_options.footer_form_title' . $lang_suffix) ?: tr_options_field('tr_theme_options.footer_form_title') ?: 'GET IN TOUCH WITH US';
+                    $f_name = tr_options_field('tr_theme_options.footer_form_name' . $lang_suffix) ?: tr_options_field('tr_theme_options.footer_form_name') ?: 'Your name*';
+                    $f_phone = tr_options_field('tr_theme_options.footer_form_phone' . $lang_suffix) ?: tr_options_field('tr_theme_options.footer_form_phone') ?: 'Phone number*';
+                    $f_msg = tr_options_field('tr_theme_options.footer_form_message' . $lang_suffix) ?: tr_options_field('tr_theme_options.footer_form_message') ?: 'Your Message';
+                    $f_submit = tr_options_field('tr_theme_options.footer_form_submit' . $lang_suffix) ?: tr_options_field('tr_theme_options.footer_form_submit') ?: 'submit';
+                    ?>
                     <div class="footer_content_form">
-                        <div class="footer_form_title txt_16 txt_uppercase heading cl_be txt_16 txt_medium">GET
-                            IN
-                            TOUCH WITH US</div>
+                        <div class="footer_form_title txt_16 txt_uppercase heading cl_be txt_16 txt_medium"><?php echo wp_kses_post(nl2br($f_title)); ?></div>
                         <form class="footer_form" novalidate>
                             <div class="footer_form_row">
-                                <input type="text" name="footer_name" placeholder="Your name*" class="footer_form_input" required>
-                                <input type="tel" name="footer_phone" placeholder="Phone number*" class="footer_form_input" required>
+                                <input type="text" name="footer_name" placeholder="<?php echo esc_attr($f_name); ?>" class="footer_form_input" required>
+                                <input type="tel" name="footer_phone" placeholder="<?php echo esc_attr($f_phone); ?>" class="footer_form_input" required>
                             </div>
                             <div class="footer_form_row">
-                                <input type="text" name="footer_message" placeholder="Your Message" class="footer_form_input">
+                                <input type="text" name="footer_message" placeholder="<?php echo esc_attr($f_msg); ?>" class="footer_form_input">
                             </div>
 
                             <div class="footer_form_row">
                                 <button type="submit"
                                     class="btn_submit button_hover hover_txt txt_14 txt_uppercase cl_be">
                                     <div class="hover_txt_grid">
-                                        <span class="init">submit</span>
-                                        <span class="active">submit</span>
+                                        <span class="init"><?php echo esc_html($f_submit); ?></span>
+                                        <span class="active"><?php echo esc_html($f_submit); ?></span>
                                     </div>
                                 </button>
                             </div>

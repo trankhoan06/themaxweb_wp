@@ -9,7 +9,7 @@ add_action('edit_form_after_title', function ($post) {
         echo $form->textarea('service_hero_title')->setLabel("Hero Title");
         echo $form->textarea('service_hero_desc')->setLabel("Hero Description");
         echo $form->text('service_hero_btn_text')->setLabel("Button Text");
-        echo $form->text('service_hero_btn_link')->setLabel("Button Link");
+        // echo $form->text('service_hero_btn_link')->setLabel("Button Link");
         echo endBox();
 
         echo beginBox("Service Image", true);

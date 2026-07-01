@@ -1,4 +1,5 @@
 <?php
+flush_rewrite_rules();
 include 'typerocket/init.php';
 require dirname( __FILE__ ) . '/inc/init.php';
 

@@ -41,7 +41,7 @@
     <header>
         <div class="header">
             <div class="grid container" data-init>
-                <a href="/" class="header_logo svg_full">
+                <a href="<?php echo function_exists('pll_home_url') ? esc_url(pll_home_url()) : esc_url(home_url('/')); ?>" class="header_logo svg_full">
                     <svg width="128" height="36" viewBox="0 0 128 36" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path
                             d="M86.8352 6.37714L78.4384 25.4057V6.37714H71.2704L64 17.1771L56.7296 6.37714H49.5616V29.6228H56.7296V17.4857L61.2352 24.48H64H66.7648L71.2704 17.4857V29.6228H76.5952H78.4384H84.6848L85.6064 27.2571L90.7264 14.0914L96.8704 29.6228H104.858L94.72 6.37714H86.8352Z"
@@ -63,9 +63,15 @@
                         if (is_front_page() || is_home()) {
                             echo 'Digital Marketing Agency';
                         } elseif (is_singular('work')) {
-                            echo '<a href="/works" class="header_works_link">Works</a> &nbsp;/&nbsp; ' . esc_html(get_the_title());
+                            $lang = function_exists('pll_current_language') ? pll_current_language() : 'en';
+                            $works_label = ($lang === 'vi') ? 'Tác phẩm' : 'Works';
+                            $works_link = ($lang === 'vi') ? '/vi/works' : '/works';
+                            echo '<a href="' . esc_url($works_link) . '" class="header_works_link">' . esc_html($works_label) . '</a> &nbsp;/&nbsp; ' . esc_html(get_the_title());
                         } elseif (is_singular('career')) {
-                            echo '<a href="/career" class="header_works_link">Careers</a> &nbsp;/&nbsp; ' . esc_html(get_the_title());
+                            $lang = function_exists('pll_current_language') ? pll_current_language() : 'en';
+                            $career_label = ($lang === 'vi') ? 'Tuyển dụng' : 'Careers';
+                            $career_link = ($lang === 'vi') ? '/vi/career' : '/career';
+                            echo '<a href="' . esc_url($career_link) . '" class="header_works_link">' . esc_html($career_label) . '</a> &nbsp;/&nbsp; ' . esc_html(get_the_title());
                         } else {
                             echo esc_html(get_the_title());
                         }

@@ -336,9 +336,17 @@ get_header();
                 <?php
                 $args = array(
                     'post_type' => 'work',
-                    'posts_per_page' => 6,
+                    'posts_per_page' => -1,
                     'post_status' => 'publish',
-                    'ignore_sticky_posts' => true
+                    'ignore_sticky_posts' => true,
+                    // Lấy những bài viết có tích chọn "Hiện thị ở trang chủ" (ACF True/False)
+                    'meta_query' => array(
+                        array(
+                            'key' => 'hien-thi-trang-chu',
+                            'value' => '1',
+                            'compare' => '='
+                        )
+                    )
                 );
                 $query = new WP_Query($args);
                 if ($query->have_posts()):
@@ -432,23 +440,19 @@ get_header();
             <?php
             $home_clients_subtitle = tr_posts_field('home_clients_subtitle');
             $home_clients_title = tr_posts_field('home_clients_title');
-            $home_clients_tab1_name = tr_posts_field('home_clients_tab1_name');
-            $home_clients_tab2_name = tr_posts_field('home_clients_tab2_name');
-            $home_clients_tab3_name = tr_posts_field('home_clients_tab3_name');
-            $home_clients_btn_text = tr_posts_field('home_clients_btn_text');
-            $home_clients_btn_link = tr_posts_field('home_clients_btn_link');
+            $home_clients_tab1_name = tr_options_field('tr_theme_options.home_clients_tab1_name');
+            $home_clients_tab2_name = tr_options_field('tr_theme_options.home_clients_tab2_name');
+            $home_clients_tab3_name = tr_options_field('tr_theme_options.home_clients_tab3_name');
+            $home_clients_btn_text = tr_options_field('tr_theme_options.home_clients_btn_text');
+            $home_clients_btn_link = tr_options_field('tr_theme_options.home_clients_btn_link');
             ?>
             <div class="home_clients_bg img_full">
                 <img src="./images/pattern-blur.svg" alt="" loading="lazy">
             </div>
-            <?php if ($home_clients_subtitle): ?>
                 <div class="home_clients_subtitle block_arrow"><?php echo esc_html($home_clients_subtitle); ?></div>
-            <?php endif; ?>
-            <?php if ($home_clients_title): ?>
                 <div class="home_clients_title heading h2 h4_mb cl_linear txt_center">
                     <?php echo wp_kses_post(nl2br($home_clients_title)); ?>
                 </div>
-            <?php endif; ?>
 
             <?php if ($home_clients_tab1_name || $home_clients_tab2_name || $home_clients_tab3_name): ?>
                 <div class="home_clients_tab">
@@ -482,7 +486,7 @@ get_header();
                 <?php
                 $tabs = ['tab1' => 'home_clients_tab1', 'tab2' => 'home_clients_tab2', 'tab3' => 'home_clients_tab3'];
                 foreach ($tabs as $tab_id => $field_name):
-                    $clients = tr_posts_field($field_name);
+                    $clients = tr_options_field('tr_theme_options.' . $field_name);
                     ?>
                     <div class="home_clients_content_item" data-tabs="<?php echo $tab_id; ?>">
                         <?php
@@ -504,8 +508,7 @@ get_header();
             </div>
             <?php if ($home_clients_btn_text && $home_clients_btn_link): ?>
                 <a href="<?php echo esc_url($home_clients_btn_link); ?>"
-                    class="home_clients_button button_hover txt_uppercase hover_txt txt_14 txt_medium"
-                    style="display:inline-flex;">
+                    class="home_clients_button button_hover txt_uppercase hover_txt txt_14 txt_medium">
                     <div class="hover_txt_grid">
                         <span class="init"><?php echo esc_html($home_clients_btn_text); ?></span>
                         <span class="active"><?php echo esc_html($home_clients_btn_text); ?></span>

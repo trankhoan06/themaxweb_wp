@@ -96,37 +96,49 @@ get_header();
                     echo do_shortcode($form_shortcode);
                 else:
                     ?>
+                    <?php
+                    $contact_name = tr_posts_field('contact_form_name') ?: 'Your name';
+                    $contact_email = tr_posts_field('contact_form_email') ?: 'Email address';
+                    $contact_phone = tr_posts_field('contact_form_phone') ?: 'Phone number';
+                    $contact_company = tr_posts_field('contact_form_company') ?: 'Company name';
+                    $contact_advice = tr_posts_field('contact_form_advice') ?: 'What area do you need advice on?';
+                    $contact_submit = tr_posts_field('contact_form_submit') ?: 'SUBMIT';
+
+                    $err_c_name = tr_posts_field('contact_err_name') ?: 'Please enter your name';
+                    $err_c_email = tr_posts_field('contact_err_email') ?: 'Please enter a valid email';
+                    $err_c_phone = tr_posts_field('contact_err_phone') ?: 'Please enter your phone number';
+                    ?>
                     <form class="contact_form" novalidate>
                         <div class="contact_form_row">
-                            <input type="text" name="contact_name" placeholder="Your name*" class="contact_form_input"
+                            <input type="text" name="contact_name" placeholder="<?php echo esc_attr($contact_name); ?>*" class="contact_form_input"
                                 required>
-                            <span class="error_msg">Please enter your name</span>
+                            <span class="error_msg"><?php echo esc_html($err_c_name); ?></span>
                         </div>
                         <div class="contact_form_row col-2">
                             <div class="contact_form_col">
-                                <input type="email" name="contact_email" placeholder="Email address*"
+                                <input type="email" name="contact_email" placeholder="<?php echo esc_attr($contact_email); ?>*"
                                     class="contact_form_input" required>
-                                <span class="error_msg">Please enter a valid email</span>
+                                <span class="error_msg"><?php echo esc_html($err_c_email); ?></span>
                             </div>
                             <div class="contact_form_col">
-                                <input type="tel" name="contact_phone" placeholder="Phone number*"
+                                <input type="tel" name="contact_phone" placeholder="<?php echo esc_attr($contact_phone); ?>*"
                                     class="contact_form_input" required>
-                                <span class="error_msg">Please enter your phone number</span>
+                                <span class="error_msg"><?php echo esc_html($err_c_phone); ?></span>
                             </div>
                         </div>
                         <div class="contact_form_row">
-                            <input type="text" name="contact_company" placeholder="Company name" class="contact_form_input">
+                            <input type="text" name="contact_company" placeholder="<?php echo esc_attr($contact_company); ?>" class="contact_form_input">
                         </div>
                         <div class="contact_form_row">
-                            <input type="text" name="contact_advice" placeholder="What area do you need advice on?"
+                            <input type="text" name="contact_advice" placeholder="<?php echo esc_attr($contact_advice); ?>"
                                 class="contact_form_input">
                         </div>
 
                         <div class="contact_form_row submit_row">
                             <button type="submit" class="btn_submit button_hover hover_txt txt_14 txt_uppercase cl_be">
                                 <div class="hover_txt_grid">
-                                    <span class="init">SUBMIT</span>
-                                    <span class="active">SUBMIT</span>
+                                    <span class="init"><?php echo esc_html($contact_submit); ?></span>
+                                    <span class="active"><?php echo esc_html($contact_submit); ?></span>
                                 </div>
                             </button>
                         </div>

@@ -350,7 +350,7 @@ function themax_email_template($section_title, $content) {
 
 function themax_verify_recaptcha($token) {
     if (empty($token)) return false;
-    $secret = tr_options_field('tr_theme_options.recaptcha_secret_key') ?: '';
+    $secret = tr_options_field('tr_theme_options.recaptcha_secret_key');
     $response = wp_remote_post('https://www.google.com/recaptcha/api/siteverify', [
         'body' => [
             'secret' => $secret,
@@ -606,4 +606,98 @@ function themax_check_rate_limit_ip() {
     
     set_transient($transient_name, $submit_count + 1, 60);
     return true;
+}
+
+add_action('wp_ajax_submit_career_popup_application', 'ajax_submit_career_popup_application');
+add_action('wp_ajax_nopriv_submit_career_popup_application', 'ajax_submit_career_popup_application');
+
+function ajax_submit_career_popup_application() {
+    $result = ['status' => 0];
+    
+    if (!themax_check_rate_limit_ip()) {
+        $result['message'] = 'Bạn gửi quá nhiều yêu cầu. Vui lòng đợi 1 phút rồi thử lại.';
+        echo json_encode($result);
+        die();
+    }
+    
+    $recaptcha_token = isset($_POST['g-recaptcha-response']) ? $_POST['g-recaptcha-response'] : '';
+    if (!empty($recaptcha_token) && !themax_verify_recaptcha($recaptcha_token)) {
+        $result['message'] = 'Xác thực bảo mật thất bại. Vui lòng thử lại.';
+        echo json_encode($result);
+        die();
+    }
+    
+    $name = isset($_POST['your_name']) ? sanitize_text_field($_POST['your_name']) : '';
+    $email = isset($_POST['email_address']) ? sanitize_email($_POST['email_address']) : '';
+    $phone = isset($_POST['phone_number']) ? sanitize_text_field($_POST['phone_number']) : '';
+    $portfolio = isset($_POST['link_portfolio']) ? sanitize_text_field($_POST['link_portfolio']) : '';
+    $intro = isset($_POST['introduction']) ? sanitize_textarea_field($_POST['introduction']) : '';
+    $job_title = isset($_POST['title_job']) ? sanitize_text_field($_POST['title_job']) : 'Vị trí Ứng tuyển';
+
+    $to_email = tr_options_field('tr_theme_options.receive_email'); 
+    if (empty($to_email)) {
+        $to_email = get_option('admin_email');
+    }
+
+    $subject = "Ứng tuyển mới: " . $job_title . " - " . $name;
+    
+    $content = '<h2 style="margin-top:0; font-size:18px; color:#111; margin-bottom:20px;">Ứng viên ' . $name . ' vừa ứng tuyển</h2>';
+    $content .= '<table width="100%" cellpadding="8" cellspacing="0" border="0" style="font-size: 14px;">';
+    $content .= '<tr><td width="35%" style="font-weight:bold; color:#555;">Họ và tên:</td><td>' . $name . '</td></tr>';
+    $content .= '<tr><td style="font-weight:bold; color:#555;">Vị trí ứng tuyển:</td><td>' . $job_title . '</td></tr>';
+    $content .= '<tr><td style="font-weight:bold; color:#555;">Email:</td><td>' . $email . '</td></tr>';
+    $content .= '<tr><td style="font-weight:bold; color:#555;">Số điện thoại:</td><td>' . $phone . '</td></tr>';
+    $content .= '<tr><td style="font-weight:bold; color:#555;">Xem CV:</td><td>File đính kèm</td></tr>';
+    if(!empty($portfolio)) $content .= '<tr><td style="font-weight:bold; color:#555;">Link Portfolio:</td><td><a href="'.$portfolio.'" style="color:#EB4250;">'.$portfolio.'</a></td></tr>';
+    if(!empty($intro)) $content .= '<tr><td style="font-weight:bold; color:#555; vertical-align:top;">Giới thiệu:</td><td>' . nl2br($intro) . '</td></tr>';
+    $content .= '</table>';
+    
+    $body = themax_email_template('TUYỂN DỤNG', $content);
+    $headers = array('Content-Type: text/html; charset=UTF-8');
+    
+    // Handle File Upload
+    $attachments = array();
+    if (!empty($_FILES['upload_cv']['name'])) {
+        $uploaded_file = $_FILES['upload_cv'];
+        
+        $allowed_exts = ['pdf', 'ppt', 'pptx', 'doc', 'docx', 'jpg', 'png'];
+        $file_info = pathinfo($uploaded_file['name']);
+        $extension = isset($file_info['extension']) ? strtolower($file_info['extension']) : '';
+        
+        if (in_array($extension, $allowed_exts) && $uploaded_file['error'] == 0 && $uploaded_file['size'] <= 5242880) { // 5MB limit
+            $upload_dir = wp_upload_dir();
+            $file_name = sanitize_file_name($uploaded_file['name']);
+            $target_file = $upload_dir['path'] . '/' . wp_unique_filename($upload_dir['path'], $file_name);
+            
+            if (move_uploaded_file($uploaded_file['tmp_name'], $target_file)) {
+                $attachments[] = $target_file;
+            }
+        } else {
+            $result['message'] = 'Lỗi file CV (định dạng không hỗ trợ hoặc vượt quá 5MB).';
+            echo json_encode($result);
+            die();
+        }
+    }
+    
+    $check = wp_mail($to_email, $subject, $body, $headers, $attachments);
+
+    if ($check) {
+        $result['status'] = 1;
+        
+        // Gửi mail cảm ơn cho ứng viên
+        $thank_you_subject = 'Cảm ơn bạn đã ứng tuyển vị trí ' . $job_title;
+        $thank_you_content = '<h2 style="margin-top:0; font-size:18px; color:#111; margin-bottom:20px;">Xin chào ứng viên, ' . $name . '</h2>';
+        $thank_you_content .= '<p style="margin-bottom:15px;">Cảm ơn bạn đã quan tâm và gửi hồ sơ ứng tuyển vị trí <strong>' . $job_title . '</strong>.</p>';
+        $thank_you_content .= '<p style="margin-bottom:15px;">Chúng tôi đã nhận được thông tin và CV của bạn. Bộ phận Tuyển dụng sẽ xem xét hồ sơ và liên hệ với bạn trong thời gian sớm nhất nếu hồ sơ phù hợp.</p>';
+        $thank_you_content .= '<p style="margin-bottom:25px;">Chúc bạn một ngày tốt lành!</p>';
+        $thank_you_content .= '<p style="margin-bottom:0; color:#555;">Trân trọng,<br><strong style="color:#111;">Phòng Nhân sự TheMax</strong></p>';
+        
+        $thank_you_body = themax_email_template('TUYỂN DỤNG', $thank_you_content);
+        wp_mail($email, $thank_you_subject, $thank_you_body, $headers);
+    } else {
+        $result['message'] = 'Có lỗi xảy ra khi gửi mail, vui lòng thử lại sau.';
+    }
+
+    echo json_encode($result);
+    die();
 }

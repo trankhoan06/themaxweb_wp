@@ -1,10 +1,29 @@
 <?php
 /**
  * Template Name: Career Detail
+ * Template Post Type: career, page
  */
 get_header();
 ?>
 <main class="main" data-namespace="careerDetail">
+    <?php
+    $is_vi = function_exists('pll_current_language') && pll_current_language() === 'vi';
+    $pop_title = tr_options_field($is_vi ? 'career_popup_title_text_vi' : 'career_popup_title_text') ?: ($is_vi ? 'NôP đƠN ỨNG TUYểN Vị TRí NàY' : 'SUBMIT YOUR APPLICATION FOR THIS POSITION');
+    $pop_name = tr_options_field($is_vi ? 'career_popup_name_vi' : 'career_popup_name') ?: ($is_vi ? 'Họ và tên' : 'Your name');
+    $pop_email = tr_options_field($is_vi ? 'career_popup_email_vi' : 'career_popup_email') ?: ($is_vi ? 'Địa chỉ Email' : 'Email address');
+    $pop_phone = tr_options_field($is_vi ? 'career_popup_phone_vi' : 'career_popup_phone') ?: ($is_vi ? 'Số điện thoại' : 'Phone number');
+    $pop_upload_btn = tr_options_field($is_vi ? 'career_popup_upload_btn_vi' : 'career_popup_upload_btn') ?: ($is_vi ? 'Tải CV lên' : 'Upload CV');
+    $pop_upload_note = tr_options_field($is_vi ? 'career_popup_upload_note_vi' : 'career_popup_upload_note') ?: ($is_vi ? 'Tải lên file PDF, PPT, PPTX, DOC, DOCX, JPG, PNG (tối đa 5 MB)' : 'Upload PDF, PPT, PPTX, DOC, DOCX, JPG, PNG files (maximum 5 MB)');
+    $pop_portfolio = tr_options_field($is_vi ? 'career_popup_portfolio_vi' : 'career_popup_portfolio') ?: 'Link Portfolio';
+    $pop_job_ph = tr_options_field($is_vi ? 'career_popup_job_placeholder_vi' : 'career_popup_job_placeholder') ?: ($is_vi ? 'Vui lòng chọn vị trí ứng tuyển' : 'Please select the title job');
+    $pop_intro = tr_options_field($is_vi ? 'career_popup_intro_vi' : 'career_popup_intro') ?: ($is_vi ? 'Giới thiệu ngắn gọn về bản thân' : 'A brief introduction about myself');
+    $pop_submit = tr_options_field($is_vi ? 'career_popup_submit_vi' : 'career_popup_submit') ?: ($is_vi ? 'NỘP ĐƠN ỨNG TUYỂN' : 'SUBMIT JOB APPLICATION');
+
+    $err_name = $is_vi ? 'Vui lòng nhập tên của bạn' : 'Please enter your name';
+    $err_email = $is_vi ? 'Vui lòng nhập địa chỉ email hợp lệ' : 'Please enter a valid email';
+    $err_phone = $is_vi ? 'Vui lòng nhập số điện thoại' : 'Please enter your phone number';
+    $err_cv = $is_vi ? 'Vui lòng tải lên CV của bạn' : 'Please upload your CV';
+    ?>
     <section class="careerdetail_info" data-init>
         <div class="careerdetail_info_bg svg_full">
             <svg width="883" height="806" viewBox="0 0 883 806" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -95,28 +114,25 @@ get_header();
                         ?>
                     </div>
                     <div class="careerdetail_info_content_form">
-                        <div class="careerdetail_info_content_form_title heading h5 h6_mb cl_red txt_uppercase">NôP đƠN
-                            ỨNG TUYểN
-                            Vị TRí
-                            NàY
+                        <div class="careerdetail_info_content_form_title heading h5 h6_mb cl_red txt_uppercase"><?php echo esc_attr($pop_title); ?>
                         </div>
                         <form class="careerdetail_form" novalidate>
                             <input type="hidden" name="job_id" value="<?php echo get_the_ID(); ?>">
                             <div class="careerdetail_form_row">
-                                <input type="text" name="career_name" placeholder="Your name*"
+                                <input type="text" name="career_name" placeholder="<?php echo esc_attr($pop_name); ?>"
                                     class="careerdetail_form_input" required>
-                                <span class="error_msg">Please enter your name</span>
+                                <span class="error_msg"><?php echo esc_html($err_name); ?></span>
                             </div>
                             <div class="careerdetail_form_row col-2">
                                 <div class="careerdetail_form_col">
-                                    <input type="email" name="career_email" placeholder="Email address*"
+                                    <input type="email" name="career_email" placeholder="<?php echo esc_attr($pop_email); ?>*"
                                         class="careerdetail_form_input" required>
-                                    <span class="error_msg">Please enter a valid email</span>
+                                    <span class="error_msg"><?php echo esc_html($err_email); ?></span>
                                 </div>
                                 <div class="careerdetail_form_col">
-                                    <input type="tel" name="career_phone" placeholder="Phone number*"
+                                    <input type="tel" name="career_phone" placeholder="<?php echo esc_attr($pop_phone); ?>*"
                                         class="careerdetail_form_input" required>
-                                    <span class="error_msg">Please enter your phone number</span>
+                                    <span class="error_msg"><?php echo esc_html($err_phone); ?></span>
                                 </div>
                             </div>
                             <div class="careerdetail_form_row careerdetail_form_upload">
@@ -127,21 +143,19 @@ get_header();
                                         <polyline points="17 8 12 3 7 8"></polyline>
                                         <line x1="12" y1="3" x2="12" y2="15"></line>
                                     </svg>
-                                    Upload CV
+                                    <?php echo esc_attr($pop_upload_btn); ?>
                                     <input type="file" name="career_cv" accept=".pdf,.ppt,.pptx,.doc,.docx,.jpg,.png"
                                         style="display:none;" required>
                                 </label>
-                                <span class="careerdetail_form_upload_txt">Upload PDF, PPT, PPTX, DOC, DOCX, JPG,
-                                    PNG
-                                    files (maximum 5 MB)</span>
-                                <span class="error_msg" style="bottom: -2rem; left: 0;">Please upload your CV</span>
+                                <span class="careerdetail_form_upload_txt"><?php echo esc_html($pop_upload_note); ?></span>
+                                <span class="error_msg" style="bottom: -2rem; left: 0;"><?php echo esc_html($err_cv); ?></span>
                             </div>
                             <div class="careerdetail_form_row">
-                                <input type="text" name="career_portfolio" placeholder="Link Portfolio"
+                                <input type="text" name="career_portfolio" placeholder="<?php echo esc_attr($pop_portfolio); ?>"
                                     class="careerdetail_form_input">
                             </div>
                             <div class="careerdetail_form_row">
-                                <input type="text" name="career_intro" placeholder="A brief introduction about myself"
+                                <input type="text" name="career_intro" placeholder="<?php echo esc_attr($pop_intro); ?>"
                                     class="careerdetail_form_input">
                             </div>
 
@@ -149,8 +163,8 @@ get_header();
                                 <button type="submit"
                                     class="btn_submit button_hover hover_txt txt_14 txt_uppercase cl_be">
                                     <div class="hover_txt_grid">
-                                        <span class="init">SUBMIT JOB APPLICATION</span>
-                                        <span class="active">SUBMIT JOB APPLICATION</span>
+                                        <span class="init"><?php echo esc_attr($pop_submit); ?></span>
+                                        <span class="active"><?php echo esc_attr($pop_submit); ?></span>
                                     </div>
                                 </button>
                             </div>
@@ -366,17 +380,76 @@ get_header();
                     <div class="about_cta_inner_content_des txt_18">
                         <?php echo nl2br(esc_html($cta_des ?? '')); ?>
                     </div>
-                    <a href="<?php echo esc_url($cta_link ?? ''); ?>"
+                    <button
                         class="about_cta_inner_content_title_button hover_txt button_hover txt_uppercase txt_14 cl_be">
                         <div class="hover_txt_grid">
                             <?php $cta_btn_txt_val = esc_html($cta_btn_text ?? ''); ?>
                             <span class="init"><?php echo $cta_btn_txt_val; ?></span>
                             <span class="active"><?php echo $cta_btn_txt_val; ?></span>
                         </div>
-                    </a>
+                    </button>
                 </div>
             </div>
         </div>
     </section>
+    <div class="career_popup_overlay" id="careerPopupOverlay">
+        <div class="career_popup_content">
+            <button class="career_popup_close" id="careerPopupClose">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"></path></svg>
+            </button>
+            <form class="career_popup_form" action="" method="POST" enctype="multipart/form-data">
+                <div class="career_popup_form_row">
+                    <input class="txt_16" type="text" name="your_name" placeholder="<?php echo esc_attr($pop_name); ?>" required>
+                </div>
+                <div class="career_popup_form_row col-2">
+                    <input class="txt_16" type="email" name="email_address" placeholder="<?php echo esc_attr($pop_email); ?>" required>
+                    <input class="txt_16" type="tel" name="phone_number" placeholder="<?php echo esc_attr($pop_phone); ?>" required>
+                </div>
+                <div class="career_popup_form_row file_upload_row">
+                    <label class="career_popup_upload_btn">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg>
+                        <?php echo esc_html($pop_upload_btn); ?>
+                        <input type="file" name="upload_cv" accept=".pdf,.ppt,.pptx,.doc,.docx,.jpg,.png" hidden>
+                    </label>
+                    <div class="career_popup_upload_note"><?php echo esc_html($pop_upload_note); ?></div>
+                </div>
+                <div class="career_popup_form_row">
+                    <input class="txt_16" type="url" name="link_portfolio" placeholder="<?php echo esc_attr($pop_portfolio); ?>">
+                </div>
+                <div class="career_popup_form_row select_row">
+                    <select class="txt_16" name="title_job" required>
+                        <option value="" disabled selected><?php echo esc_html($pop_job_ph); ?></option>
+                        <?php 
+                        $career_posts = new WP_Query(array(
+                            'post_type' => 'career',
+                            'post_status' => 'publish',
+                            'posts_per_page' => -1,
+                        ));
+                        if ($career_posts->have_posts()) : 
+                            while ($career_posts->have_posts()) : $career_posts->the_post(); 
+                        ?>
+                        <option value="<?php echo esc_attr(get_the_title()); ?>"><?php echo esc_html(get_the_title()); ?></option>
+                        <?php 
+                            endwhile; 
+                            wp_reset_postdata(); 
+                        endif; 
+                        ?>
+                    </select>
+                    <svg class="select_icon" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M6 9l6 6 6-6"/></svg>
+                </div>
+                <div class="career_popup_form_row">
+                    <input class="txt_16" type="text" name="introduction" placeholder="<?php echo esc_attr($pop_intro); ?>">
+                </div>
+                <div class="career_popup_form_submit">
+                    <button type="submit" class="career_popup_submit_btn  hover_txt button_hover">
+                        <div class="hover_txt_grid">
+                            <span class="init"><?php echo esc_html($pop_submit); ?></span>
+                            <span class="active"><?php echo esc_html($pop_submit); ?></span>
+                        </div>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 </main>
 <?php get_footer(); ?>

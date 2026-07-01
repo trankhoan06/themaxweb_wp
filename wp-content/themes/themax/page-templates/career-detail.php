@@ -74,46 +74,46 @@ get_header();
                         </div>
                         <div class="careerdetail_info_content_des">
                             <div class="careerdetail_info_content_des_item">
-                                <div class="careerdetail_info_content_des_item_title h5 h6_mb heading">M?c tiêu công
+                                <div class="careerdetail_info_content_des_item_title h5 h6_mb heading">M?c tiï¿½u cï¿½ng
                                     vi?c
                                 </div>
                                 <div class="careerdetail_info_content_des_item_inner">
                                     <div class="careerdetail_info_content_des_item_txt txt_16">Thi?t k? ?n ph?m truy?n
-                                        thông
-                                        s? nh?t quán, d?p, hi?u qu? cho social, banner ads, website/landing, ý tu?ng
+                                        thï¿½ng
+                                        s? nh?t quï¿½n, d?p, hi?u qu? cho social, banner ads, website/landing, ï¿½ tu?ng
                                         video
                                         clip ads...</div>
                                 </div>
                             </div>
                             <div class="careerdetail_info_content_des_item">
-                                <div class="careerdetail_info_content_des_item_title h5 h6_mb heading">Nhi?m v? chính
+                                <div class="careerdetail_info_content_des_item_title h5 h6_mb heading">Nhi?m v? chï¿½nh
                                 </div>
                                 <div class="careerdetail_info_content_des_item_inner">
-                                    <div class="careerdetail_info_content_des_item_txt txt_16">Lên concept, idea,
+                                    <div class="careerdetail_info_content_des_item_txt txt_16">Lï¿½n concept, idea,
                                         moodboard,
                                         styleframe theo brief</div>
-                                    <div class="careerdetail_info_content_des_item_txt txt_16">Lên concept, idea,
+                                    <div class="careerdetail_info_content_des_item_txt txt_16">Lï¿½n concept, idea,
                                         moodboard,
                                         styleframe theo brief</div>
-                                    <div class="careerdetail_info_content_des_item_txt txt_16">Lên concept, idea,
+                                    <div class="careerdetail_info_content_des_item_txt txt_16">Lï¿½n concept, idea,
                                         moodboard,
                                         styleframe theo brief</div>
-                                    <div class="careerdetail_info_content_des_item_txt txt_16">Lên concept, idea,
+                                    <div class="careerdetail_info_content_des_item_txt txt_16">Lï¿½n concept, idea,
                                         moodboard,
                                         styleframe theo brief</div>
-                                    <div class="careerdetail_info_content_des_item_txt txt_16">Lên concept, idea,
+                                    <div class="careerdetail_info_content_des_item_txt txt_16">Lï¿½n concept, idea,
                                         moodboard,
                                         styleframe theo brief</div>
-                                    <div class="careerdetail_info_content_des_item_txt txt_16">Lên concept, idea,
+                                    <div class="careerdetail_info_content_des_item_txt txt_16">Lï¿½n concept, idea,
                                         moodboard,
                                         styleframe theo brief</div>
                                 </div>
                             </div>
                         </div>
                         <div class="careerdetail_info_content_form">
-                            <div class="careerdetail_info_content_form_title heading h5 h6_mb cl_red">N?P ÐON ?NG TUY?N
-                                V? TRÍ
-                                NÀY
+                            <div class="careerdetail_info_content_form_title heading h5 h6_mb cl_red">N?P ï¿½ON ?NG TUY?N
+                                V? TRï¿½
+                                Nï¿½Y
                             </div>
                             <form class="careerdetail_form">
                                 <div class="careerdetail_form_row">
@@ -442,7 +442,7 @@ get_header();
                 <div class=" about_cta_inner_content">
                     <div class="about_cta_inner_content_title grid">
                         <div class="about_cta_inner_content_title_txt heading h2 cl_linear h5_mb">
-                            Still haven’t found
+                            Still havenï¿½t found
                             the job you like?
                         </div>
                         <div class="about_cta_inner_content_des txt_18">Don't hesitate to leave your application; we

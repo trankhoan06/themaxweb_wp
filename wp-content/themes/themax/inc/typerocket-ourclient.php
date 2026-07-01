@@ -11,25 +11,7 @@ add_action('edit_form_after_title', function ($post) {
         echo $form->text('client_hero_subtitle')->setLabel("Hero Subtitle");
         echo endBox();
 
-        echo beginBox("Tabs & Logos", true);
-        echo $form->text('tab1_name')->setLabel("Tab 1 Name (e.g. Real Estate Clients)");
-        echo $form->repeater('tab1_logos')->setLabel('Tab 1 Logos')->setFields([
-            $form->image('logo')->setLabel('Logo Image'),
-            $form->text('link')->setLabel('Link (Optional)')
-        ]);
-
-        echo $form->text('tab2_name')->setLabel("Tab 2 Name (e.g. Real Estate Projects)");
-        echo $form->repeater('tab2_logos')->setLabel('Tab 2 Logos')->setFields([
-            $form->image('logo')->setLabel('Logo Image'),
-            $form->text('link')->setLabel('Link (Optional)')
-        ]);
-
-        echo $form->text('tab3_name')->setLabel("Tab 3 Name (e.g. Web & Mobile App)");
-        echo $form->repeater('tab3_logos')->setLabel('Tab 3 Logos')->setFields([
-            $form->image('logo')->setLabel('Logo Image'),
-            $form->text('link')->setLabel('Link (Optional)')
-        ]);
-        echo endBox();
+        // Tabs moved to Theme Options
         echo beginBox("Call to Action (CTA)", true);
         echo $form->image('about_cta_img')->setLabel("CTA Image");
         echo $form->text('about_cta_link')->setLabel("CTA Link");

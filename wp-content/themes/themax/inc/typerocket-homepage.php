@@ -53,26 +53,7 @@ add_action('edit_form_after_title', function($post) {
         echo beginBox("Our Clients (Khách hàng)",true);
         echo $form->text('home_clients_subtitle')->setLabel("Tiêu đề phụ (VD: TYPICAL CLIENTS)");
         echo $form->textarea('home_clients_title')->setLabel("Tiêu đề chính (VD: We are proud to partner...)");
-        
-        echo $form->text('home_clients_tab1_name')->setLabel("Tên Tab 1 (VD: Real Estate Developers)");
-        echo $form->repeater('home_clients_tab1')->setLabel("Logo Tab 1")->setFields([
-            $form->image('logo')->setLabel("Logo đối tác")
-        ]);
-        
-        echo $form->text('home_clients_tab2_name')->setLabel("Tên Tab 2 (VD: Real Estate Projects)");
-        echo $form->repeater('home_clients_tab2')->setLabel("Logo Tab 2")->setFields([
-            $form->image('logo')->setLabel("Logo đối tác")
-        ]);
-        
-        echo $form->text('home_clients_tab3_name')->setLabel("Tên Tab 3 (VD: Others Industry)");
-        echo $form->repeater('home_clients_tab3')->setLabel("Logo Tab 3")->setFields([
-            $form->image('logo')->setLabel("Logo đối tác")
-        ]);
-        
-        echo $form->row(
-            $form->text('home_clients_btn_text')->setLabel("Text nút bấm"),
-            $form->text('home_clients_btn_link')->setLabel("Link nút bấm")
-        );
+
         echo endBox();
 
 

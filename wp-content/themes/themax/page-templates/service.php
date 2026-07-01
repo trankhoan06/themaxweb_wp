@@ -23,8 +23,8 @@ get_header();
                 <div class="service_hero_right_txt txt_18">
                     <?php echo nl2br(esc_html((tr_posts_field('service_hero_desc') ?? ''))); ?>
                 </div>
-                <a href="<?php echo esc_url((tr_posts_field('service_hero_btn_link') ?? '')); ?>"
-                    class="service_hero_right_discover hover_txt txt_16 cl_be">
+                <a href="#service"
+                    class="service_hero_right_discover txt_medium hover_txt txt_16 cl_eb">
                     <div class="hover_txt_grid">
                         <?php $btn_txt = esc_html((tr_posts_field('service_hero_btn_text') ?? '')); ?>
                         <span class="init"><?php echo $btn_txt; ?></span>
@@ -119,7 +119,7 @@ get_header();
             <img src="<?php echo esc_url($simg_mob); ?>" alt="">
         </div>
     </section>
-    <section class="home_services" data-section="white">
+    <section class="home_services" data-section="white" id="service">
         <div class="home_services_top">
             <div class="home_services_top_bg left middle svg_full">
                 <svg width="253" height="448" viewBox="0 0 253 448" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -342,6 +342,29 @@ get_header();
             </a>
         </div>
     </section>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var btn = document.querySelector('a[href="#service"]');
+        if (btn) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                var target = document.querySelector('#service');
+                if (target) {
+                    if (typeof _ !== 'undefined' && typeof _.scrollTo === 'function') {
+                        _.scrollTo(target, { offset: 0 });
+                    } else if (typeof jQuery !== 'undefined') {
+                        jQuery('html, body').animate({
+                            scrollTop: jQuery(target).offset().top
+                        }, 1200, 'swing');
+                    } else {
+                        target.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }
+            });
+        }
+    });
+    </script>
 </main>
 
 <?php get_footer(); ?>

@@ -29,10 +29,34 @@ $form = tr_form()->useJson()->setGroup( $this->getName() );
         echo "<h3>CTA Section (Global for Single Careers)</h3>";
         echo "<p>Set the global CTA content here. This will appear at the bottom of all Career single pages.</p>";
         echo $form->image('career_cta_img')->setLabel('CTA Image');
-        echo $form->text('career_cta_link')->setLabel('CTA Button Link URL');
+        // echo $form->text('career_cta_link')->setLabel('CTA Button Link URL');
         echo $form->text('career_cta_btn_text')->setLabel('CTA Button Text');
         echo $form->textarea('career_cta_title')->setLabel('CTA Title');
         echo $form->textarea('career_cta_des')->setLabel('CTA Description');
+
+        echo "<hr><h4>Popup Form Text (English)</h4>";
+        echo $form->text('career_popup_title_text')->setLabel('Title')->setDefault('Submit Your Resume');
+        echo $form->text('career_popup_name')->setLabel('Name Placeholder')->setDefault('Your name');
+        echo $form->text('career_popup_email')->setLabel('Email Placeholder')->setDefault('Email address');
+        echo $form->text('career_popup_phone')->setLabel('Phone Placeholder')->setDefault('Phone number');
+        echo $form->text('career_popup_upload_btn')->setLabel('Upload Button Text')->setDefault('Upload CV');
+        echo $form->text('career_popup_upload_note')->setLabel('Upload Note Text')->setDefault('Upload PDF, PPT, PPTX, DOC, DOCX, JPG, PNG files (maximum 5 MB)');
+        echo $form->text('career_popup_portfolio')->setLabel('Portfolio Placeholder')->setDefault('Link Portfolio');
+        echo $form->text('career_popup_job_placeholder')->setLabel('Job Select Placeholder')->setDefault('Please select the title job');
+        echo $form->text('career_popup_intro')->setLabel('Introduction Placeholder')->setDefault('A brief introduction about myself');
+        echo $form->text('career_popup_submit')->setLabel('Submit Button Text')->setDefault('SUBMIT JOB APPLICATION');
+
+        echo "<hr><h4>Popup Form Text (Tiếng Việt)</h4>";
+        echo $form->text('career_popup_title_text_vi')->setLabel('Title')->setDefault('NôP đƠN ỨNG TUYểN Vị TRí NàY');
+        echo $form->text('career_popup_name_vi')->setLabel('Name Placeholder (Tiếng Việt)');
+        echo $form->text('career_popup_email_vi')->setLabel('Email Placeholder (Tiếng Việt)');
+        echo $form->text('career_popup_phone_vi')->setLabel('Phone Placeholder (Tiếng Việt)');
+        echo $form->text('career_popup_upload_btn_vi')->setLabel('Upload Button Text (Tiếng Việt)');
+        echo $form->text('career_popup_upload_note_vi')->setLabel('Upload Note Text (Tiếng Việt)');
+        echo $form->text('career_popup_portfolio_vi')->setLabel('Portfolio Placeholder (Tiếng Việt)');
+        echo $form->text('career_popup_job_placeholder_vi')->setLabel('Job Select Placeholder (Tiếng Việt)');
+        echo $form->text('career_popup_intro_vi')->setLabel('Introduction Placeholder (Tiếng Việt)');
+        echo $form->text('career_popup_submit_vi')->setLabel('Submit Button Text (Tiếng Việt)');
     };
 
     // Footer Settings
@@ -68,6 +92,13 @@ $form = tr_form()->useJson()->setGroup( $this->getName() );
         echo $form->text('footer_link_policy')->setLabel('Link policy')->setDefault('#');
         echo $form->text('footer_copyright')->setLabel('Copyright Text')->setDefault('© 2018-2026 TheMax. All Right Reserved.');
 
+        echo "<h4>Footer Form Text</h4>";
+        echo $form->text('footer_form_title')->setLabel('Form Title')->setDefault('GET IN TOUCH WITH US');
+        echo $form->text('footer_form_name')->setLabel('Name Placeholder')->setDefault('Your name');
+        echo $form->text('footer_form_phone')->setLabel('Phone Placeholder')->setDefault('Phone number');
+        echo $form->text('footer_form_message')->setLabel('Message Placeholder')->setDefault('Your Message');
+        echo $form->text('footer_form_submit')->setLabel('Submit Button Text')->setDefault('submit');
+
         echo "<hr><h3>Footer Settings (Tiếng Việt)</h3>";
         
         echo "<h4>VN Office (Tiếng Việt)</h4>";
@@ -84,6 +115,13 @@ $form = tr_form()->useJson()->setGroup( $this->getName() );
         echo $form->text('footer_text_policy_vi')->setLabel('text policy (Tiếng Việt)');
         echo $form->text('footer_link_policy_vi')->setLabel('Link policy (Tiếng Việt)')->setDefault('#');
         echo $form->text('footer_copyright_vi')->setLabel('Copyright Text (Tiếng Việt)');
+
+        echo "<h4>Footer Form Text (Tiếng Việt)</h4>";
+        echo $form->text('footer_form_title_vi')->setLabel('Form Title (Tiếng Việt)');
+        echo $form->text('footer_form_name_vi')->setLabel('Name Placeholder (Tiếng Việt)');
+        echo $form->text('footer_form_phone_vi')->setLabel('Phone Placeholder (Tiếng Việt)');
+        echo $form->text('footer_form_message_vi')->setLabel('Message Placeholder (Tiếng Việt)');
+        echo $form->text('footer_form_submit_vi')->setLabel('Submit Button Text (Tiếng Việt)');
     };
 
     // SMTP Settings
@@ -93,7 +131,7 @@ $form = tr_form()->useJson()->setGroup( $this->getName() );
         echo $form->text('smtp_host')->setLabel('SMTP Host (vd: smtp.gmail.com)');
         echo $form->text('smtp_port')->setLabel('SMTP Port (vd: 465 hoặc 587)');
         echo $form->text('username')->setLabel('Username (Tài khoản Email SMTP)');
-        echo $form->password('password')->setLabel('Password (Mật khẩu ứng dụng SMTP)');
+        echo $form->text('smtp_password')->setLabel('Password (Mật khẩu ứng dụng SMTP)')->setAttribute('type', 'password');
         echo $form->checkbox('authentication')->setLabel('SMTP Authentication')->setText('Bật xác thực SMTP');
         echo $form->select('encryption')->setLabel('Encryption (Mã hoá)')->setOptions(['SSL' => 'ssl', 'TLS' => 'tls', 'Không có' => '']);
         echo $form->text('from_email')->setLabel('Gửi từ Email (From Email - vd: no-reply@themax.com)');
@@ -110,6 +148,34 @@ $form = tr_form()->useJson()->setGroup( $this->getName() );
         echo $form->text('recaptcha_secret_key')->setLabel('reCAPTCHA Secret Key');
     };
 
+    // Clients Settings
+    $clients_settings = function() use ($form) {
+        echo "<h3>Our Clients Settings</h3>";
+        
+        echo $form->text('home_clients_tab1_name')->setLabel("Tên Tab 1 (VD: Real Estate Developers)");
+        echo $form->repeater('home_clients_tab1')->setLabel("Logo Tab 1")->setFields([
+            $form->image('logo')->setLabel("Logo đối tác"),
+            $form->text('link')->setLabel("Link (Optional)")
+        ]);
+        
+        echo $form->text('home_clients_tab2_name')->setLabel("Tên Tab 2 (VD: Real Estate Projects)");
+        echo $form->repeater('home_clients_tab2')->setLabel("Logo Tab 2")->setFields([
+            $form->image('logo')->setLabel("Logo đối tác"),
+            $form->text('link')->setLabel("Link (Optional)")
+        ]);
+        
+        echo $form->text('home_clients_tab3_name')->setLabel("Tên Tab 3 (VD: Others Industry)");
+        echo $form->repeater('home_clients_tab3')->setLabel("Logo Tab 3")->setFields([
+            $form->image('logo')->setLabel("Logo đối tác"),
+            $form->text('link')->setLabel("Link (Optional)")
+        ]);
+        
+        echo $form->row(
+            $form->text('home_clients_btn_text')->setLabel("Text nút bấm"),
+            $form->text('home_clients_btn_link')->setLabel("Link nút bấm")
+        );
+    };
+
     // Save
     $save = $form->submit( 'Save Options' );
 
@@ -120,6 +186,7 @@ $form = tr_form()->useJson()->setGroup( $this->getName() );
         ->addTab( 'Footer', $footer_settings )
         ->addTab( 'SMTP', $smtp_settings )
         ->addTab( 'reCAPTCHA', $recaptcha_settings )
+        ->addTab( 'Clients', $clients_settings )
         ->render( 'box' );
         
     echo $form->close();

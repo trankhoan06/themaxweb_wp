@@ -1,6 +1,7 @@
 <?php
 /**
  * Template Name: Case Study Detail
+ * Template Post Type: work, page
  * Description:
  *
  * Tip:
@@ -54,16 +55,17 @@ if (have_posts()):
                 <div class="casestudydetail_content_info">
                     <div class="container grid">
                         <?php if (!empty($info_list)):
-                            foreach ($info_list as $index => $info): ?>
-                                <div class="casestudydetail_content_info_item item<?php echo $index + 1; ?>">
+                            $info_count = 1;
+                            foreach ($info_list as $info): ?>
+                                <div class="casestudydetail_content_info_item item<?php echo $info_count; ?>">
                                     <div class="casestudydetail_content_info_item_titlle txt_14 txt_uppercase">
-                                        <?php echo esc_html($info['title']); ?>
+                                        <?php echo esc_html($info['title'] ?? ''); ?>
                                     </div>
                                     <div class="casestudydetail_content_info_item_content txt_16">
-                                        <?php echo esc_html($info['content']); ?>
+                                        <?php echo esc_html($info['content'] ?? ''); ?>
                                     </div>
                                 </div>
-                            <?php endforeach; endif; ?>
+                            <?php $info_count++; endforeach; endif; ?>
                     </div>
                 </div>
                 <div class="container">
