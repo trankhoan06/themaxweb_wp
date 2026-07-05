@@ -27,7 +27,9 @@ $box->setCallback(function() {
         $form->text('title')->setLabel('Title (e.g., The Solution)'),
         $form->textarea('subtitle')->setLabel('Subtitle'),
         $form->textarea('description')->setLabel('Description'),
-        $form->gallery('image')->setLabel('Images (Multiple allowed)')
+        $form->gallery('image')->setLabel('Images (Multiple allowed)'),
+        $form->toggle('is_vertical')->setLabel('Hình dọc')->setText('Có (Dùng cho hình ảnh dọc)'),
+        $form->text('spacing')->setLabel('Khoảng cách các ảnh (VD: 32)')
     ]);
     echo $blog;
     

@@ -148,34 +148,6 @@ $form = tr_form()->useJson()->setGroup( $this->getName() );
         echo $form->text('recaptcha_secret_key')->setLabel('reCAPTCHA Secret Key');
     };
 
-    // Clients Settings
-    $clients_settings = function() use ($form) {
-        echo "<h3>Our Clients Settings</h3>";
-        
-        echo $form->text('home_clients_tab1_name')->setLabel("Tên Tab 1 (VD: Real Estate Developers)");
-        echo $form->repeater('home_clients_tab1')->setLabel("Logo Tab 1")->setFields([
-            $form->image('logo')->setLabel("Logo đối tác"),
-            $form->text('link')->setLabel("Link (Optional)")
-        ]);
-        
-        echo $form->text('home_clients_tab2_name')->setLabel("Tên Tab 2 (VD: Real Estate Projects)");
-        echo $form->repeater('home_clients_tab2')->setLabel("Logo Tab 2")->setFields([
-            $form->image('logo')->setLabel("Logo đối tác"),
-            $form->text('link')->setLabel("Link (Optional)")
-        ]);
-        
-        echo $form->text('home_clients_tab3_name')->setLabel("Tên Tab 3 (VD: Others Industry)");
-        echo $form->repeater('home_clients_tab3')->setLabel("Logo Tab 3")->setFields([
-            $form->image('logo')->setLabel("Logo đối tác"),
-            $form->text('link')->setLabel("Link (Optional)")
-        ]);
-        
-        echo $form->row(
-            $form->text('home_clients_btn_text')->setLabel("Text nút bấm"),
-            $form->text('home_clients_btn_link')->setLabel("Link nút bấm")
-        );
-    };
-
     // Save
     $save = $form->submit( 'Save Options' );
 
@@ -186,7 +158,6 @@ $form = tr_form()->useJson()->setGroup( $this->getName() );
         ->addTab( 'Footer', $footer_settings )
         ->addTab( 'SMTP', $smtp_settings )
         ->addTab( 'reCAPTCHA', $recaptcha_settings )
-        ->addTab( 'Clients', $clients_settings )
         ->render( 'box' );
         
     echo $form->close();

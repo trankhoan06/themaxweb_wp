@@ -80,12 +80,13 @@
 }
 
 .casestudydetail_content_blog_wrap {
-    grid-column: 2/12;
+    grid-column: 1/-1;
     grid-row: 2/3;
     position: relative;
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
+    gap: 3.2rem;
 }
 
 .casestudydetail_content_blog {
@@ -398,11 +399,11 @@
 
 @media only screen and (max-width: 767px) {
     .casestudydetail_hero {
-        height: 80vh;
+        height: 75vh;
     }
 
     .casestudydetail_hero_content_img {
-        width: 12rem;
+        width: 24rem;
     }
 
     .casestudydetail_content_blog_item_img {
@@ -427,6 +428,7 @@
 
     .home_case_content_item_txt_icon_wrap {
         width: 3.2rem;
+        height: 3.2rem;
     }
 
     .casestudydetail_content_blog_item_img_inner.grid-2-col {

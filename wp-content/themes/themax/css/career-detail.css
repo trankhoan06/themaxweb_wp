@@ -534,10 +534,25 @@
     border: none;
     border-bottom: 1px solid #e0e0e0;
     padding-bottom: 1.2rem;
-    color: #929292;
+    color: #1d1d1d;
     background: transparent;
     outline: none;
     font-family: inherit;
+}
+
+.career_popup_form_row select {
+    color: #1d1d1d;
+    /* Màu chữ khi đã chọn */
+}
+
+/* Màu chữ placeholder (khi chưa chọn option nào) */
+.career_popup_form_row select:invalid {
+    color: #929292;
+}
+
+/* Màu chữ của các option bên trong list dropdown */
+.career_popup_form_row select option {
+    color: #1d1d1d;
 }
 
 .career_popup_form_row input::placeholder {

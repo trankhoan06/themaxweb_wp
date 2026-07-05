@@ -45,6 +45,9 @@ add_action('edit_form_after_title', function($post) {
         echo beginBox("Case Studies (Dự án)",true);
         echo $form->text('home_case_subtitle')->setLabel("Tiêu đề phụ (VD: OUR WORKS)");
         echo $form->text('home_case_title')->setLabel("Tiêu đề chính (VD: Discover featured projects)");
+        echo $form->repeater('home_case_works')->setLabel("Danh sách dự án hiển thị (kéo thả để sắp xếp)")->setFields([
+            $form->search('work_id')->setLabel("Chọn dự án")->setPostType('work')
+        ]);
         echo $form->row(
             $form->text('home_case_btn_text')->setLabel("Text nút bấm"),
             $form->text('home_case_btn_link')->setLabel("Link nút bấm")

@@ -219,6 +219,10 @@
 }
 
 @media only screen and (max-width:767px) {
+    .home_specialize_inner_txt.main {
+        width: 100%;
+    }
+
     .home_specialize_inner_txt br {
         display: none;
     }
@@ -241,8 +245,8 @@
     }
 
     .home_specialize_subtxt {
-        bottom: -13.2rem;
-        right: 1.6rem;
+        padding-inline: 0;
+        margin-left: auto;
     }
 
     .home_specialize_bg_deco {

@@ -167,4 +167,36 @@ $register->addColumn('source', true, 'Nguồn', function($value) {
     echo $value;
 }, 'text');
 
-
+// Limit TypeRocket search by current language
+add_action('pre_get_posts', function($query) {
+    if (defined('REST_REQUEST') && REST_REQUEST) {
+        $request_uri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
+        if (strpos($request_uri, '/wp-json/typerocket/v1/search') !== false) {
+            if (!empty($_SERVER['HTTP_REFERER'])) {
+                $referer = $_SERVER['HTTP_REFERER'];
+                if (strpos($referer, 'post.php') !== false) {
+                    $query_string = parse_url($referer, PHP_URL_QUERY);
+                    if (is_string($query_string)) {
+                        parse_str($query_string, $query_params);
+                        if (!empty($query_params['post']) && function_exists('pll_get_post_language')) {
+                            $post_id = intval($query_params['post']);
+                            $lang = pll_get_post_language($post_id, 'slug');
+                            if ($lang) {
+                                $tax_query = $query->get('tax_query');
+                                if (!is_array($tax_query)) {
+                                    $tax_query = array();
+                                }
+                                $tax_query[] = array(
+                                    'taxonomy' => 'language',
+                                    'field'    => 'slug',
+                                    'terms'    => $lang,
+                                );
+                                $query->set('tax_query', $tax_query);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+});

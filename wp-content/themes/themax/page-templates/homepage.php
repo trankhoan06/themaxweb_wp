@@ -334,24 +334,37 @@ get_header();
             <?php endif; ?>
             <div class="home_case_content_list right_full left_full">
                 <?php
-                $args = array(
-                    'post_type' => 'work',
-                    'posts_per_page' => -1,
-                    'post_status' => 'publish',
-                    'ignore_sticky_posts' => true,
-                    // Lấy những bài viết có tích chọn "Hiện thị ở trang chủ" (ACF True/False)
-                    'meta_query' => array(
-                        array(
-                            'key' => 'hien-thi-trang-chu',
-                            'value' => '1',
-                            'compare' => '='
-                        )
-                    )
-                );
-                $query = new WP_Query($args);
-                if ($query->have_posts()):
-                    while ($query->have_posts()):
-                        $query->the_post();
+                $selected_works = tr_posts_field('home_case_works');
+                $work_ids = [];
+                if (!empty($selected_works)) {
+                    foreach ($selected_works as $item) {
+                        if (!empty($item['work_id'])) {
+                            $w_id = $item['work_id'];
+                            if (function_exists('pll_get_post')) {
+                                $translated_id = pll_get_post($w_id);
+                                if ($translated_id) {
+                                    $w_id = $translated_id;
+                                }
+                            }
+                            $work_ids[] = $w_id;
+                        }
+                    }
+                    $work_ids = array_unique($work_ids);
+                }
+                
+                if (!empty($work_ids)) {
+                    $args = array(
+                        'post_type' => 'work',
+                        'post__in' => $work_ids,
+                        'orderby' => 'post__in',
+                        'posts_per_page' => -1,
+                        'post_status' => 'publish',
+                        'ignore_sticky_posts' => true
+                    );
+                    $query = new WP_Query($args);
+                    if ($query->have_posts()):
+                        while ($query->have_posts()):
+                            $query->the_post();
                         $categories = get_the_category();
                         $category_name = !empty($categories) ? $categories[0]->name : '';
                         $img_url = get_the_post_thumbnail_url(get_the_ID(), 'full') ?: get_template_directory_uri() . '/images/case.webp';
@@ -415,6 +428,7 @@ get_header();
                     endwhile;
                     wp_reset_postdata();
                 endif;
+                }
                 ?>
             </div>
             <?php

@@ -3093,6 +3093,23 @@ const mainScript = () => {
                 if (this.timer) {
                     clearInterval(this.timer);
                 }
+                
+                // On mobile (fallback), add blinking cursor to first span and handle timing differently
+                const firstSplit = this.splits[0];
+                if (!firstSplit || !firstSplit.textSplit) {
+                    const firstSpan = this.spans[0];
+                    if (firstSpan && !firstSpan.querySelector('.cursor')) {
+                        const txt = firstSpan.getAttribute('data-text') || firstSpan.innerText;
+                        firstSpan.setAttribute('data-text', txt);
+                        firstSpan.innerHTML = txt + '<span class="cursor" style="border-right: 0.05em solid currentColor;"></span>';
+                        gsap.fromTo(firstSpan.querySelector('.cursor'), { opacity: 1 }, { opacity: 0, duration: 0.4, repeat: -1, yoyo: true, ease: 'steps(1)' });
+                    }
+                    this.timer = setTimeout(() => {
+                        this.next();
+                    }, 3000); // 3 seconds for the first span before rotating
+                    return;
+                }
+
                 this.timer = setInterval(() => {
                     this.next();
                 }, 3000); // 3 seconds interval
@@ -3111,15 +3128,76 @@ const mainScript = () => {
                     const nextSpan = this.spans[nextIndex];
 
                     if (currentSpan && nextSpan) {
-                        gsap.set(nextSpan, { display: 'inline-block' });
+                        // Clear the global timer to take manual control of timing on mobile
+                        if (this.timer) {
+                            clearInterval(this.timer);
+                            clearTimeout(this.timer);
+                            this.timer = null;
+                        }
+                        
+                        // Multi-line typing effect on mobile (string manipulation)
+                        gsap.set([currentSpan, nextSpan], { clearProps: 'overflow,whiteSpace,borderRight,width' });
+                        gsap.set(nextSpan, { display: 'inline-block', opacity: 1 });
+                        
+                        const textErasing = currentSpan.getAttribute('data-text') || currentSpan.innerText;
+                        if (!currentSpan.hasAttribute('data-text')) currentSpan.setAttribute('data-text', textErasing);
+                        
+                        const textTyping = nextSpan.getAttribute('data-text') || nextSpan.innerText;
+                        if (!nextSpan.hasAttribute('data-text')) nextSpan.setAttribute('data-text', textTyping);
+                        
+                        currentSpan.innerHTML = textErasing + '<span class="cursor" style="border-right: 0.05em solid currentColor;"></span>';
+                        nextSpan.innerHTML = '<span class="cursor" style="border-right: 0.05em solid currentColor;"></span>';
+                        gsap.set(nextSpan, { display: 'none' });
+                        
+                        const lenErase = textErasing.length;
+                        const lenType = textTyping.length;
+                        
+                        const durationErase = Math.max(0.6, lenErase * 0.08); // 80ms per character
+                        const durationType = Math.max(1.0, lenType * 0.12); // 120ms per character
+                        
+                        const obj = { erase: lenErase, type: 0 };
+                        
                         const tl = gsap.timeline({
                             onComplete: () => {
                                 this.currentIndex = nextIndex;
                                 this.isAnimating = false;
+                                
+                                // Blinking cursor during the 3s rest after typing
+                                const cursor = nextSpan.querySelector('.cursor');
+                                if (cursor) {
+                                    gsap.fromTo(cursor, { opacity: 1 }, { opacity: 0, duration: 0.4, repeat: -1, yoyo: true, ease: 'steps(1)' });
+                                }
+                                
+                                // Schedule next word after 3s
+                                this.timer = setTimeout(() => {
+                                    this.next();
+                                }, 3000);
                             }
                         });
-                        tl.to(currentSpan, { opacity: 0, duration: 0.5 });
-                        tl.to(nextSpan, { opacity: 1, duration: 0.5 }, "<");
+                        
+                        // Erase current text
+                        tl.to(obj, {
+                            erase: 0,
+                            duration: durationErase,
+                            ease: 'none',
+                            onUpdate: () => {
+                                currentSpan.innerHTML = textErasing.substring(0, Math.floor(obj.erase)) + '<span class="cursor" style="border-right: 0.05em solid currentColor;"></span>';
+                            },
+                            onComplete: () => {
+                                gsap.set(currentSpan, { display: 'none', opacity: 0 });
+                                gsap.set(nextSpan, { display: 'inline-block' });
+                                nextSpan.innerHTML = '<span class="cursor" style="border-right: 0.05em solid currentColor;"></span>';
+                            }
+                        });
+                        // Type next text immediately (no delay between erase and type)
+                        tl.to(obj, {
+                            type: lenType,
+                            duration: durationType,
+                            ease: 'none',
+                            onUpdate: () => {
+                                nextSpan.innerHTML = textTyping.substring(0, Math.floor(obj.type)) + '<span class="cursor" style="border-right: 0.05em solid currentColor;"></span>';
+                            }
+                        });
                     } else {
                         this.currentIndex = nextIndex;
                         this.isAnimating = false;

@@ -85,11 +85,11 @@ if (have_posts()):
                                             ?>
                                             <div class="casestudydetail_content_blog_item">
                                                 <div class="casestudydetail_content_blog_item_info">
-                                                    <div class="casestudydetail_content_blog_item_info_title h3 heading">
+                                                    <div class="casestudydetail_content_blog_item_info_title h3 heading cl_eb">
                                                         <?php echo esc_html($item['title']); ?>
                                                     </div>
                                                     <div class="casestudydetail_content_blog_item_info_content">
-                                                        <div class="casestudydetail_content_blog_item_info_content_subtitle heading h5">
+                                                        <div class="casestudydetail_content_blog_item_info_content_subtitle heading h5 cl_eb">
                                                             <?php echo nl2br(esc_html($item['subtitle'])); ?>
                                                         </div>
                                                         <div class="casestudydetail_content_blog_item_info_content_des txt_16">
@@ -102,8 +102,18 @@ if (have_posts()):
                                                         $is_multiple = count($image_ids) > 1;
                                                         $grid_class = $is_multiple ? ' grid-2-col' : '';
                                                         ?>
+                                                        <?php
+                                                        $inline_style = 'flex: 1;';
+                                                        if (!empty($item['is_vertical'])) {
+                                                            $inline_style .= 'display: flex !important; flex-direction:column;';
+                                                        }
+                                                        if (isset($item['spacing']) && $item['spacing'] !== '') {
+                                                            $spacing_val = (float) $item['spacing'];
+                                                            $inline_style .= ' gap: ' . ($spacing_val / 10) . 'rem;';
+                                                        }
+                                                        ?>
                                                         <div class="casestudydetail_content_blog_item_img_inner img_full<?php echo $grid_class; ?>"
-                                                            style="flex: 1;">
+                                                            style="<?php echo esc_attr($inline_style); ?>">
                                                             <?php foreach ($image_ids as $img_id):
                                                                 $img_url = wp_get_attachment_image_url($img_id, 'full');
                                                                 if ($img_url):
