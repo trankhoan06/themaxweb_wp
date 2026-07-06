@@ -14,7 +14,7 @@ get_header();
 
 ?>
 <main class="main" data-namespace="caseStudy">
-    <section class="casestudy_hero">
+    <section class="casestudy_hero" data-init>
         <div class="container">
             <div class="casestudy_hero_inner grid">
                 <h1 class="casestudy_hero_title heading h1 h4_mb cl_linear">
@@ -63,7 +63,7 @@ get_header();
             </div>
         </div>
     </section>
-    <section class="casestudy_content">
+    <section class="casestudy_content" data-init>
         <div class="container">
             <div class="home_case_content_list right_full left_full">
                 <?php

@@ -87,13 +87,6 @@ a:hover {
     line-height: 1.4em;
 }
 
-.bp-line,
-.heading-line {
-    padding-top: 0.25em !important;
-    padding-bottom: 0.5em !important;
-    margin-top: -0.25em !important;
-    margin-bottom: -0.55em !important;
-}
 
 .item_line {
     position: relative;
@@ -1061,9 +1054,6 @@ h2 {
 }
 
 @media only screen and (max-width: 767px) {
-    [data-init] {
-        opacity: 1;
-    }
 
     .header_menu_nav {
         padding-inline: 4.6rem;

@@ -81,13 +81,27 @@
         padding-top: 10rem;
     }
 
+    .service_hero_bg {
+        filter: none;
+        width: 60rem;
+        height: 60rem;
+        background: radial-gradient(circle, rgba(230, 38, 54, 0.4) 0%, rgba(230, 38, 54, 0) 70%);
+        transform: translate(30%, -30%);
+        right: 0;
+        top: 0;
+    }
+
+    .service_hero_bg svg {
+        display: none;
+    }
 }
 
 @media only screen and (max-width: 767px) {
     .service_hero_bg {
-        width: 82.69%;
-        transform: translate(20%, -1%);
-        filter: blur(8rem);
+        width: 60rem;
+        height: 60rem;
+        transform: translate(30%, -10%);
+        filter: none;
     }
 
     .service_hero .container {
@@ -469,7 +483,7 @@
         margin-left: calc(-1 * var(--padding-container)) !important;
         margin-right: calc(-1 * var(--padding-container)) !important;
         /* margin-top: -37.5rem; */
-        height: auto;
+        height: 54rem;
         width: auto;
     }
 

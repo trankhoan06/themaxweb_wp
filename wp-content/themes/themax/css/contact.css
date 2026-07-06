@@ -140,6 +140,21 @@
     .contact_hero_content {
         justify-content: space-between;
     }
+
+    .contact_hero_bg {
+        filter: none;
+        width: 60rem;
+        height: 60rem;
+        background: radial-gradient(circle, rgba(230, 38, 54, 0.4) 0%, rgba(230, 38, 54, 0) 70%);
+        transform: translate(30%, -30%);
+        left: unset;
+        right: 0;
+        top: 0;
+    }
+
+    .contact_hero_bg svg {
+        display: none;
+    }
 }
 
 @media only screen and (max-width:767px) {
@@ -171,11 +186,12 @@
     }
 
     .contact_hero_bg {
-        width: 100%;
+        width: 60rem;
+        height: 60rem;
+        transform: translate(30%, -10%);
+        filter: none;
         left: unset;
         right: 0;
-        transform: translateX(35%);
-        filter: blur(9rem);
     }
 
     .contact_hero_content_title {

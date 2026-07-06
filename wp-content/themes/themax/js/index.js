@@ -20,7 +20,7 @@ const mainScript = () => {
         });
     }
     class MasterTimeline {
-        constructor({ triggerInit, timeline, tweenArr, stagger = .1, scrollTrigger, allowMobile = true }) {
+        constructor({ triggerInit, timeline, tweenArr, stagger = .15, scrollTrigger, allowMobile = true }) {
             this.allowMobile = allowMobile;
             if (getScreenType().isMobile && !this.allowMobile) return;
             this.timeline = timeline;
@@ -264,9 +264,12 @@ const mainScript = () => {
             this.props = props;
         }
         init() {
-            if (getScreenType().isMobile) return;
             const screen = getScreenType();
             if (screen.isMobile && !this.forceSplitOnMobile) {
+                if (this.isDisableAnim) {
+                    gsap.set(this.DOM.el, { opacity: 0, display: 'none' });
+                    return;
+                }
                 this.isFallback = true;
                 this.animation = gsap.fromTo(this.DOM.el,
                     { opacity: 0, y: parseRem(32) },
@@ -275,7 +278,7 @@ const mainScript = () => {
                         y: 0,
                         duration: this.duration,
                         ease: 'power3.out',
-                        clearProps: 'all',
+                        clearProps: this.isDisableRevert ? '' : 'all',
                         ...this.props
                     }
                 );
@@ -283,6 +286,10 @@ const mainScript = () => {
                 return;
             }
             if (screen.isTablet && !this.forceSplitOnMobile) {
+                if (this.isDisableAnim) {
+                    gsap.set(this.DOM.el, { opacity: 0, display: 'none' });
+                    return;
+                }
                 this.isFallback = true;
                 this.animation = gsap.fromTo(this.DOM.el,
                     { opacity: 0, y: parseRem(45) },
@@ -291,7 +298,7 @@ const mainScript = () => {
                         y: 0,
                         duration: this.duration,
                         ease: 'power2.out',
-                        clearProps: 'all',
+                        clearProps: this.isDisableRevert ? '' : 'all',
                         ...this.props
                     }
                 );
@@ -458,7 +465,6 @@ const mainScript = () => {
         }
         init() {
             if (!this.DOM.el) return;
-            if (getScreenType().isMobile) return;
             if (this.animation) return; // avoid duplicate initialization
 
             gsap.set(this.DOM.el, { ...this.options[this.type]?.set || this.options.default.set });
@@ -602,10 +608,14 @@ const mainScript = () => {
             this.onComplete = onComplete;
         }
         init() {
-            if (!this.DOM.el || getScreenType().isMobile) return;
+            if (!this.DOM.el) return;
             if (this.animation) return; // avoid duplicate initialization
 
-            gsap.set(this.DOM.el, { scale: 1.08, autoAlpha: 0, y: 24 });
+            const isMobile = getScreenType().isMobile;
+            const startScale = isMobile ? 1 : 1.08;
+            const startY = isMobile ? 16 : 24;
+
+            gsap.set(this.DOM.el, { scale: startScale, autoAlpha: 0, y: startY });
 
             const d = this.duration || 1.4;
             const tl = gsap.timeline();
@@ -1603,8 +1613,8 @@ const mainScript = () => {
         }
     }
     const mouse = {
-        init() {},
-        updateHtml() {}
+        init() { },
+        updateHtml() { }
     };
     class Loader {
         constructor() {
@@ -1946,11 +1956,16 @@ const mainScript = () => {
     }
     const header = new Header();
 
-    class Footer {
+    class Footer extends TriggerSetup {
         constructor() {
+            super();
             this.el = null;
-            this.fadeTl = null;
-            this.master = null;
+            this.topTl = null;
+            this.topMaster = null;
+            this.contentTl = null;
+            this.contentMaster = null;
+            this.botTl = null;
+            this.botMaster = null;
             this.menuItemsFade = null;
             this.emailFade = null;
             this.addressFade = null;
@@ -1961,10 +1976,17 @@ const mainScript = () => {
         init(data) {
             this.el = document.querySelector("footer");
             if (!this.el) return;
+            super.setTrigger(this.el, this.onTrigger.bind(this));
+        }
+        onTrigger() {
             this.setup();
             this.animFade();
         }
         setup() {
+            this.topEl = this.el.querySelector('.footer_top');
+            this.contentEl = this.el.querySelector('.footer_content');
+            this.botEl = this.el.querySelector('.footer_bot');
+
             this.menuItems = this.el.querySelectorAll('.footer_top_menu_item');
             this.email = this.el.querySelector('.footer_top_email');
             this.addresses = this.el.querySelectorAll('.footer_content_address');
@@ -2098,35 +2120,70 @@ const mainScript = () => {
             }
         }
         animFade() {
-            this.fadeTl = gsap.timeline({
-                scrollTrigger: {
-                    trigger: this.el,
-                    start: 'top top+=75%',
-                    once: true
+            // Footer Top
+            ScrollTrigger.refresh();
+            if (this.topEl) {
+                const topTweens = [];
+                if (this.menuItemsFade) topTweens.push(this.menuItemsFade);
+                if (this.emailFade) topTweens.push(this.emailFade);
+                if (topTweens.length > 0) {
+                    this.topMaster = new MasterTimeline({
+                        triggerInit: this.topEl,
+                        scrollTrigger: {
+                            start: 'top top+=75%',
+                            once: true
+                        },
+                        tweenArr: topTweens
+                    });
                 }
-            });
+            }
 
-            const tweenArr = [];
-            if (this.menuItemsFade) tweenArr.push(this.menuItemsFade);
-            if (this.emailFade) tweenArr.push(this.emailFade);
-            if (this.addressFade) tweenArr.push(this.addressFade);
-            if (this.formFade) tweenArr.push(this.formFade);
-            if (this.botFade) tweenArr.push(this.botFade);
+            // Footer Content
+            if (this.contentEl) {
+                const contentTweens = [];
+                if (this.addressFade) contentTweens.push(this.addressFade);
+                if (this.formFade) contentTweens.push(this.formFade);
+                if (contentTweens.length > 0) {
+                    this.contentMaster = new MasterTimeline({
+                        triggerInit: this.contentEl,
+                        scrollTrigger: {
+                            start: 'top top+=75%',
+                            once: true
+                        },
+                        tweenArr: contentTweens
+                    });
+                }
+            }
 
-            this.master = new MasterTimeline({
-                timeline: this.fadeTl,
-                triggerInit: this.el,
-                tweenArr: tweenArr
-            });
+            // Footer Bottom
+            if (this.botEl) {
+                const botTweens = [];
+                if (this.botFade) botTweens.push(this.botFade);
+                if (botTweens.length > 0) {
+                    this.botMaster = new MasterTimeline({
+                        triggerInit: this.botEl,
+                        scrollTrigger: {
+                            start: 'top top+=90%',
+                            once: true
+                        },
+                        tweenArr: botTweens
+                    });
+                }
+            }
         }
         destroy() {
-            if (this.fadeTl) {
-                this.fadeTl.kill();
-                this.fadeTl = null;
+            super.cleanTrigger();
+            if (this.topMaster) {
+                this.topMaster.destroy();
+                this.topMaster = null;
             }
-            if (this.master) {
-                this.master.destroy();
-                this.master = null;
+            if (this.contentMaster) {
+                this.contentMaster.destroy();
+                this.contentMaster = null;
+            }
+            if (this.botMaster) {
+                this.botMaster.destroy();
+                this.botMaster = null;
             }
             if (this.menuItemsFade) {
                 this.menuItemsFade.destroy();
@@ -2225,16 +2282,20 @@ const mainScript = () => {
         }
 
         animFade() {
-            this.fadeTl = gsap.timeline({
-                scrollTrigger: { trigger: this.el, start: 'top top+=70%', once: true }
-            });
             const tweenArr = [];
             if (this.imgFade) tweenArr.push(this.imgFade);
             if (this.contentSplit) tweenArr.push(this.contentSplit);
-            this.master = new MasterTimeline({ timeline: this.fadeTl, triggerInit: this.el, tweenArr, stagger: 0.2 });
+            this.master = new MasterTimeline({
+                triggerInit: this.el,
+                scrollTrigger: {
+                    start: 'top top+=70%',
+                    once: true
+                },
+                tweenArr,
+                stagger: 0.2
+            });
         }
         animBgDecorators() {
-            if (viewport.w <= 767) return; // Skip on mobile
             const tweenArr = [];
             if (this.bgTopFade) tweenArr.push(this.bgTopFade);
             if (this.bgBotFade) tweenArr.push(this.bgBotFade);
@@ -2242,24 +2303,24 @@ const mainScript = () => {
             if (!tweenArr.length) return;
 
             const trigger = this.bgRed || this.bgTop || this.el;
-            this.bgDecorTl = gsap.timeline({
-                scrollTrigger: { trigger, start: 'top top+=80%', toggleActions: 'play reverse play reverse' }
-            });
             this.bgDecorMaster = new MasterTimeline({
-                timeline: this.bgDecorTl,
                 triggerInit: trigger,
+                scrollTrigger: {
+                    trigger: trigger,
+                    start: 'top top+=80%',
+                    once: false,
+                    toggleActions: 'play reverse play reverse'
+                },
                 tweenArr,
                 stagger: 0
             });
         }
         destroy() {
-            if (this.fadeTl) { this.fadeTl.kill(); this.fadeTl = null; }
             if (this.master) { this.master.destroy(); this.master = null; }
-            if (this.bgDecorTl) { this.bgDecorTl.kill(); this.bgDecorTl = null; }
             if (this.bgDecorMaster) { this.bgDecorMaster.destroy(); this.bgDecorMaster = null; }
             [this.imgFade, this.contentSplit, this.iconFade, this.bgTopFade, this.bgBotFade, this.bgRedFade]
                 .forEach(a => a?.destroy?.());
-            this.fadeTl = this.master = this.bgDecorTl = this.bgDecorMaster = null;
+            this.master = this.bgDecorMaster = null;
             this.imgFade = this.contentSplit = this.iconFade = this.bgTopFade = this.bgBotFade = this.bgRedFade = null;
         }
     }
@@ -2367,7 +2428,11 @@ const mainScript = () => {
             trigger(data) {
                 this.el = document.querySelector('.home_intro_wrap');
                 if (!this.el) return;
-                super.setTrigger(this.el, this.onTrigger.bind(this));
+                if (viewport.w <= 767) {
+                    this.onTrigger();
+                } else {
+                    super.setTrigger(this.el, this.onTrigger.bind(this));
+                }
             }
             onTrigger() {
                 this.setup();
@@ -2389,9 +2454,9 @@ const mainScript = () => {
                     triggerInit: this.el,
                     tweenArr: [
                         ...Array.from($(this.el).find('.home_intro_txt')).flatMap((item) => [
-                            new FadeSplitText({ el: $(item).get(0), splitType: 'chars' }),
+                            new FadeSplitText({ el: $(item).get(0), splitType: 'chars', isDisableRevert: true }),
                         ]),
-                        new FadeSplitText({ el: this.el.querySelector('.home_intro_subtxt_inner') })
+                        new FadeSplitText({ el: this.el.querySelector('.home_intro_subtxt_inner'), isDisableRevert: true })
                     ]
                 })
             }
@@ -2457,19 +2522,19 @@ const mainScript = () => {
                 else {
                     this.introTl
                         .to('.home_intro_img_list:nth-child(1)', {
-                            x: '-150%',
+                            x: '-125%',
                             ease: 'none',
                         }, 0)
                         .to('.home_intro_img_list:nth-child(2)', {
-                            x: '150%',
+                            x: '125%',
                             ease: 'none',
                         }, 0)
                         .to('.home_intro_img_list:nth-child(3)', {
-                            x: '-150%',
+                            x: '-125%',
                             ease: 'none',
                         }, 0)
                         .to('.home_intro_img_list:nth-child(4)', {
-                            x: '150%',
+                            x: '125%',
                             ease: 'none',
                         }, 0);
                 }
@@ -2577,12 +2642,6 @@ const mainScript = () => {
                 this.interact();
             }
             setup() {
-                // Initialize home clients tabs
-                let activeTab = $('.home_clients_tab_item.active').attr('data-tabs');
-                if (activeTab) {
-                    $('.home_clients_content_item').hide();
-                    $('.home_clients_content_item[data-tabs="' + activeTab + '"]').css('display', 'flex');
-                }
 
                 this.subtitle = this.el.querySelector('.home_clients_subtitle');
                 this.title = this.el.querySelector('.home_clients_title');
@@ -2639,6 +2698,7 @@ const mainScript = () => {
                             }
                         );
                     }
+                    ScrollTrigger.refresh();
                 };
 
                 $('.home_clients_tab_item').on('click', this.tabClickHandler);
@@ -2852,37 +2912,25 @@ const mainScript = () => {
                 }
             }
             animFade() {
-                this.fadeTl = gsap.timeline({
-                    scrollTrigger: {
-                        trigger: this.el.querySelector('.home_services_top') || this.el,
-                        start: 'top top+=80%',
-                        once: true,
-                    }
-                });
-
                 const tweenArr = [];
                 if (this.subFade) tweenArr.push(this.subFade);
                 if (this.fadeSplitTitle) tweenArr.push(this.fadeSplitTitle);
                 if (this.descFade) tweenArr.push(this.descFade);
                 if (this.bgFade) tweenArr.push(this.bgFade);
 
+                const topTrigger = this.el.querySelector('.home_services_top') || this.el;
                 this.master = new MasterTimeline({
-                    timeline: this.fadeTl,
-                    triggerInit: this.el.querySelector('.home_services_top') || this.el,
+                    triggerInit: topTrigger,
+                    scrollTrigger: {
+                        start: 'top top+=80%',
+                        once: true,
+                    },
                     tweenArr: tweenArr
                 });
 
                 // 2. Separate scroll-trigger timeline for the first item content
                 const cmsWrap = this.el.querySelector('.home_services_cms_wrap');
                 if (this.firstItemInner && cmsWrap) {
-                    this.firstItemTl = gsap.timeline({
-                        scrollTrigger: {
-                            trigger: cmsWrap,
-                            start: 'top top+=65%',
-                            once: true
-                        }
-                    });
-
                     const firstTweenArr = [];
                     if (this.firstTitleSplit) firstTweenArr.push(this.firstTitleSplit);
                     if (this.firstImgAnim) firstTweenArr.push(this.firstImgAnim);
@@ -2891,8 +2939,11 @@ const mainScript = () => {
                     if (this.firstListItemsFade) firstTweenArr.push(this.firstListItemsFade);
 
                     this.firstItemMaster = new MasterTimeline({
-                        timeline: this.firstItemTl,
                         triggerInit: cmsWrap,
+                        scrollTrigger: {
+                            start: 'top top+=65%',
+                            once: true
+                        },
                         tweenArr: firstTweenArr
                     });
                 }
@@ -2932,10 +2983,6 @@ const mainScript = () => {
                     this.servicesTl.kill();
                     this.servicesTl = null;
                 }
-                if (this.fadeTl) {
-                    this.fadeTl.kill();
-                    this.fadeTl = null;
-                }
                 if (this.master) {
                     this.master.destroy();
                     this.master = null;
@@ -2954,10 +3001,6 @@ const mainScript = () => {
                 }
 
                 // Clean up first item animations
-                if (this.firstItemTl) {
-                    this.firstItemTl.kill();
-                    this.firstItemTl = null;
-                }
                 if (this.firstItemMaster) {
                     this.firstItemMaster.destroy();
                     this.firstItemMaster = null;
@@ -3179,7 +3222,7 @@ const mainScript = () => {
                 if (this.timer) {
                     clearInterval(this.timer);
                 }
-                
+
                 // On mobile (fallback), add blinking cursor to first span and handle timing differently
                 const firstSplit = this.splits[0];
                 if (!firstSplit || !firstSplit.textSplit) {
@@ -3220,47 +3263,47 @@ const mainScript = () => {
                             clearTimeout(this.timer);
                             this.timer = null;
                         }
-                        
+
                         // Multi-line typing effect on mobile (string manipulation)
                         gsap.set([currentSpan, nextSpan], { clearProps: 'overflow,whiteSpace,borderRight,width' });
                         gsap.set(nextSpan, { display: 'inline-block', opacity: 1 });
-                        
+
                         const textErasing = currentSpan.getAttribute('data-text') || currentSpan.innerText;
                         if (!currentSpan.hasAttribute('data-text')) currentSpan.setAttribute('data-text', textErasing);
-                        
+
                         const textTyping = nextSpan.getAttribute('data-text') || nextSpan.innerText;
                         if (!nextSpan.hasAttribute('data-text')) nextSpan.setAttribute('data-text', textTyping);
-                        
+
                         currentSpan.innerHTML = textErasing + '<span class="cursor" style="border-right: 0.05em solid currentColor;"></span>';
                         nextSpan.innerHTML = '<span class="cursor" style="border-right: 0.05em solid currentColor;"></span>';
                         gsap.set(nextSpan, { display: 'none' });
-                        
+
                         const lenErase = textErasing.length;
                         const lenType = textTyping.length;
-                        
+
                         const durationErase = Math.max(0.6, lenErase * 0.08); // 80ms per character
                         const durationType = Math.max(1.0, lenType * 0.12); // 120ms per character
-                        
+
                         const obj = { erase: lenErase, type: 0 };
-                        
+
                         const tl = gsap.timeline({
                             onComplete: () => {
                                 this.currentIndex = nextIndex;
                                 this.isAnimating = false;
-                                
+
                                 // Blinking cursor during the 3s rest after typing
                                 const cursor = nextSpan.querySelector('.cursor');
                                 if (cursor) {
                                     gsap.fromTo(cursor, { opacity: 1 }, { opacity: 0, duration: 0.4, repeat: -1, yoyo: true, ease: 'steps(1)' });
                                 }
-                                
+
                                 // Schedule next word after 3s
                                 this.timer = setTimeout(() => {
                                     this.next();
                                 }, 3000);
                             }
                         });
-                        
+
                         // Erase current text
                         tl.to(obj, {
                             erase: 0,
@@ -3402,20 +3445,33 @@ const mainScript = () => {
                 if (this.title) {
                     this.titleSplit = new FadeSplitText({ el: this.title });
                 }
+                
+                const isMobile = getScreenType().isMobile;
                 if (this.items.length > 0) {
-                    this.itemsFade = new FadeIn({
-                        el: this.items,
-                        type: 'bottom',
-                        isDisableRevert: true,
-                        stagger: 0.1
-                    });
+                    if (isMobile) {
+                        this.itemsFade = [];
+                        this.items.forEach(item => {
+                            this.itemsFade.push(new FadeIn({
+                                el: item,
+                                type: 'bottom',
+                                isDisableRevert: true
+                            }));
+                        });
+                    } else {
+                        this.itemsFade = new FadeIn({
+                            el: this.items,
+                            type: 'bottom',
+                            isDisableRevert: true,
+                            stagger: 0.1
+                        });
+                    }
                 }
                 if (this.seeview) {
                     this.seeviewFade = new FadeIn({
                         el: this.seeview,
                         type: 'bottom',
                         isDisableRevert: true,
-                        delay: 1,
+                        delay: isMobile ? 0 : 1,
                     });
                 }
             }
@@ -3440,24 +3496,52 @@ const mainScript = () => {
                 });
 
                 // 2. Trigger timeline for content list
-                const contentList = this.el.querySelector('.home_case_content_list');
-                if (contentList && this.itemsFade) {
-                    this.listTl = gsap.timeline({
-                        scrollTrigger: {
-                            trigger: contentList,
-                            start: 'top top+=75%',
-                            once: true
-                        }
-                    });
+                const isMobile = getScreenType().isMobile;
+                if (isMobile) {
+                    this.listMasters = [];
+                    if (this.itemsFade && this.itemsFade.length > 0) {
+                        this.itemsFade.forEach((itemFade, index) => {
+                            const itemEl = this.items[index];
+                            this.listMasters.push(new MasterTimeline({
+                                triggerInit: itemEl,
+                                scrollTrigger: {
+                                    start: "top bottom-=10%",
+                                    once: true
+                                },
+                                tweenArr: [itemFade]
+                            }));
+                        });
+                    }
+                    if (this.seeviewFade) {
+                        this.seeviewMaster = new MasterTimeline({
+                            triggerInit: this.seeview,
+                            scrollTrigger: {
+                                start: "top bottom-=10%",
+                                once: true
+                            },
+                            tweenArr: [this.seeviewFade]
+                        });
+                    }
+                } else {
+                    const contentList = this.el.querySelector('.home_case_content_list');
+                    if (contentList && this.itemsFade) {
+                        this.listTl = gsap.timeline({
+                            scrollTrigger: {
+                                trigger: contentList,
+                                start: 'top top+=75%',
+                                once: true
+                            }
+                        });
 
-                    const listTweenArr = [this.itemsFade];
-                    if (this.seeviewFade) listTweenArr.push(this.seeviewFade);
+                        const listTweenArr = [this.itemsFade];
+                        if (this.seeviewFade) listTweenArr.push(this.seeviewFade);
 
-                    this.listMaster = new MasterTimeline({
-                        timeline: this.listTl,
-                        triggerInit: contentList,
-                        tweenArr: listTweenArr
-                    });
+                        this.listMaster = new MasterTimeline({
+                            timeline: this.listTl,
+                            triggerInit: contentList,
+                            tweenArr: listTweenArr
+                        });
+                    }
                 }
             }
             destroy() {
@@ -3478,6 +3562,14 @@ const mainScript = () => {
                     this.listMaster.destroy();
                     this.listMaster = null;
                 }
+                if (this.listMasters) {
+                    this.listMasters.forEach(m => m.destroy());
+                    this.listMasters = null;
+                }
+                if (this.seeviewMaster) {
+                    this.seeviewMaster.destroy();
+                    this.seeviewMaster = null;
+                }
                 if (this.subFade) {
                     this.subFade.destroy();
                     this.subFade = null;
@@ -3487,7 +3579,11 @@ const mainScript = () => {
                     this.titleSplit = null;
                 }
                 if (this.itemsFade) {
-                    this.itemsFade.destroy();
+                    if (Array.isArray(this.itemsFade)) {
+                        this.itemsFade.forEach(item => item.destroy());
+                    } else {
+                        this.itemsFade.destroy();
+                    }
                     this.itemsFade = null;
                 }
                 if (this.seeviewFade) {
@@ -3644,12 +3740,6 @@ const mainScript = () => {
                 let _thisEl = this.el;
                 let _this = this;
 
-                // Initial setup: hide all content except the active one
-                let activeTab = $(_thisEl).find('.home_clients_tab_item.active').first();
-                let initialTabId = activeTab.attr('data-tabs') || 'tab1';
-                $(_thisEl).find('.home_clients_content_item').hide();
-                $(_thisEl).find('.home_clients_content_item[data-tabs="' + initialTabId + '"]').css('display', 'flex');
-
                 this.tabClickHandler = function () {
                     let clicked = $(this);
                     if (clicked.hasClass('active')) return;
@@ -3676,6 +3766,7 @@ const mainScript = () => {
                             }
                         );
                     }
+                    ScrollTrigger.refresh();
                 };
 
                 $(_thisEl).find('.home_clients_tab_item').on('click', this.tabClickHandler);
@@ -3785,11 +3876,12 @@ const mainScript = () => {
                     this.bgFade = new FadeIn({
                         el: this.bg,
                         type: 'none',
-                        from: { scale: 0.8 },
-                        to: { scale: 1 },
+                        from: { scale: 0.8, opacity: 0 },
+                        to: { scale: 1, opacity: 0.7 },
                         isDisableRevert: true,
                         duration: 2.0,
-                        ease: 'power2.out'
+                        ease: 'power2.out',
+                        clearProps: 'none'
                     });
                 }
             }
@@ -5476,6 +5568,95 @@ const mainScript = () => {
         }
     };
     const CaseStudyPage = {
+        Hero: class {
+            constructor() {
+                this.el = null;
+                this.titleSplit = null;
+                this.descFade = null;
+                this.bgFade = null;
+                this.master = null;
+            }
+            trigger() {
+                this.el = document.querySelector('.casestudy_hero');
+                if (!this.el) return;
+                this.setup();
+                this.animFade();
+            }
+            setup() {
+                const title = this.el.querySelector('.casestudy_hero_title');
+                const desc = this.el.querySelector('.casestudy_hero_des');
+                const bg = this.el.querySelector('.casestudy_hero_bg');
+
+                if (title) this.titleSplit = new FadeSplitText({ el: title });
+                if (desc) this.descFade = new FadeIn({ el: desc, type: 'bottom', isDisableRevert: true });
+                if (bg) this.bgFade = new FadeIn({ el: bg, type: 'none', isDisableRevert: true });
+            }
+            animFade() {
+                const tweenArr = [];
+                if (this.titleSplit) tweenArr.push(this.titleSplit);
+                if (this.descFade) tweenArr.push(this.descFade);
+                if (this.bgFade) tweenArr.push(this.bgFade);
+
+                if (tweenArr.length) {
+                    this.master = new MasterTimeline({ triggerInit: this.el, tweenArr, stagger: 0.1 });
+                }
+            }
+            destroy() {
+                if (this.master) { this.master.destroy(); this.master = null; }
+                [this.titleSplit, this.descFade, this.bgFade].forEach(a => a?.destroy?.());
+            }
+        },
+        Items: class {
+            constructor() {
+                this.master = null;
+                this.masterList = [];
+            }
+            trigger() {
+                const isMobile = getScreenType().isMobile;
+                if (isMobile) {
+                    const items = document.querySelectorAll('.home_case_content_list .home_case_content_item');
+                    if (!items || items.length === 0) return;
+
+                    items.forEach(item => {
+                        const tweenArr = [
+                            new FadeIn({ el: item, type: 'bottom', isDisableRevert: true })
+                        ];
+                        this.masterList.push(new MasterTimeline({
+                            triggerInit: item,
+                            scrollTrigger: {
+                                start: "top bottom-=10%",
+                                once: true
+                            },
+                            tweenArr: tweenArr
+                        }));
+                    });
+                } else {
+                    const list = document.querySelector('.home_case_content_list');
+                    if (!list) return;
+
+                    const tweenArr = [
+                        new FadeIn({ el: list, type: 'bottom', isDisableRevert: true, duration: 1.2 })
+                    ];
+
+                    this.master = new MasterTimeline({
+                        triggerInit: list,
+                        scrollTrigger: {
+                            start: "top bottom-=10%",
+                            once: true
+                        },
+                        tweenArr: tweenArr
+                    });
+                }
+            }
+            destroy() {
+                if (this.master) {
+                    this.master.destroy();
+                    this.master = null;
+                }
+                this.masterList.forEach(m => m.destroy());
+                this.masterList = [];
+            }
+        },
         Content: class {
             constructor() {
                 this.el = null;
@@ -5907,6 +6088,34 @@ const mainScript = () => {
                 [this.titleSplit, this.descFade, this.btnFade, this.bgFade].forEach(a => a?.destroy?.());
             }
         },
+        ServiceImg: class {
+            constructor() {
+                this.el = null;
+                this.imgFade = null;
+                this.master = null;
+            }
+            trigger() {
+                this.el = document.querySelector('.service_img');
+                if (!this.el) return;
+                this.setup();
+                this.animFade();
+            }
+            setup() {
+                const img = this.el.querySelectorAll('.service_img_content');
+                if (img.length > 0) {
+                    this.imgFade = new FadeIn({ el: img, type: 'bottom', isDisableRevert: true });
+                }
+            }
+            animFade() {
+                if (this.imgFade) {
+                    this.master = new MasterTimeline({ triggerInit: this.el, tweenArr: [this.imgFade] });
+                }
+            }
+            destroy() {
+                if (this.master) { this.master.destroy(); this.master = null; }
+                if (this.imgFade) { this.imgFade.destroy(); this.imgFade = null; }
+            }
+        },
         ServicesTop: class {
             constructor() {
                 this.el = null;
@@ -5948,14 +6157,15 @@ const mainScript = () => {
                 if (this.bgRightFade) bgArr.push(this.bgRightFade);
 
                 if (tweenArr.length) {
-                    const fadeTl = gsap.timeline({
+                    this.master = new MasterTimeline({
+                        triggerInit: this.el,
                         scrollTrigger: {
-                            trigger: this.el,
                             start: 'top top+=75%',
                             once: true
-                        }
+                        },
+                        tweenArr: [...tweenArr, ...bgArr],
+                        stagger: 0.1
                     });
-                    this.master = new MasterTimeline({ timeline: fadeTl, triggerInit: this.el, tweenArr: [...tweenArr, ...bgArr], stagger: 0.1 });
                 }
             }
             destroy() {
@@ -5985,7 +6195,10 @@ const mainScript = () => {
                     if (listItems && listItems.length > 0) {
                         tweenArr.push(new FadeIn({ el: listItems, type: 'bottom', isDisableRevert: true, stagger: 0.1 }));
                     }
-                    if (img) tweenArr.push(new FadeIn({ el: img, type: 'none', isDisableRevert: true }));
+                    if (img) {
+                        const isMobile = getScreenType().isMobile;
+                        tweenArr.push(new FadeIn({ el: img, type: isMobile ? 'bottom' : 'none', isDisableRevert: true, delay: 1.2 }));
+                    }
 
                     if (tweenArr.length > 0) {
                         this.masterList.push(new MasterTimeline({
@@ -6001,6 +6214,7 @@ const mainScript = () => {
                 this.masterList = [];
             }
         }
+
     };
 
     class PageManager {
@@ -6049,13 +6263,10 @@ const mainScript = () => {
         setupHandler(event) {
             const data = event.detail;
             const mode = event.mode;
-            if (!getScreenType().isMobile) {
-                setTimeout(() => {
-                    $('[data-init]').removeAttr('data-init');
-                }, 100);
-            } else {
+            setTimeout(() => {
                 $('[data-init]').removeAttr('data-init');
-            }
+            }, 100);
+
             this.sections.forEach((section) => {
                 if (section.trigger) {
                     section.trigger(data);

@@ -52,8 +52,15 @@
     }
 
     .casestudy_hero_bg {
-        transform: translate(20%, -50%);
-        filter: blur(12rem);
+        filter: none;
+        width: 60rem;
+        height: 60rem;
+        background: radial-gradient(circle, rgba(230, 38, 54, 0.4) 0%, rgba(230, 38, 54, 0) 70%);
+        transform: translate(20%, -30%);
+    }
+
+    .casestudy_hero_bg svg {
+        display: none;
     }
 
     .casestudy_hero_title br {
@@ -63,9 +70,10 @@
 
 @media only screen and (max-width: 767px) {
     .casestudy_hero_bg {
-        width: 82.69%;
-        transform: translate(20%, -1%);
-        filter: blur(10rem);
+        width: 60rem;
+        height: 60rem;
+        transform: translate(20%, -10%);
+        filter: none;
     }
 
     .casestudy_hero .container {
@@ -238,6 +246,10 @@
     gap: 2.4rem;
 }
 
+.home_clients_content_item:first-child {
+    display: flex;
+}
+
 .home_clients_content {
     margin-bottom: 6.4rem;
 }
@@ -261,7 +273,18 @@
 
 @media only screen and (max-width: 991px) {
     .home_clients_bg {
+        filter: none;
         width: 60rem;
+        height: 60rem;
+        background: radial-gradient(circle, rgba(230, 38, 54, 0.45) 0%, rgba(230, 38, 54, 0) 70%);
+        transform: translate(-50%, -30%);
+        left: 50%;
+        top: 0;
+    }
+
+    .home_clients_bg svg,
+    .home_clients_bg img {
+        display: none;
     }
 
     .home_clients_content_item_img {
@@ -322,8 +345,11 @@
     }
 
     .home_clients_bg {
-        width: 100%;
-        filter: blur(12rem);
+        width: 60rem;
+        height: 60rem;
+        transform: translate(-50%, -10%);
+        filter: none;
+        left: 50%;
     }
 
     .home_clients_content {
