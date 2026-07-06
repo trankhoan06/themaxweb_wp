@@ -20,14 +20,14 @@ const mainScript = () => {
         });
     }
     class MasterTimeline {
-        constructor({ triggerInit, timeline, tweenArr, stagger = .1, scrollTrigger, allowMobile }) {
-            if (getScreenType().isMobile) return;
+        constructor({ triggerInit, timeline, tweenArr, stagger = .1, scrollTrigger, allowMobile = true }) {
+            this.allowMobile = allowMobile;
+            if (getScreenType().isMobile && !this.allowMobile) return;
             this.timeline = timeline;
             this.triggerInit = triggerInit;
             this.scrollTrigger = scrollTrigger;
             this.tweenArr = tweenArr;
             this.stagger = stagger;
-            this.allowMobile = getScreenType().isMobile ? allowMobile : true;
 
             // Defer all animation initialization and setup until the element is within 100vh of the viewport
             this.deferTrigger = ScrollTrigger.create({
@@ -249,7 +249,7 @@ const mainScript = () => {
         }
     }
     class FadeSplitText {
-        constructor({ el, delay, headingType, splitType, duration, stagger, isDisableRevert, isDisableAnim, ...props }) {
+        constructor({ el, delay, headingType, splitType, duration, stagger, isDisableRevert, isDisableAnim, forceSplitOnMobile, ...props }) {
             if (!el || el.textContent === '') return;
             this.DOM = { el: el };
             this.delay = delay;
@@ -260,15 +260,29 @@ const mainScript = () => {
             this.stagger = stagger || .02;
             this.isDisableRevert = isDisableRevert;
             this.isDisableAnim = isDisableAnim;
+            this.forceSplitOnMobile = forceSplitOnMobile;
             this.props = props;
         }
         init() {
+            if (getScreenType().isMobile) return;
             const screen = getScreenType();
-            if (screen.isMobile) {
-                this.animation = gsap.timeline();
+            if (screen.isMobile && !this.forceSplitOnMobile) {
+                this.isFallback = true;
+                this.animation = gsap.fromTo(this.DOM.el,
+                    { opacity: 0, y: parseRem(32) },
+                    {
+                        opacity: 1,
+                        y: 0,
+                        duration: this.duration,
+                        ease: 'power3.out',
+                        clearProps: 'all',
+                        ...this.props
+                    }
+                );
+                gsap.set(this.DOM.el, { opacity: 0, y: parseRem(32) });
                 return;
             }
-            if (screen.isTablet) {
+            if (screen.isTablet && !this.forceSplitOnMobile) {
                 this.isFallback = true;
                 this.animation = gsap.fromTo(this.DOM.el,
                     { opacity: 0, y: parseRem(45) },
@@ -372,11 +386,9 @@ const mainScript = () => {
             this.animation = animation;
         }
         play() {
-            if (getScreenType().isMobile) return null;
             return this.animation ? this.animation.play() : null;
         }
         destroy() {
-            if (getScreenType().isMobile) return;
             if (this.animation) this.animation.kill();
             if (this.textSplit) this.textSplit.revert();
         }
@@ -443,7 +455,8 @@ const mainScript = () => {
             };
         }
         init() {
-            if (!this.DOM.el || getScreenType().isMobile) return;
+            if (!this.DOM.el) return;
+            if (getScreenType().isMobile) return;
             if (this.animation) return; // avoid duplicate initialization
 
             gsap.set(this.DOM.el, { ...this.options[this.type]?.set || this.options.default.set });
@@ -459,11 +472,9 @@ const mainScript = () => {
                 });
         }
         play() {
-            if (getScreenType().isMobile) return null;
             return this.animation ? this.animation.play() : null;
         }
         destroy() {
-            if (getScreenType().isMobile) return;
             if (this.animation) this.animation.kill();
         }
     }
@@ -656,6 +667,14 @@ const mainScript = () => {
     };
 
     let cachedSvh100 = null;
+    let cachedHtmlFontSize = null;
+    const getHtmlFontSize = () => {
+        if (cachedHtmlFontSize !== null) return cachedHtmlFontSize;
+        const htmlEl = document.documentElement;
+        cachedHtmlFontSize = parseFloat(window.getComputedStyle(htmlEl).fontSize) || 16;
+        return cachedHtmlFontSize;
+    };
+
     const getSvh100 = () => {
         if (cachedSvh100 != null) return cachedSvh100;
         const el = document.createElement("div");
@@ -668,6 +687,7 @@ const mainScript = () => {
     };
     window.addEventListener("resize", () => {
         cachedSvh100 = null;
+        cachedHtmlFontSize = null;
     });
     const cvUnit = (val, unit) => {
         let result;
@@ -684,7 +704,7 @@ const mainScript = () => {
                 result = getSvh100() * (val / 100);
                 break;
             case unit === "rem":
-                result = (val / 10) * parseFloat($("html").css("font-size"));
+                result = (val / 10) * getHtmlFontSize();
                 break;
             default:
                 break;
@@ -943,7 +963,7 @@ const mainScript = () => {
     function resetScroll(data) {
         if (window.location.hash !== "") {
             if ($(window.location.hash).length >= 1) {
-                if (viewport.w > 767) {
+                if (viewport.w > 991 && !isTouchDevice()) {
                     setTimeout(() => {
                         $("html").animate(
                             { scrollTop: $(window.location.hash).offset().top - 100 },
@@ -985,7 +1005,7 @@ const mainScript = () => {
             if (searchObj.sc) {
                 if ($(`#${searchObj.sc}`).length >= 1) {
                     let target = `#${searchObj.sc}`;
-                    if (viewport.w > 767) {
+                    if (viewport.w > 991 && !isTouchDevice()) {
                         setTimeout(() => {
                             smoothScroll.scrollTo(`#${searchObj.sc}`, {
                                 offset: -100,
@@ -1115,7 +1135,7 @@ const mainScript = () => {
                 ? data.next.namespace
                 : $('[data-barba="container"]').attr("data-barba-namespace");
 
-            if (viewport.w > 767) {
+            if (viewport.w > 991 && !isTouchDevice()) {
                 this.lenis = new Lenis({
                     content: document.documentElement,
                     wrapper: document.documentElement,
@@ -1128,7 +1148,7 @@ const mainScript = () => {
                     this.updateOnScroll(e);
                 });
             } else {
-                // On mobile, use native scrolling. Reset ScrollTrigger defaults to window.
+                // On mobile/tablet/touch, use native scrolling. Reset ScrollTrigger defaults to window.
                 ScrollTrigger.defaults({
                     scroller: window,
                 });
@@ -1194,7 +1214,7 @@ const mainScript = () => {
                 this.lenis.start();
             }
             this.enableScroll();
-            if (viewport.w <= 767) {
+            if (viewport.w <= 991 || isTouchDevice()) {
                 $("body").css("overflow", "initial");
             }
         }
@@ -1204,7 +1224,7 @@ const mainScript = () => {
                 this.lenis.stop();
             }
             this.disableScroll();
-            if (viewport.w <= 767) {
+            if (viewport.w <= 991 || isTouchDevice()) {
                 $("body").css("overflow", "hidden");
             }
         }
@@ -1231,7 +1251,7 @@ const mainScript = () => {
         }
 
         scrollToPosition(target) {
-            if (viewport.w <= 767) {
+            if (viewport.w <= 991 || isTouchDevice()) {
                 const bodyInner = document.querySelector(".body-inner");
                 if (bodyInner) {
                     bodyInner.scrollTop = target;
@@ -1317,14 +1337,29 @@ const mainScript = () => {
                 target: { x: 0.5, y: 0.5 },
             };
             this.cursorRaf = null;
+            this.isUpdating = false;
             this.init();
 
-            // Add mouse move event listener
-            window.addEventListener("mousemove", (e) => {
-                this.mousePos = this.getPointerPos(e);
-            });
-            window.addEventListener("touchmove", (e) => {
-                this.mousePos = this.getPointerPos(e);
+            // Add mouse move event listener only if not on touch device
+            if (!isTouchDevice()) {
+                window.addEventListener("mousemove", (e) => {
+                    this.mousePos = this.getPointerPos(e);
+                });
+            }
+            window.addEventListener("resize", () => {
+                if (viewport.w > 991 && !isTouchDevice()) {
+                    if (!$(".cursor").hasClass("active")) {
+                        $(".cursor").addClass("active");
+                        this.updateHtml();
+                    }
+                    if (!this.isUpdating) {
+                        this.isUpdating = true;
+                        requestAnimationFrame(this.update.bind(this));
+                    }
+                } else {
+                    $(".cursor").removeClass("active");
+                    this.isUpdating = false;
+                }
             });
         }
 
@@ -1334,6 +1369,7 @@ const mainScript = () => {
                     this.updateHtml();
                 }, 200);
                 $(".cursor").addClass("active");
+                this.isUpdating = true;
                 requestAnimationFrame(this.update.bind(this));
             }
         }
@@ -1371,6 +1407,12 @@ const mainScript = () => {
             return section.length ? section : (mode.length ? mode : null);
         }
         update() {
+            if (viewport.w <= 991 || isTouchDevice()) {
+                this.isUpdating = false;
+                this.cursorRaf = null;
+                return;
+            }
+            this.isUpdating = true;
             const section = this.getSectionAtCursor(this.mousePos.x, this.mousePos.y);
             this.currentSection = section?.attr("data-section") || section?.attr("data-mode") || null;
             if (viewport.w > 991) {
@@ -1388,7 +1430,9 @@ const mainScript = () => {
                 this.cursorRaf = requestAnimationFrame(this.lerpCursorPos.bind(this));
             }
             // this.toggleCursor();
-            requestAnimationFrame(this.update.bind(this));
+            if (this.isUpdating) {
+                requestAnimationFrame(this.update.bind(this));
+            }
         }
 
         getPointerPos(ev) {
@@ -1405,6 +1449,13 @@ const mainScript = () => {
         }
 
         lerpCursorPos = () => {
+            if (viewport.w <= 991 || isTouchDevice()) {
+                if (this.cursorRaf) {
+                    cancelAnimationFrame(this.cursorRaf);
+                    this.cursorRaf = null;
+                }
+                return;
+            }
             this.normalizeMousePos.current.x = lerp(
                 this.normalizeMousePos.current.x,
                 this.normalizeMousePos.target.x,
@@ -1549,7 +1600,10 @@ const mainScript = () => {
             cursor.removeClass("on-control");
         }
     }
-    const mouse = new Mouse();
+    const mouse = {
+        init() {},
+        updateHtml() {}
+    };
     class Loader {
         constructor() {
             this.isLoaded =
@@ -1746,12 +1800,23 @@ const mainScript = () => {
     class Header {
         constructor() {
             this.el = null;
+            this.$el = null;
             this.isOpen = false;
             this.listDependent = [];
+            this.height = 80;
         }
         init(data) {
             this.el = document.querySelector(".header");
             if (!this.el) return;
+            this.$el = $(this.el);
+            this.height = this.el.offsetHeight || 80;
+
+            window.addEventListener("resize", () => {
+                if (this.el) {
+                    this.height = this.el.offsetHeight || 80;
+                }
+            });
+
             gsap.fromTo('.header .container', { yPercent: -100, autoAlpha: 0 }, { yPercent: 0, autoAlpha: 1, clearProps: 'all' });
             const menuBtn = this.el.querySelector(".header_menu_inner");
             const menuNav = this.el.querySelector(".header_menu_nav");
@@ -1788,8 +1853,9 @@ const mainScript = () => {
             this.updateOnScroll(smoothScroll);
         }
         onHideDependent() {
-            let heightHeader = $(this.el).outerHeight();
-            if (!$(this.el).hasClass('on-hide')) {
+            if (this.listDependent.length === 0) return;
+            let heightHeader = this.height;
+            if (!this.$el.hasClass('on-hide')) {
                 this.listDependent.forEach((item) => {
                     $(item).css('top', heightHeader);
                 });
@@ -1807,22 +1873,26 @@ const mainScript = () => {
                 this.listDependent = this.listDependent.filter((item) => item !== dependentEl);
             }
         }
-        getCurrentSection(attribute, offset = cvUnit(25, "rem")) {
+        getCurrentSection(attribute, offset) {
             let sections = $(attribute);
-            let matchedSection = null;
+            if (sections.length === 0) return null;
 
-            if (sections.length > 0) {
-                for (let i = 0; i < sections.length; i++) {
-                    let rect = sections[i].getBoundingClientRect();
-                    if (
-                        rect.top < $(this.el).height() + offset &&
-                        rect.bottom -
-                        $(this.el).height() * 0.5 -
-                        offset >
-                        0
-                    ) {
-                        matchedSection = sections[i];
-                    }
+            let matchedSection = null;
+            if (offset === undefined) {
+                offset = cvUnit(25, "rem");
+            }
+            const headerHeight = this.height;
+
+            for (let i = 0; i < sections.length; i++) {
+                let rect = sections[i].getBoundingClientRect();
+                if (
+                    rect.top < headerHeight + offset &&
+                    rect.bottom -
+                    headerHeight * 0.5 -
+                    offset >
+                    0
+                ) {
+                    matchedSection = sections[i];
                 }
             }
             return matchedSection ? $(matchedSection) : null;
@@ -1834,24 +1904,24 @@ const mainScript = () => {
             this.onHideDependent();
         }
         toggleScroll(inst) {
-            if (inst.scroll > $(this.el).height() * 2)
-                $(this.el).addClass("on-scroll");
-            else $(this.el).removeClass("on-scroll");
+            if (inst.scroll > this.height * 2)
+                this.$el.addClass("on-scroll");
+            else this.$el.removeClass("on-scroll");
         }
         toggleHide(inst) {
-            if (inst.scroll < $(this.el).height() * 3) {
-                $(this.el).removeClass("on-hide");
+            if (inst.scroll < this.height * 3) {
+                this.$el.removeClass("on-hide");
             } else {
                 if (inst.direction == 1) {
-                    $(this.el).addClass("on-hide");
+                    this.$el.addClass("on-hide");
                 } else if (inst.direction == -1) {
-                    $(this.el).removeClass("on-hide");
+                    this.$el.removeClass("on-hide");
                 }
             }
         }
         toggleMode() {
             let mode = this.getCurrentSection("[data-section]")?.attr("data-section");
-            const currentClasses = $(this.el).attr("class") || "";
+            const currentClasses = this.$el.attr("class") || "";
             const onModeClasses = currentClasses
                 .split(" ")
                 .filter(
@@ -1861,13 +1931,13 @@ const mainScript = () => {
                         cls !== "on-hide"
                 );
             onModeClasses.forEach((cls) => {
-                $(this.el).removeClass(cls);
+                this.$el.removeClass(cls);
             });
 
             if (mode) {
-                $(this.el).attr("data-mode", mode);
+                this.$el.attr("data-mode", mode);
             } else {
-                $(this.el).removeAttr("data-mode");
+                this.$el.removeAttr("data-mode");
             }
         }
     }
@@ -1997,7 +2067,7 @@ const mainScript = () => {
 
             // Lazy load footer video when scroll is near (within 2000px / ~200vh)
             const lazyVideo = this.el.querySelector('.lazy-footer-video');
-            if (lazyVideo) {
+            if (lazyVideo && window.innerWidth > 991) {
                 if ('IntersectionObserver' in window) {
                     this.videoObserver = new IntersectionObserver((entries, observer) => {
                         entries.forEach(entry => {
@@ -2243,6 +2313,19 @@ const mainScript = () => {
                 this.setup();
                 this.animFade();
                 this.animScrub();
+
+                // Lazy load banner video
+                const lazyVideo = this.el.querySelector('.lazy-home-video');
+                if (lazyVideo && window.innerWidth > 991) {
+                    setTimeout(() => {
+                        const dataSrc = lazyVideo.getAttribute('data-src');
+                        if (dataSrc) {
+                            lazyVideo.setAttribute('src', dataSrc);
+                            lazyVideo.load();
+                            lazyVideo.play().catch(e => console.log("Home video play interrupted:", e));
+                        }
+                    }, 300);
+                }
             }
             setup() {
             }
@@ -3644,6 +3727,19 @@ const mainScript = () => {
                 if (!this.el) return;
                 this.setup();
                 this.animFade();
+
+                // Lazy load About video
+                const lazyVideo = this.el.querySelector('.lazy-about-video');
+                if (lazyVideo && window.innerWidth > 991) {
+                    setTimeout(() => {
+                        const dataSrc = lazyVideo.getAttribute('data-src');
+                        if (dataSrc) {
+                            lazyVideo.setAttribute('src', dataSrc);
+                            lazyVideo.load();
+                            lazyVideo.play().catch(e => console.log("About video play interrupted:", e));
+                        }
+                    }, 300);
+                }
             }
             setup() {
                 this.img = this.el.querySelector('.about_hero_img');
@@ -3734,6 +3830,23 @@ const mainScript = () => {
                 if (this.bgFade) {
                     this.bgFade.destroy();
                     this.bgFade = null;
+                }
+            }
+        },
+        Company: class {
+            constructor() {
+                this.el = null;
+            }
+            trigger(data) {
+                this.el = document.querySelector('.about_company_inner.middle');
+                if (!this.el) return;
+                if (window.innerWidth > 767) {
+                    setTimeout(() => {
+                        const bg = this.el.getAttribute('data-bg');
+                        if (bg) {
+                            this.el.style.backgroundImage = `url('${bg}')`;
+                        }
+                    }, 300);
                 }
             }
         },
@@ -3878,24 +3991,29 @@ const mainScript = () => {
                         { opacity: 1, x: 0, duration: 1.2, ease: 'power2.out' }
                     );
 
+                    const isMobile = getScreenType().isMobile;
+
                     this.imgPlayTrigger = ScrollTrigger.create({
                         trigger: this.el,
                         start: 'top bottom-=20%',
+                        once: isMobile,
                         onEnter: () => this.imgTl?.play(),
-                        onEnterBack: () => this.imgTl?.play()
+                        onEnterBack: isMobile ? null : () => this.imgTl?.play()
                     });
 
-                    this.imgResetTrigger = ScrollTrigger.create({
-                        trigger: this.el,
-                        start: 'top bottom',
-                        end: 'bottom top',
-                        onLeave: () => {
-                            this.imgTl?.progress(0).pause();
-                        },
-                        onLeaveBack: () => {
-                            this.imgTl?.progress(0).pause();
-                        }
-                    });
+                    if (!isMobile) {
+                        this.imgResetTrigger = ScrollTrigger.create({
+                            trigger: this.el,
+                            start: 'top bottom',
+                            end: 'bottom top',
+                            onLeave: () => {
+                                this.imgTl?.progress(0).pause();
+                            },
+                            onLeaveBack: () => {
+                                this.imgTl?.progress(0).pause();
+                            }
+                        });
+                    }
                 }
             }
             destroy() {
@@ -4390,35 +4508,20 @@ const mainScript = () => {
                         this.itemTls = [];
                         this.itemMasters = [];
                         this.items.forEach((item) => {
-                            const itemFade = new FadeIn({ el: item, type: 'bottom', isDisableRevert: true, duration: 0.8 });
-                            const iconFade = new FadeIn({ el: item.querySelector('.about_team_content_item_icon'), type: 'bottom', isDisableRevert: true, duration: 0.8 });
-                            const titleFade = new FadeSplitText({
-                                el: item.querySelector('.about_team_content_item_title'),
-                                splitType: 'words',
-                                isDisableRevert: true,
-                                duration: 0.8,
-                                stagger: 0.02,
-                            });
-                            const desFade = new FadeSplitText({
-                                el: item.querySelector('.about_team_content_item_des'),
-                                splitType: 'words',
-                                isDisableRevert: true,
-                                duration: 0.8,
-                                stagger: 0.01,
-                            });
-
-                            const tl = gsap.timeline({
-                                scrollTrigger: { trigger: item, start: 'top top+=75%', once: true }
-                            });
-                            const tweenArr = [];
-                            if (iconFade.DOM?.el) tweenArr.push(iconFade);
-                            if (titleFade.DOM?.el) tweenArr.push(titleFade);
-                            if (desFade.DOM?.el) tweenArr.push(desFade);
-                            if (itemFade.DOM?.el) tweenArr.push(itemFade);
-
-                            const master = new MasterTimeline({ timeline: tl, triggerInit: item, tweenArr, stagger: 0.2 });
-                            this.itemTls.push(tl);
-                            this.itemMasters.push(master);
+                            gsap.fromTo(item,
+                                { opacity: 0, y: 32 },
+                                {
+                                    opacity: 1,
+                                    y: 0,
+                                    duration: 0.8,
+                                    ease: 'power3.out',
+                                    scrollTrigger: {
+                                        trigger: item,
+                                        start: 'top bottom-=10%',
+                                        once: true
+                                    }
+                                }
+                            );
                         });
                     }
                 });
@@ -5015,13 +5118,19 @@ const mainScript = () => {
         },
         SocialShare: class {
             constructor() {
-                this.fbBtns = document.querySelectorAll('.btn-share-fb');
-                this.twBtns = document.querySelectorAll('.btn-share-tw');
-                this.inBtns = document.querySelectorAll('.btn-share-in');
+                this.fbBtns = null;
+                this.twBtns = null;
+                this.inBtns = null;
 
                 this.handleShareFB = this.handleShareFB.bind(this);
                 this.handleShareTW = this.handleShareTW.bind(this);
                 this.handleShareIN = this.handleShareIN.bind(this);
+            }
+
+            trigger() {
+                this.fbBtns = document.querySelectorAll('.btn-share-fb');
+                this.twBtns = document.querySelectorAll('.btn-share-tw');
+                this.inBtns = document.querySelectorAll('.btn-share-in');
 
                 if (this.fbBtns) this.fbBtns.forEach(btn => btn.addEventListener('click', this.handleShareFB));
                 if (this.twBtns) this.twBtns.forEach(btn => btn.addEventListener('click', this.handleShareTW));
@@ -5534,13 +5643,19 @@ const mainScript = () => {
 
     CaseStudyDetailPage.SocialShare = class {
         constructor() {
-            this.copyBtns = document.querySelectorAll('.btn-copy-link');
-            this.fbBtns = document.querySelectorAll('.btn-share-fb');
-            this.inBtns = document.querySelectorAll('.btn-share-in');
+            this.copyBtns = null;
+            this.fbBtns = null;
+            this.inBtns = null;
 
             this.handleCopy = this.handleCopy.bind(this);
             this.handleShareFB = this.handleShareFB.bind(this);
             this.handleShareIN = this.handleShareIN.bind(this);
+        }
+
+        trigger() {
+            this.copyBtns = document.querySelectorAll('.btn-copy-link');
+            this.fbBtns = document.querySelectorAll('.btn-share-fb');
+            this.inBtns = document.querySelectorAll('.btn-share-in');
 
             if (this.copyBtns) this.copyBtns.forEach(btn => btn.addEventListener('click', this.handleCopy));
             if (this.fbBtns) this.fbBtns.forEach(btn => btn.addEventListener('click', this.handleShareFB));
@@ -5931,7 +6046,13 @@ const mainScript = () => {
         setupHandler(event) {
             const data = event.detail;
             const mode = event.mode;
-            $('[data-init]').removeAttr('data-init');
+            if (!getScreenType().isMobile) {
+                setTimeout(() => {
+                    $('[data-init]').removeAttr('data-init');
+                }, 100);
+            } else {
+                $('[data-init]').removeAttr('data-init');
+            }
             this.sections.forEach((section) => {
                 if (section.trigger) {
                     section.trigger(data);

@@ -21,7 +21,9 @@ get_header();
             $video_url = $home_banner_video ? wp_get_attachment_url($home_banner_video) : '';
             ?>
             <?php if ($video_url): ?>
-                <video src="<?php echo esc_url($video_url); ?>" autoplay loop muted playsinline preload="auto"
+                <video data-src="<?php echo esc_url($video_url); ?>"
+                    poster="/wp-content/uploads/2026/07/poster.jpg" preload="none"
+                    loop muted playsinline class="lazy-home-video"
                     style="max-width: 100%; height: auto;"></video>
                 <!-- <video src="<?php echo get_template_directory_uri(); ?>/images/video_button.mp4" autoplay loop muted playsinline preload="auto" style="max-width: 100%; height: auto;"></video> -->
             <?php endif; ?>
@@ -34,7 +36,7 @@ get_header();
             </div>
         </div>
     </section>
-    <div class="home_intro_wrap">
+    <div class="home_intro_wrap" data-init>
         <div class="home_intro_block"></div>
         <div class="home_intro_main">
             <section class="home_intro">
@@ -329,7 +331,7 @@ get_header();
                 </div>
             <?php endif; ?>
             <?php if ($home_case_title): ?>
-            <div class="home_case_title heading h2 txt_center cl_linear h4_mb"><?php echo esc_html($home_case_title); ?>
+                <div class="home_case_title heading h2 txt_center cl_linear h4_mb"><?php echo esc_html($home_case_title); ?>
                 </div>
             <?php endif; ?>
             <div class="home_case_content_list right_full left_full">
@@ -339,19 +341,11 @@ get_header();
                 if (!empty($selected_works)) {
                     foreach ($selected_works as $item) {
                         if (!empty($item['work_id'])) {
-                            $w_id = $item['work_id'];
-                            if (function_exists('pll_get_post')) {
-                                $translated_id = pll_get_post($w_id);
-                                if ($translated_id) {
-                                    $w_id = $translated_id;
-                                }
-                            }
-                            $work_ids[] = $w_id;
+                            $work_ids[] = $item['work_id'];
                         }
                     }
-                    $work_ids = array_unique($work_ids);
                 }
-                
+
                 if (!empty($work_ids)) {
                     $args = array(
                         'post_type' => 'work',
@@ -365,69 +359,69 @@ get_header();
                     if ($query->have_posts()):
                         while ($query->have_posts()):
                             $query->the_post();
-                        $categories = get_the_category();
-                        $category_name = !empty($categories) ? $categories[0]->name : '';
-                        $img_url = get_the_post_thumbnail_url(get_the_ID(), 'full') ?: get_template_directory_uri() . '/images/case.webp';
-                        $post_subtitle = tr_posts_field('hero_subtitle', get_the_ID());
-                        ?>
-                        <a href="<?php the_permalink(); ?>" class="home_case_content_item">
-                            <div class="home_case_content_item_des">
-                                <div class="home_case_content_item_des_txt txt_15 txt_medium">
-                                    <?php echo esc_html($post_subtitle); ?>
-                                </div>
-                                <div class="home_case_content_item_des_txt txt_15 txt_medium">
-                                    <?php echo esc_html($category_name); ?>
-                                </div>
-                            </div>
-                            <div class="home_case_content_item_img_outer">
-                                <div class="home_case_content_item_img img_full">
-                                    <?php if ($img_url): ?>
-                                        <img src="<?php echo esc_url($img_url); ?>" alt="" loading="lazy">
-                                    <?php endif; ?>
-                                </div>
-                            </div>
-                            <div class="home_case_content_item_txt">
-                                <div class="home_case_content_item_txt_title heading cl_be h4 h5_mb"><?php the_title(); ?></div>
-                                <div class="home_case_content_item_txt_icon">
-                                    <div class="home_case_content_item_txt_icon_wrap svg_full">
-                                        <svg width="48" height="48" viewBox="0 0 48 48" fill="none"
-                                            xmlns="http://www.w3.org/2000/svg">
-                                            <g clip-path="url(#clip0_1164_690)">
-                                                <path d="M12 12H36.0003V36.0003" stroke="#929292" stroke-width="2"
-                                                    stroke-linejoin="round" />
-                                                <path d="M12 36.0003L36.0003 12" stroke="#929292" stroke-width="2"
-                                                    stroke-linejoin="round" />
-                                            </g>
-                                            <defs>
-                                                <clipPath id="clip0_1164_690">
-                                                    <rect width="48" height="48" fill="white" />
-                                                </clipPath>
-                                            </defs>
-                                        </svg>
+                            $categories = get_the_category();
+                            $category_name = !empty($categories) ? $categories[0]->name : '';
+                            $img_url = get_the_post_thumbnail_url(get_the_ID(), 'full') ?: get_template_directory_uri() . '/images/case.webp';
+                            $post_subtitle = tr_posts_field('hero_subtitle', get_the_ID());
+                            ?>
+                            <a href="<?php the_permalink(); ?>" class="home_case_content_item">
+                                <div class="home_case_content_item_des">
+                                    <div class="home_case_content_item_des_txt txt_15 txt_medium">
+                                        <?php echo esc_html($post_subtitle); ?>
                                     </div>
-                                    <div class="home_case_content_item_txt_icon_wrap svg_full active">
-                                        <svg width="48" height="48" viewBox="0 0 48 48" fill="none"
-                                            xmlns="http://www.w3.org/2000/svg">
-                                            <g clip-path="url(#clip0_1164_690)">
-                                                <path d="M12 12H36.0003V36.0003" stroke="#F32B3B" stroke-width="2"
-                                                    stroke-linejoin="round" />
-                                                <path d="M12 36.0003L36.0003 12" stroke="#F32B3B" stroke-width="2"
-                                                    stroke-linejoin="round" />
-                                            </g>
-                                            <defs>
-                                                <clipPath id="clip0_1164_690">
-                                                    <rect width="48" height="48" fill="white" />
-                                                </clipPath>
-                                            </defs>
-                                        </svg>
+                                    <div class="home_case_content_item_des_txt txt_15 txt_medium">
+                                        <?php echo esc_html($category_name); ?>
                                     </div>
                                 </div>
-                            </div>
-                        </a>
-                        <?php
-                    endwhile;
-                    wp_reset_postdata();
-                endif;
+                                <div class="home_case_content_item_img_outer">
+                                    <div class="home_case_content_item_img img_full">
+                                        <?php if ($img_url): ?>
+                                            <img src="<?php echo esc_url($img_url); ?>" alt="" loading="lazy">
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                                <div class="home_case_content_item_txt">
+                                    <div class="home_case_content_item_txt_title heading cl_be h4 h5_mb"><?php the_title(); ?></div>
+                                    <div class="home_case_content_item_txt_icon">
+                                        <div class="home_case_content_item_txt_icon_wrap svg_full">
+                                            <svg width="48" height="48" viewBox="0 0 48 48" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <g clip-path="url(#clip0_1164_690)">
+                                                    <path d="M12 12H36.0003V36.0003" stroke="#929292" stroke-width="2"
+                                                        stroke-linejoin="round" />
+                                                    <path d="M12 36.0003L36.0003 12" stroke="#929292" stroke-width="2"
+                                                        stroke-linejoin="round" />
+                                                </g>
+                                                <defs>
+                                                    <clipPath id="clip0_1164_690">
+                                                        <rect width="48" height="48" fill="white" />
+                                                    </clipPath>
+                                                </defs>
+                                            </svg>
+                                        </div>
+                                        <div class="home_case_content_item_txt_icon_wrap svg_full active">
+                                            <svg width="48" height="48" viewBox="0 0 48 48" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <g clip-path="url(#clip0_1164_690)">
+                                                    <path d="M12 12H36.0003V36.0003" stroke="#F32B3B" stroke-width="2"
+                                                        stroke-linejoin="round" />
+                                                    <path d="M12 36.0003L36.0003 12" stroke="#F32B3B" stroke-width="2"
+                                                        stroke-linejoin="round" />
+                                                </g>
+                                                <defs>
+                                                    <clipPath id="clip0_1164_690">
+                                                        <rect width="48" height="48" fill="white" />
+                                                    </clipPath>
+                                                </defs>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                            <?php
+                        endwhile;
+                        wp_reset_postdata();
+                    endif;
                 }
                 ?>
             </div>
@@ -463,10 +457,10 @@ get_header();
             <div class="home_clients_bg img_full">
                 <img src="./images/pattern-blur.svg" alt="" loading="lazy">
             </div>
-                <div class="home_clients_subtitle block_arrow"><?php echo esc_html($home_clients_subtitle); ?></div>
-                <div class="home_clients_title heading h2 h4_mb cl_linear txt_center">
-                    <?php echo wp_kses_post(nl2br($home_clients_title)); ?>
-                </div>
+            <div class="home_clients_subtitle block_arrow"><?php echo esc_html($home_clients_subtitle); ?></div>
+            <div class="home_clients_title heading h2 h4_mb cl_linear txt_center">
+                <?php echo wp_kses_post(nl2br($home_clients_title)); ?>
+            </div>
 
             <?php if ($home_clients_tab1_name || $home_clients_tab2_name || $home_clients_tab3_name): ?>
                 <div class="home_clients_tab">

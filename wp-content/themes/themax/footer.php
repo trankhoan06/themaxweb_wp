@@ -100,6 +100,7 @@
                             $mask_url = "data:image/svg+xml;base64," . base64_encode($mask_svg);
                             ?>
                             <video data-src="<?php echo esc_url($footer_vid_url); ?>"
+                                poster="/wp-content/uploads/2026/07/poster.jpg" preload="none"
                                 loop muted playsinline class="lazy-footer-video"
                                 style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; pointer-events: none; -webkit-mask-image: url('<?php echo $mask_url; ?>'); mask-image: url('<?php echo $mask_url; ?>'); -webkit-mask-size: 100% 100%; mask-size: 100% 100%; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;"></video>
     

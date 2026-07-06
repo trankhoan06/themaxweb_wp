@@ -24,8 +24,9 @@ get_header();
                             $mask_svg = '<svg width="641" height="117" viewBox="0 0 641 117" xmlns="http://www.w3.org/2000/svg"><path d="M435.777 0L393.388 95.7474V0H357.202L320.5 54.3431L283.798 0H247.612V116.967H283.798V55.8958L306.543 91.0894H320.5H334.457L357.202 55.8958V116.967H384.083H393.388H424.921L429.573 105.063L455.42 38.8165L486.436 116.967H526.757L475.581 0H435.777Z"/><path d="M602.23 63.1416L580.002 93.6773L597.06 116.967H641L602.23 63.1416Z"/><path d="M640.483 0H596.544L580.002 22.7724L601.713 53.308L640.483 0Z"/><path d="M160.25 0V15.0091V51.2378H102.353V0H87.3621H51.1766H36.7024H0V15.0091H36.7024V116.967H51.1766V15.0091H87.3621V51.2378V65.7293V116.967H102.353V65.7293H160.25V101.958V116.967H175.241H233.655V101.958H175.241V65.7293H233.655V51.2378H175.241V15.0091H233.655V0H175.241H160.25Z"/></svg>';
                             $mask_url = "data:image/svg+xml;base64," . base64_encode($mask_svg);
                             ?>
-                            <video src="<?php echo esc_url($footer_vid_url); ?>"
-                                autoplay loop muted playsinline
+                            <video data-src="<?php echo esc_url($footer_vid_url); ?>"
+                                poster="/wp-content/uploads/2026/07/poster.jpg" preload="none"
+                                loop muted playsinline class="lazy-about-video"
                                 style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; pointer-events: none; -webkit-mask-image: url('<?php echo $mask_url; ?>'); mask-image: url('<?php echo $mask_url; ?>'); -webkit-mask-size: 100% 100%; mask-size: 100% 100%; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;"></video>
     
                             <svg width="641" height="117" viewBox="0 0 641 117" fill="none"
@@ -100,7 +101,7 @@ get_header();
                     <?php echo esc_html((tr_posts_field('about_impr_subtitle') ?? '')); ?>
                 </div>
                 <div class="about_impressive_left_img img_full left_full">
-                    <img src="<?php echo get_template_directory_uri(); ?>/images/bg_pattern.webp" alt="">
+                    <img src="<?php echo get_template_directory_uri(); ?>/images/bg_pattern.webp" alt="" loading="lazy">
                 </div>
             </div>
             <div class="about_impressive_right">
@@ -137,7 +138,7 @@ get_header();
         $comp_desk = wp_get_attachment_image_url((tr_posts_field('about_company_img_desktop') ?? ''), 'full') ?: get_template_directory_uri() . '/images/company.webp';
         $comp_mob = wp_get_attachment_image_url((tr_posts_field('about_company_img_mobile') ?? ''), 'full') ?: get_template_directory_uri() . '/images/company_mb.webp';
         ?>
-        <div class="about_company_inner middle" style="background-image: url('<?php echo esc_url($comp_desk); ?>');">
+        <div class="about_company_inner middle" data-bg="<?php echo esc_url($comp_desk); ?>">
         </div>
         <div class="about_company_inner mobile img_full">
             <img src="<?php echo esc_url($comp_mob); ?>" alt="">
@@ -255,7 +256,7 @@ get_header();
                         <div class="about_team_content ">
                             <div class="about_team_content_mask"></div>
                             <div class="about_team_content_bgleft middle img_full">
-                                <img src="<?php echo get_template_directory_uri(); ?>/images/pattern_left.webp" alt="">
+                                <img src="<?php echo get_template_directory_uri(); ?>/images/pattern_left.webp" alt="" loading="lazy">
                             </div>
                             <div class="about_team_content_main">
                                 <div class="about_team_content_inner">
@@ -268,7 +269,7 @@ get_header();
                                                 <div class="about_team_content_item item_line">
                                                     <div class="about_team_content_item_icon img_full">
                                                         <?php $icon_url = wp_get_attachment_image_url($team_item['icon'] ?? 0, 'full') ?: get_template_directory_uri() . '/images/icon-careers.svg'; ?>
-                                                        <img src="<?php echo esc_url($icon_url); ?>" alt="">
+                                                        <img src="<?php echo esc_url($icon_url); ?>" alt="" loading="lazy">
                                                     </div>
                                                     <div
                                                         class="about_team_content_item_title item_line_title cl_linear h5 heading txt_uppercase ">
@@ -306,7 +307,7 @@ get_header();
                                 $card_img = wp_get_attachment_image_url($img_id, 'full') ?: get_template_directory_uri() . '/images/' . (($index % 2 === 0) ? 'card.webp' : 'card2.jpg');
                                 ?>
                                 <div class="about_team_card_img_item <?php echo $index === 0 ? 'active' : ''; ?>">
-                                    <img src="<?php echo esc_url($card_img); ?>" alt="">
+                                    <img src="<?php echo esc_url($card_img); ?>" alt="" loading="lazy">
                                 </div>
                             <?php endforeach; ?>
                         </div>
@@ -371,7 +372,7 @@ get_header();
     <section class="about_cta">
         <div class="about_cta_img img_full">
             <?php $cta_img = wp_get_attachment_image_url((tr_posts_field('about_cta_img') ?? ''), 'full') ?: get_template_directory_uri() . '/images/img_cta.webp'; ?>
-            <img src="<?php echo esc_url($cta_img); ?>" alt="">
+            <img src="<?php echo esc_url($cta_img); ?>" alt="" loading="lazy">
         </div>
         <div class="about_cta_inner_bg">
             <svg class="about_cta_bg_red" width="100" height="273" viewBox="0 0 100 273" fill="none"

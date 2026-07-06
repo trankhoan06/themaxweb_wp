@@ -222,3 +222,23 @@ function themax_render_clients_settings_page() {
     echo '</div></div>';
 }
 
+// Add defer attribute to speed up script loading and eliminate parser blocking
+add_filter('script_loader_tag', function($tag, $handle) {
+    if (is_admin()) {
+        return $tag;
+    }
+    $defer_handles = array(
+        'gsap',
+        'scroll-trigger',
+        'split-text',
+        'lenis',
+        'swiper-js',
+        'themax-index-js',
+        'google-recaptcha'
+    );
+    if (in_array($handle, $defer_handles)) {
+        return str_replace(' src', ' defer src', $tag);
+    }
+    return $tag;
+}, 10, 2);
+
