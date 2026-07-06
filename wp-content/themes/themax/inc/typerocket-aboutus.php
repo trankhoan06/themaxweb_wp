@@ -47,7 +47,7 @@ add_action('edit_form_after_title', function ($post) {
         echo $form->repeater('about_team_cards')->setLabel("Team Cards")->setFields([
             $form->image('img')->setLabel("Card Image"),
             $form->text('title')->setLabel("Card Title"),
-            $form->textarea('desc')->setLabel("Card Description"),
+            // $form->textarea('desc')->setLabel("Card Description"),
         ]);
         echo endBox();
 

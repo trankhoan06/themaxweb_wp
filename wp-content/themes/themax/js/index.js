@@ -335,6 +335,8 @@ const mainScript = () => {
                             child.style.webkitTextFillColor = 'transparent';
                             child.style.backgroundClip = 'text';
                         });
+                        self.elements[0].style.backgroundImage = 'none';
+                        self.elements[0].style.webkitTextFillColor = 'initial';
                     }
                     if (this.isDisableAnim) {
                         gsap.set(self[this.splitType], { autoAlpha: 1, yPercent: 100 });

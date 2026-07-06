@@ -526,13 +526,13 @@
 
 .about_team_card_item_content {
     position: absolute;
-    width: 62.5rem;
+    width: 38.5rem;
     padding: 3.2rem;
     background: rgba(16, 16, 16, 0.5);
     backdrop-filter: blur(4.8rem);
     -webkit-backdrop-filter: blur(4.8rem);
     top: 1.6rem;
-    left: 1.6rem;
+    left: -1.6rem;
     z-index: 5;
 }
 
@@ -758,7 +758,7 @@
         inset: unset;
         width: 100%;
         padding: 1.6rem;
-        margin-top: -6rem;
+        margin-top: 3rem;
         pointer-events: auto;
     }
 

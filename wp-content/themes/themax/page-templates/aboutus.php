@@ -325,9 +325,9 @@ get_header();
                                             <div class="about_team_card_item_content_title heading h5 cl_linear">
                                                 <?php echo esc_html($card_title); ?>
                                             </div>
-                                            <div class="about_team_card_item_content_des txt_14">
+                                            <!-- <div class="about_team_card_item_content_des txt_14">
                                                 <?php echo nl2br(esc_html($card_desc)); ?>
-                                            </div>
+                                            </div> -->
                                         </div>
                                     <?php endforeach; ?>
                                 </div>
