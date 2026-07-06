@@ -1898,6 +1898,7 @@ const mainScript = () => {
             return matchedSection ? $(matchedSection) : null;
         }
         updateOnScroll(inst) {
+            if (!this.$el) return;
             this.toggleHide(inst);
             this.toggleScroll(inst);
             this.toggleMode();
@@ -2067,7 +2068,7 @@ const mainScript = () => {
 
             // Lazy load footer video when scroll is near (within 2000px / ~200vh)
             const lazyVideo = this.el.querySelector('.lazy-footer-video');
-            if (lazyVideo && window.innerWidth > 991) {
+            if (lazyVideo) {
                 if ('IntersectionObserver' in window) {
                     this.videoObserver = new IntersectionObserver((entries, observer) => {
                         entries.forEach(entry => {
@@ -2316,7 +2317,7 @@ const mainScript = () => {
 
                 // Lazy load banner video
                 const lazyVideo = this.el.querySelector('.lazy-home-video');
-                if (lazyVideo && window.innerWidth > 991) {
+                if (lazyVideo) {
                     setTimeout(() => {
                         const dataSrc = lazyVideo.getAttribute('data-src');
                         if (dataSrc) {
@@ -3730,7 +3731,7 @@ const mainScript = () => {
 
                 // Lazy load About video
                 const lazyVideo = this.el.querySelector('.lazy-about-video');
-                if (lazyVideo && window.innerWidth > 991) {
+                if (lazyVideo) {
                     setTimeout(() => {
                         const dataSrc = lazyVideo.getAttribute('data-src');
                         if (dataSrc) {
