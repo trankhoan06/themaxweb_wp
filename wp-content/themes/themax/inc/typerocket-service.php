@@ -14,7 +14,7 @@ add_action('edit_form_after_title', function ($post) {
 
         echo beginBox("Service Image", true);
         echo $form->image('service_img_desktop')->setLabel("Image Desktop");
-        echo $form->image('service_img_mobile')->setLabel("Image Mobile");
+        // echo $form->image('service_img_mobile')->setLabel("Image Mobile");
         echo endBox();
 
         echo beginBox("Service Section Text", true);

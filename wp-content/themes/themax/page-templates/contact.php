@@ -150,12 +150,8 @@ get_header();
     <section class="contact_img">
         <?php
         $cimg_desk = wp_get_attachment_image_url(tr_posts_field('contact_img_desktop'), 'full') ?: get_template_directory_uri() . '/images/img_contact.webp';
-        $cimg_mob = wp_get_attachment_image_url(tr_posts_field('contact_img_mobile'), 'full') ?: get_template_directory_uri() . '/images/img_contact.webp';
         ?>
-        <div class="contact_img_inner middle" style="background-image: url('<?php echo esc_url($cimg_desk); ?>');">
-        </div>
-        <div class="contact_img_inner img_full mobile">
-            <img src="<?php echo esc_url($cimg_mob); ?>" alt="">
+        <div id="parallax" class="contact_img_inner" style="background-image: url('<?php echo esc_url($cimg_desk); ?>');">
         </div>
     </section>
 </main>

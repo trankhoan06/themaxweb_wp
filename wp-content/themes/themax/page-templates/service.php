@@ -113,10 +113,7 @@ get_header();
         $simg_desk = wp_get_attachment_image_url((tr_posts_field('service_img_desktop') ?? ''), 'full') ?: get_template_directory_uri() . '/images/bg_service.webp';
         $simg_mob = wp_get_attachment_image_url((tr_posts_field('service_img_mobile') ?? ''), 'full') ?: get_template_directory_uri() . '/images/img_service_mb.webp';
         ?>
-        <div class="service_img_content middle" style="background-image: url('<?php echo esc_url($simg_desk); ?>');">
-        </div>
-        <div class="service_img_content mobile img_fullfill">
-            <img src="<?php echo esc_url($simg_mob); ?>" alt="">
+        <div id="parallax" class="service_img_content " style="background-image: url('<?php echo esc_url($simg_desk); ?>');">
         </div>
     </section>
     <section class="home_services" data-section="white" id="service">

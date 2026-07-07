@@ -7,6 +7,7 @@
     padding: 0;
     overflow: hidden;
     box-sizing: border-box;
+    z-index: 999999;
 }
 
 .home_hero_inner {
@@ -66,7 +67,7 @@
 
 @media only screen and (max-width:767px) {
     .home_hero {
-        height: 75dvh;
+        height: 100dvh;
     }
 
     .home_hero_inner video {
@@ -718,10 +719,39 @@
         right: -90% !important;
         top: -37%;
         transform: translateY(0);
+        display: none;
     }
 
     .home_services_content {
         grid-column: 1/5;
+        position: absolute;
+        z-index: 1;
+        position: absolute;
+        bottom: 0;
+        padding-block: 2.4rem 2.3rem;
+    }
+
+    .home_services_content::before {
+        content: "";
+        position: absolute;
+        inset: -2rem;
+        left: -1.6rem;
+        right: -1.6rem;
+        top: 0;
+        bottom: 0;
+        background: rgba(13, 13, 13, 0.20);
+        backdrop-filter: blur(12px);
+        z-index: -1;
+        pointer-events: none;
+    }
+
+    .home_services_content_bottom_list::before {
+        content: none !important;
+    }
+
+    .home_services_item_inner .grid {
+        position: relative;
+        height: 100dvh;
     }
 
     .home_services_img {
@@ -748,15 +778,16 @@
 
     .home_services_content_bottom_des {
         margin-bottom: 2.4rem;
+        width: 100%;
     }
 
     .home_services_content_bottom_list {
-        padding-block: 1.6rem;
+        /* padding-block: 1.6rem; */
         position: relative;
         z-index: 1;
     }
 
-    .home_services_content_bottom_list::before {
+    /* .home_services_content_bottom_list::before {
         content: "";
         position: absolute;
         inset: -2rem;
@@ -768,11 +799,11 @@
         backdrop-filter: blur(12px);
         z-index: -1;
         pointer-events: none;
-    }
+    } */
 
     .home_services_img {
         margin-left: -2rem;
-        margin-top: -28.5rem;
+        /* margin-top: -28.5rem; */
 
         img {
             height: auto;
@@ -1100,8 +1131,14 @@
     filter: grayscale();
     transform: scale(1);
     height: 6.4rem;
-    width: auto;
+    width: 100%;
     transition: opacity .4s ease, filter .4s ease, transform .4s ease;
+}
+
+.home_clients_content_item_inner img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain !important;
 }
 
 .home_clients_content_item_img:hover .home_clients_content_item_inner {

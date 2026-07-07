@@ -3445,7 +3445,7 @@ const mainScript = () => {
                 if (this.title) {
                     this.titleSplit = new FadeSplitText({ el: this.title });
                 }
-                
+
                 const isMobile = getScreenType().isMobile;
                 if (this.items.length > 0) {
                     if (isMobile) {
@@ -3806,6 +3806,33 @@ const mainScript = () => {
     };
 
     const AboutUsPage = {
+        ParallaxBg: class {
+            constructor() {
+                this.parallax = null;
+                this.onScroll = this.onScroll.bind(this);
+            }
+            trigger() {
+                this.parallax = document.getElementById("parallax");
+                if (this.parallax) {
+                    window.addEventListener("scroll", this.onScroll);
+                }
+            }
+            onScroll() {
+                let rect = this.parallax.getBoundingClientRect();
+                if (rect.top <= 0) {
+                    let offset = -rect.top;
+                    this.parallax.style.backgroundPositionY = (offset * 0.5) + "px";
+                } else {
+                    this.parallax.style.backgroundPositionY = "0px";
+                }
+            }
+            destroy() {
+                if (this.parallax) {
+                    window.removeEventListener("scroll", this.onScroll);
+                    this.parallax = null;
+                }
+            }
+        },
         Hero: class {
             constructor() {
                 this.el = null;
@@ -4617,6 +4644,24 @@ const mainScript = () => {
                                     }
                                 }
                             );
+
+                            const innerItem = item.classList.contains('about_team_content_item') ? item : item.querySelector('.about_team_content_item');
+                            if (innerItem) {
+                                // Use native scroll listener for perfect sticky detection immune to GSAP layout shifts
+                                const toggleStickyClass = () => {
+                                    const rectTop = item.getBoundingClientRect().top;
+                                    const stickyTop = parseFloat(window.getComputedStyle(item).top);
+                                    // If rectTop <= stickyTop (with 1px buffer for subpixel rendering), it is sticking or past it
+                                    if (rectTop <= stickyTop + 1) {
+                                        innerItem.classList.add('is-stuck');
+                                    } else {
+                                        innerItem.classList.remove('is-stuck');
+                                    }
+                                };
+                                window.addEventListener('scroll', toggleStickyClass, { passive: true });
+                                window.addEventListener('resize', toggleStickyClass, { passive: true });
+                                toggleStickyClass(); // Initial check
+                            }
                         });
                     }
                 });
@@ -4707,6 +4752,33 @@ const mainScript = () => {
         }
     };
     const CareerPage = {
+        ParallaxBg: class {
+            constructor() {
+                this.parallax = null;
+                this.onScroll = this.onScroll.bind(this);
+            }
+            trigger() {
+                this.parallax = document.getElementById("parallax");
+                if (this.parallax) {
+                    window.addEventListener("scroll", this.onScroll);
+                }
+            }
+            onScroll() {
+                let rect = this.parallax.getBoundingClientRect();
+                if (rect.top <= 0) {
+                    let offset = -rect.top;
+                    this.parallax.style.backgroundPositionY = (offset * 0.5) + "px";
+                } else {
+                    this.parallax.style.backgroundPositionY = "0px";
+                }
+            }
+            destroy() {
+                if (this.parallax) {
+                    window.removeEventListener("scroll", this.onScroll);
+                    this.parallax = null;
+                }
+            }
+        },
         Hero: class {
             constructor() {
                 this.el = null;
@@ -5882,6 +5954,33 @@ const mainScript = () => {
     };
 
     const ContactPage = {
+        ParallaxBg: class {
+            constructor() {
+                this.parallax = null;
+                this.onScroll = this.onScroll.bind(this);
+            }
+            trigger() {
+                this.parallax = document.getElementById("parallax");
+                if (this.parallax) {
+                    window.addEventListener("scroll", this.onScroll);
+                }
+            }
+            onScroll() {
+                let rect = this.parallax.getBoundingClientRect();
+                if (rect.top <= 0) {
+                    let offset = -rect.top;
+                    this.parallax.style.backgroundPositionY = (offset * 0.5) + "px";
+                } else {
+                    this.parallax.style.backgroundPositionY = "0px";
+                }
+            }
+            destroy() {
+                if (this.parallax) {
+                    window.removeEventListener("scroll", this.onScroll);
+                    this.parallax = null;
+                }
+            }
+        },
         Hero: class {
             constructor() {
                 this.el = null;
@@ -6046,6 +6145,33 @@ const mainScript = () => {
         }
     };
     const ServicePage = {
+        ParallaxBg: class {
+            constructor() {
+                this.parallax = null;
+                this.onScroll = this.onScroll.bind(this);
+            }
+            trigger() {
+                this.parallax = document.getElementById("parallax");
+                if (this.parallax) {
+                    window.addEventListener("scroll", this.onScroll);
+                }
+            }
+            onScroll() {
+                let rect = this.parallax.getBoundingClientRect();
+                if (rect.top <= 0) {
+                    let offset = -rect.top;
+                    this.parallax.style.backgroundPositionY = (offset * 0.5) + "px";
+                } else {
+                    this.parallax.style.backgroundPositionY = "0px";
+                }
+            }
+            destroy() {
+                if (this.parallax) {
+                    window.removeEventListener("scroll", this.onScroll);
+                    this.parallax = null;
+                }
+            }
+        },
         Hero: class {
             constructor() {
                 this.el = null;
@@ -6103,7 +6229,7 @@ const mainScript = () => {
             setup() {
                 const img = this.el.querySelectorAll('.service_img_content');
                 if (img.length > 0) {
-                    this.imgFade = new FadeIn({ el: img, type: 'bottom', isDisableRevert: true });
+                    this.imgFade = new FadeIn({ el: img, type: 'none', isDisableRevert: true, clearProps: 'opacity' });
                 }
             }
             animFade() {

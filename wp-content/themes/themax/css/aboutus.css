@@ -68,7 +68,7 @@
 
 @media only screen and (max-width:767px) {
     .about_hero .container {
-        padding-top: 12.8rem;
+        padding-top: 17.6rem;
     }
 
     .about_hero_content {
@@ -198,7 +198,7 @@
 .about_company_inner {
     width: 100%;
     height: 100%;
-    background-attachment: fixed;
+    /* background-attachment: fixed; */
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -206,12 +206,9 @@
 
 @media only screen and (max-width:767px) {
     .about_company {
-        height: auto;
+        height: 40rem;
     }
 
-    .about_company_inner {
-        background-attachment: unset;
-    }
 }
 
 /* about_best */
@@ -418,8 +415,38 @@
     counter-increment: team-counter;
 }
 
-.about_team_content_inner .about_team_content_item:hover {
-    transform: translateY(-1.2rem);
+@media (min-width: 768px) {
+    .about_team_content_inner .about_team_content_item:hover {
+        background-color: #E62636;
+    }
+
+    .about_team_content_inner .about_team_content_item:hover .about_team_content_item_des {
+        color: #ebebeb;
+    }
+
+    .about_team_content_inner .about_team_content_item:hover .about_team_content_item_title {
+        color: #fff;
+    }
+
+    .about_team_content_inner .about_team_content_item:hover::after {
+        color: #F6A9AF;
+    }
+}
+
+.about_team_content_inner .about_team_content_item.is-stuck {
+    background-color: #E62636;
+}
+
+.about_team_content_inner .about_team_content_item.is-stuck::after {
+    color: #F6A9AF;
+}
+
+.about_team_content_inner .about_team_content_item.is-stuck .about_team_content_item_des {
+    color: #ebebeb;
+}
+
+.about_team_content_inner .about_team_content_item.is-stuck .about_team_content_item_title {
+    color: #fff;
 }
 
 .about_team_content_inner .about_team_content_item::before {
@@ -442,9 +469,9 @@
     transition: color 0.4s ease;
 }
 
-.about_team_content_inner .about_team_content_item:hover::after {
+/* .about_team_content_inner .about_team_content_item:hover::after {
     color: #EF6470;
-}
+} */
 
 .about_team_content_inner .about_team_content_item:nth-child(2n) {
     grid-column: 8/12;
@@ -452,8 +479,9 @@
 }
 
 .about_team_content_inner .about_team_content_item_title {
-    -webkit-text-fill-color: #E62636 !important;
+    color: #E62636;
     margin-bottom: 1.2rem;
+    transition: color .4s ease;
 }
 
 .about_team_content_inner .about_team_content_item_sub {
@@ -470,9 +498,39 @@
 .about_team_content_item_icon {
     width: 5.6rem;
     height: 5.6rem;
+    position: relative;
     margin-bottom: 14rem;
+    transition: fill .4s ease;
 }
 
+.about_team_content_item_icon img {
+    transition: opacity .4s ease;
+}
+
+.about_team_content_item_icon_active {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+}
+
+@media (min-width: 768px) {
+    .about_team_content_inner .about_team_content_item:hover .about_team_content_item_icon img {
+        opacity: 0;
+    }
+
+    .about_team_content_inner .about_team_content_item:hover .about_team_content_item_icon_active {
+        opacity: 1 !important;
+    }
+}
+
+.about_team_content_inner .about_team_content_item.is-stuck .about_team_content_item_icon img {
+    opacity: 0;
+}
+
+.about_team_content_inner .about_team_content_item.is-stuck .about_team_content_item_icon_active {
+    opacity: 1 !important;
+}
 
 .about_team_content_item_title {
     margin-bottom: 1.2rem;
@@ -747,10 +805,26 @@
 
     .about_team_content_item {
         width: 100%;
+        padding: 2.4rem;
+    }
+
+    .about_team_content_inner .about_team_content_item_title {
+        font-size: 4rem;
+    }
+
+    .about_team_content_inner .about_team_content_item::after {
+        font-size: 4rem;
+        line-height: 1.4em;
+    }
+
+    .about_team_content_item_sub {
+        font-size: 2rem;
     }
 
     .about_team_content_inner .about_team_content_item_wrap {
         width: 100%;
+        position: sticky;
+        top: 10rem;
     }
 
     .about_team_main {

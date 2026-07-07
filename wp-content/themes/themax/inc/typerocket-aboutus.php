@@ -24,7 +24,7 @@ add_action('edit_form_after_title', function ($post) {
 
         echo beginBox("Company Images", true);
         echo $form->image('about_company_img_desktop')->setLabel("Image Desktop");
-        echo $form->image('about_company_img_mobile')->setLabel("Image Mobile");
+        // echo $form->image('about_company_img_mobile')->setLabel("Image Mobile");
         echo endBox();
 
         echo beginBox("What We Do Best", true);
@@ -40,6 +40,7 @@ add_action('edit_form_after_title', function ($post) {
         echo $form->textarea('about_team_desc')->setLabel("Description");
         echo $form->repeater('about_team_list')->setLabel("Values/Insight")->setFields([
             $form->image('icon')->setLabel("Icon"),
+            $form->image('icon_hover')->setLabel("Icon Hover"),
             $form->text('title')->setLabel("Title"),
             $form->text('sub')->setLabel("Subtitle"),
             $form->textarea('desc')->setLabel("Description")

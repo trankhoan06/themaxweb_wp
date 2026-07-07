@@ -102,13 +102,10 @@ get_header();
     <section class="about_company">
         <?php
         $comp_desk = wp_get_attachment_image_url((tr_posts_field('about_company_img_desktop') ?? ''), 'full') ?: get_template_directory_uri() . '/images/company.webp';
-        $comp_mob = wp_get_attachment_image_url((tr_posts_field('about_company_img_mobile') ?? ''), 'full') ?: get_template_directory_uri() . '/images/company_mb.webp';
         ?>
-        <div class="about_company_inner middle" data-bg="<?php echo esc_url($comp_desk); ?>">
+        <div id="parallax" class="about_company_inner" style="background-image: url('<?php echo esc_url($comp_desk); ?>');">
         </div>
-        <div class="about_company_inner mobile img_full">
-            <img src="<?php echo esc_url($comp_mob); ?>" alt="">
-        </div>
+
     </section>
     <section class="about_best">
         <div class="container">
@@ -213,13 +210,15 @@ get_header();
                                         foreach ($team_list as $team_item):
                                             ?>
                                             <div class="about_team_content_item_wrap ">
-                                                <div class="about_team_content_item item_line">
+                                                <div class="about_team_content_item">
                                                     <div class="about_team_content_item_icon img_full">
                                                         <?php $icon_url = wp_get_attachment_image_url($team_item['icon'] ?? 0, 'full') ?: get_template_directory_uri() . '/images/icon-careers.svg'; ?>
+                                                        <?php $icon_url_hover = wp_get_attachment_image_url($team_item['icon_hover'] ?? 0, 'full') ?: get_template_directory_uri() . '/images/icon-careers-hover.svg'; ?>
                                                         <img src="<?php echo esc_url($icon_url); ?>" alt="" loading="lazy">
+                                                        <img  class="about_team_content_item_icon_active" src="<?php echo esc_url($icon_url_hover); ?>" alt="" loading="lazy">
                                                     </div>
                                                     <div
-                                                        class="about_team_content_item_title item_line_title cl_linear h5 heading txt_uppercase ">
+                                                        class="about_team_content_item_title h2 h4_mb heading txt_uppercase ">
                                                         <?php echo esc_html($team_item['title'] ?? ''); ?>
                                                     </div>
                                                     <?php if (!empty($team_item['sub'])): ?>

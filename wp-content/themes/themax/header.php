@@ -163,3 +163,22 @@
             </div>
         </div>
     </header>
+    <?php if (!is_front_page() && !is_home()) : ?>
+    <div class="breadcrumb_title block_arrow txt_medium txt_16 mobile" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 45vw;">
+                    <?php 
+                        if (is_singular('work')) {
+                            $lang = function_exists('pll_current_language') ? pll_current_language() : 'en';
+                            $works_label = ($lang === 'vi') ? 'Tác phẩm' : 'Works';
+                            $works_link = ($lang === 'vi') ? '/vi/works' : '/works';
+                            echo '<a href="' . esc_url($works_link) . '" class="header_works_link">' . esc_html($works_label) . '</a>' . esc_html(get_the_title());
+                        } elseif (is_singular('career')) {
+                            $lang = function_exists('pll_current_language') ? pll_current_language() : 'en';
+                            $career_label = ($lang === 'vi') ? 'Tuyển dụng' : 'Careers';
+                            $career_link = ($lang === 'vi') ? '/vi/career' : '/career';
+                            echo '<a href="' . esc_url($career_link) . '" class="header_works_link">' . esc_html($career_label) . '</a>' . esc_html(get_the_title());
+                        } else {
+                            echo esc_html(get_the_title());
+                        }
+                    ?>
+                </div>
+    <?php endif; ?>

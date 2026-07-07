@@ -105,7 +105,7 @@
     }
 
     .service_hero .container {
-        padding-top: 9.6rem;
+        padding-top: 13.4rem;
         padding-bottom: 4.8rem;
     }
 
@@ -140,14 +140,14 @@
 
 .service_img {
     width: 100%;
-    height: 70rem;
+    height: 100vh;
     /* Adjust height as needed */
 }
 
 .service_img_content {
     width: 100%;
     height: 100%;
-    background-attachment: fixed;
+    /* background-attachment: fixed; */
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -155,7 +155,7 @@
 
 @media only screen and (max-width:767px) {
     .service_img {
-        height: auto;
+        height: 40rem;
     }
 
     .service_img_content {
@@ -417,6 +417,10 @@
         margin-bottom: 2rem;
     }
 
+    .home_services_title br {
+        display: none;
+    }
+
     .home_services_top {
         padding-block: 6.4rem;
     }
@@ -426,6 +430,7 @@
         right: -90% !important;
         top: -37%;
         transform: translateY(0);
+        display: none;
     }
 
     .home_services_content {

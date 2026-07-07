@@ -63,10 +63,11 @@
         height: 60rem;
         transform: translate(20%, -10%);
         filter: none;
+        opacity: .7;
     }
 
     .casestudy_hero .container {
-        padding-block: 9.6rem 4.8rem;
+        padding-block: 13.4rem 4.8rem;
     }
 
     .casestudy_hero_des {

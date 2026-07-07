@@ -15,7 +15,7 @@ add_action('edit_form_after_title', function($post) {
 
         echo beginBox("Career Images", true);
         echo $form->image('career_img_desktop')->setLabel("Image Desktop");
-        echo $form->image('career_img_mobile')->setLabel("Image Mobile");
+        // echo $form->image('career_img_mobile')->setLabel("Image Mobile");
         echo endBox();
 
         echo beginBox("Why Choose TheMax", true);

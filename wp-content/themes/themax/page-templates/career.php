@@ -106,12 +106,8 @@ get_header();
     <section class="career_img" data-init>
         <?php
         $img_desk = wp_get_attachment_image_url(tr_posts_field('career_img_desktop'), 'full') ?: get_template_directory_uri() . '/images/image_career.webp';
-        $img_mob = wp_get_attachment_image_url(tr_posts_field('career_img_mobile'), 'full') ?: get_template_directory_uri() . '/images/image_career.webp';
         ?>
-        <div class="career_img_inner middle" style="background-image: url('<?php echo esc_url($img_desk); ?>');">
-        </div>
-        <div class="career_img_inner mobile img_full">
-            <img src="<?php echo esc_url($img_mob); ?>" alt="">
+        <div id="parallax" class="career_img_inner" style="background-image: url('<?php echo esc_url($img_desk); ?>');">
         </div>
     </section>
     <section class="career_why" data-init>
