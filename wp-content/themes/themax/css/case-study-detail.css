@@ -403,7 +403,8 @@
     }
 
     .casestudydetail_hero_content_img {
-        width: 24rem;
+        width: auto;
+        height: 15rem;
     }
 
     .casestudydetail_content_blog_item_img {

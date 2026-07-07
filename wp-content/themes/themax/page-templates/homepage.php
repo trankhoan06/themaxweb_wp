@@ -14,17 +14,21 @@ get_header();
 
 ?>
 <main class="main" data-namespace="home">
-    <section class="home_hero">
+    <section class="home_hero" data-init>
         <div class="home_hero_inner">
             <?php
             $home_banner_video = tr_posts_field('home_banner_video');
             $video_url = $home_banner_video ? wp_get_attachment_url($home_banner_video) : '';
+            $home_banner_poster = tr_posts_field('home_banner_poster');
+            $poster_url = $home_banner_poster ? wp_get_attachment_image_url($home_banner_poster, 'full') : '/wp-content/uploads/2026/07/poster.jpg';
             ?>
             <?php if ($video_url): ?>
+                <img src="<?php echo esc_url($poster_url); ?>" alt="" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1;">
                 <video data-src="<?php echo esc_url($video_url); ?>"
-                    poster="/wp-content/uploads/2026/07/poster.jpg" preload="none"
-                    loop muted playsinline class="lazy-home-video"
-                    style="max-width: 100%; height: auto;"></video>
+                    poster="<?php echo esc_url($poster_url); ?>" preload="auto"
+                    autoplay loop muted playsinline class="lazy-home-video"
+                    style="position: relative; z-index: 1;"
+                    ></video>
                 <!-- <video src="<?php echo get_template_directory_uri(); ?>/images/video_button.mp4" autoplay loop muted playsinline preload="auto" style="max-width: 100%; height: auto;"></video> -->
             <?php endif; ?>
 

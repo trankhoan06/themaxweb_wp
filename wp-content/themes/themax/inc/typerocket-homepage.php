@@ -7,6 +7,7 @@ add_action('edit_form_after_title', function($post) {
         
         echo beginBox("Banner Chính",true);
         echo $form->file('home_banner_video')->setLabel("Banner Video (.mp4)");
+        echo $form->image('home_banner_poster')->setLabel("Banner Video Poster Image");
         echo endBox();
 
         echo beginBox("Intro Text & Images (Giới thiệu)",true);

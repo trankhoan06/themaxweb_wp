@@ -2381,24 +2381,48 @@ const mainScript = () => {
                 // Lazy load banner video
                 const lazyVideo = this.el.querySelector('.lazy-home-video');
                 if (lazyVideo) {
-                    setTimeout(() => {
-                        const dataSrc = lazyVideo.getAttribute('data-src');
-                        if (dataSrc) {
-                            lazyVideo.setAttribute('src', dataSrc);
-                            lazyVideo.load();
+                    let hasPlayed = false;
+                    const startAnim = () => {
+                        if (!hasPlayed) {
+                            hasPlayed = true;
+                            if (this.tlFade) this.tlFade.play();
                             lazyVideo.play().catch(e => console.log("Home video play interrupted:", e));
                         }
-                    }, 300);
+                    };
+
+                    // Listen for video readiness to start animation
+                    lazyVideo.addEventListener('loadeddata', startAnim, { once: true });
+                    lazyVideo.addEventListener('canplay', startAnim, { once: true });
+
+                    // Fallback timeout in case video loads instantly or events fail
+                    setTimeout(() => {
+                        if (lazyVideo.readyState >= 3) {
+                            startAnim();
+                        } else {
+                            startAnim(); // Forced fallback after 5s
+                        }
+                    }, 5000);
+
+                    const dataSrc = lazyVideo.getAttribute('data-src');
+                    if (dataSrc) {
+                        lazyVideo.setAttribute('src', dataSrc);
+                        lazyVideo.load();
+                    } else {
+                        startAnim();
+                    }
+                } else {
+                    if (this.tlFade) this.tlFade.play();
                 }
             }
             setup() {
             }
             animFade() {
-                this.tlFade = gsap.timeline();
+                this.tlFade = gsap.timeline({ paused: true });
                 new MasterTimeline({
                     timeline: this.tlFade,
                     triggerInit: this.el,
                     tweenArr: [
+                        new FadeIn({ el: this.el.querySelector('.home_hero_inner'), type: 'none' }),
                         new FadeSplitText({ el: this.el.querySelector('.home_hero_overlay_txt') }),
                         new FadeIn({ el: this.el.querySelector('.home_hero_overlay_icon'), type: 'none' }),
                     ]
@@ -2465,8 +2489,8 @@ const mainScript = () => {
                 this.introTl = gsap.timeline({
                     scrollTrigger: {
                         trigger: '.home_intro_wrap',
-                        start: 'top+=5% top',
-                        end: () => `bottom bottom`,
+                        start: viewport.w > 767 ? 'top+=5% top' : 'top+=2% top',
+                        end: () => viewport.w > 767 ? `bottom bottom` : `bottom+=${viewport.h / 2} bottom`,
                         scrub: true,
                         invalidateOnRefresh: true,
                     }
@@ -2528,15 +2552,15 @@ const mainScript = () => {
                         .to('.home_intro_img_list:nth-child(2)', {
                             x: '125%',
                             ease: 'none',
-                        }, 0)
+                        }, 0.05)
                         .to('.home_intro_img_list:nth-child(3)', {
                             x: '-125%',
                             ease: 'none',
-                        }, 0)
+                        }, 0.1)
                         .to('.home_intro_img_list:nth-child(4)', {
                             x: '125%',
                             ease: 'none',
-                        }, 0);
+                        }, 0.15);
                 }
 
                 // Helper trigger to control exit/entry locking and animation without scrub conflicts
@@ -3085,11 +3109,11 @@ const mainScript = () => {
                     span.style.display = 'inline-block';
 
                     if (index === 0) {
-                        this.fadeSplitActive = new FadeSplitText({ el: span, splitType: 'chars', isDisableRevert: true, delay: '<=0.2' });
+                        this.fadeSplitActive = new FadeSplitText({ el: span, splitType: 'chars', isDisableRevert: true, delay: '<=0.2', forceSplitOnMobile: true });
                         this.fadeSplitActive.init();
                         this.splits.push(this.fadeSplitActive);
                     } else {
-                        const inactiveSplit = new FadeSplitText({ el: span, splitType: 'chars', isDisableRevert: true, isDisableAnim: true });
+                        const inactiveSplit = new FadeSplitText({ el: span, splitType: 'chars', isDisableRevert: true, isDisableAnim: true, forceSplitOnMobile: true });
                         inactiveSplit.init();
                         this.splits.push(inactiveSplit);
                     }
@@ -3223,25 +3247,69 @@ const mainScript = () => {
                     clearInterval(this.timer);
                 }
 
-                // On mobile (fallback), add blinking cursor to first span and handle timing differently
-                const firstSplit = this.splits[0];
-                if (!firstSplit || !firstSplit.textSplit) {
-                    const firstSpan = this.spans[0];
-                    if (firstSpan && !firstSpan.querySelector('.cursor')) {
-                        const txt = firstSpan.getAttribute('data-text') || firstSpan.innerText;
-                        firstSpan.setAttribute('data-text', txt);
-                        firstSpan.innerHTML = txt + '<span class="cursor" style="border-right: 0.05em solid currentColor;"></span>';
-                        gsap.fromTo(firstSpan.querySelector('.cursor'), { opacity: 1 }, { opacity: 0, duration: 0.4, repeat: -1, yoyo: true, ease: 'steps(1)' });
-                    }
-                    this.timer = setTimeout(() => {
-                        this.next();
-                    }, 3000); // 3 seconds for the first span before rotating
-                    return;
-                }
+                // Initial container height setup for auto-expand logic
+                const container = this.spans[0].parentElement;
+                gsap.set(container, { height: this.spans[0].offsetHeight });
 
+                // Unified autoplay for both desktop and mobile
                 this.timer = setInterval(() => {
-                    this.next();
-                }, 3000); // 3 seconds interval
+                    const nextIndex = (this.currentIndex + 1) % this.spans.length;
+                    this.goTo(nextIndex);
+                }, 3000);
+            }
+
+            goTo(targetIndex) {
+                if (this.currentIndex === targetIndex) return;
+
+                const currentSplit = this.splits[this.currentIndex];
+                const nextSplit = this.splits[targetIndex];
+
+                if (!currentSplit || !nextSplit || !currentSplit.textSplit || !nextSplit.textSplit) return;
+
+                const oldIndex = this.currentIndex;
+                this.currentIndex = targetIndex;
+
+                // Ensure all other splits are hidden to prevent ghosting
+                this.splits.forEach((split, idx) => {
+                    if (idx !== oldIndex && idx !== targetIndex && split.textSplit) {
+                        gsap.killTweensOf(split.textSplit.chars);
+                        gsap.set(split.textSplit.chars, { yPercent: 100 });
+                    }
+                });
+
+                gsap.killTweensOf(currentSplit.textSplit.chars);
+                gsap.killTweensOf(nextSplit.textSplit.chars);
+
+                // Determine scroll direction for animation (handle wrap around for desktop auto-loop)
+                const isScrollingDown = targetIndex > oldIndex || (oldIndex === this.spans.length - 1 && targetIndex === 0);
+                const startY = isScrollingDown ? 100 : -100;
+                const endY = isScrollingDown ? -100 : 100;
+
+                gsap.set(nextSplit.textSplit.chars, { yPercent: startY });
+
+                const tl = gsap.timeline();
+
+                const container = this.spans[0].parentElement;
+                const targetHeight = this.spans[targetIndex].offsetHeight;
+                tl.to(container, {
+                    height: targetHeight,
+                    duration: 0.6,
+                    ease: 'power2.inOut'
+                }, 0);
+
+                tl.to(currentSplit.textSplit.chars, {
+                    yPercent: endY,
+                    duration: 0.6,
+                    ease: 'power2.inOut',
+                    stagger: 0.01
+                }, 0);
+
+                tl.to(nextSplit.textSplit.chars, {
+                    yPercent: 0,
+                    duration: 0.6,
+                    ease: 'power2.inOut',
+                    stagger: 0.01
+                }, 0.1);
             }
             next() {
                 if (this.isAnimating) return;
@@ -3281,7 +3349,7 @@ const mainScript = () => {
                         const lenErase = textErasing.length;
                         const lenType = textTyping.length;
 
-                        const durationErase = Math.max(0.6, lenErase * 0.08); // 80ms per character
+                        const durationErase = Math.max(0.3, lenErase * 0.04); // 40ms per character, min 0.3s
                         const durationType = Math.max(1.0, lenType * 0.12); // 120ms per character
 
                         const obj = { erase: lenErase, type: 0 };
@@ -3297,10 +3365,12 @@ const mainScript = () => {
                                     gsap.fromTo(cursor, { opacity: 1 }, { opacity: 0, duration: 0.4, repeat: -1, yoyo: true, ease: 'steps(1)' });
                                 }
 
-                                // Schedule next word after 3s
-                                this.timer = setTimeout(() => {
-                                    this.next();
-                                }, 3000);
+                                // Schedule next word after 3s (desktop only)
+                                if (viewport.w > 767) {
+                                    this.timer = setTimeout(() => {
+                                        this.next();
+                                    }, 3000);
+                                }
                             }
                         });
 

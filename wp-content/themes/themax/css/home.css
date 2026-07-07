@@ -170,6 +170,7 @@
 .home_specialize_inner_txt.main {
     display: grid;
     grid-template-columns: 1fr;
+    align-items: start;
     width: max-content;
     height: max-content;
     overflow: hidden;
@@ -233,12 +234,11 @@
     }
 
     .home_specialize_block {
-        height: 20dvh;
-        display: none;
+        height: 160vh;
     }
 
     .home_specialize_inner {
-        padding: 6.4rem 0 0 0;
+        padding: 3.4rem 0 0 0;
         min-height: 37rem;
     }
 
@@ -262,7 +262,7 @@
     }
 
     .home_specialize_bg_deco_item.center {
-        top: 64%;
+        top: 68%;
         width: 5.4rem;
         -webkit-transform: translateY(0%) !important;
         transform: translateY(0%) !important;
@@ -279,8 +279,7 @@
     }
 
     .home_specialize {
-        align-items: start;
-        height: auto;
+        align-items: center;
         padding-bottom: 6.4rem;
     }
 
@@ -434,19 +433,19 @@
 
 @media only screen and (max-width:767px) {
     .home_intro_img_list:nth-child(1) {
-        transform: translateX(-25%);
+        transform: translateX(-0%);
     }
 
     .home_intro_img_list:nth-child(2) {
-        transform: translateX(30%);
+        transform: translateX(0%);
     }
 
     .home_intro_img_list:nth-child(3) {
-        transform: translateX(-20%);
+        transform: translateX(-0%);
     }
 
     .home_intro_img_list:nth-child(4) {
-        transform: translateX(30%);
+        transform: translateX(0%);
     }
 
     .home_intro_img_cms {
@@ -494,7 +493,7 @@
 .home_services {
     position: relative;
     z-index: 5;
-    margin-top: -100%;
+    margin-top: -100dvh;
 }
 
 .home_services_top {
@@ -692,9 +691,7 @@
 }
 
 @media only screen and (max-width:767px) {
-    .home_services {
-        margin-top: 0;
-    }
+    /* Removed margin-top: 0 to allow the section to overlap as it does on desktop */
 
     .home_services_top_bg {
         pointer-events: none;
