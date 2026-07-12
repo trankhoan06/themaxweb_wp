@@ -19,6 +19,7 @@ if (have_posts()):
         the_post();
         $hero_bg = wp_get_attachment_image_url(tr_posts_field('hero_bg'), 'full');
         $hero_logo = wp_get_attachment_image_url(tr_posts_field('hero_logo'), 'full');
+        $hero_logo_mobile_width = tr_posts_field('hero_logo_mobile_width');
         $hero_subtitle = tr_posts_field('hero_subtitle');
         $info_list = tr_posts_field('info_list') ?: [];
         $blog_items = tr_posts_field('blog_items') ?: [];
@@ -29,6 +30,20 @@ if (have_posts()):
         $cta_text3 = tr_options_field('tr_theme_options.about_cta_text3');
         ?>
         <main class="main" data-namespace="caseStudyDetail">
+            <?php if (!empty($hero_logo_mobile_width)): ?>
+                <style>
+                    @media only screen and (max-width: 767px) {
+                        .casestudydetail_hero_content_img,
+                        .home_case_content_view_logo {
+                            <?php 
+                            $mobile_width_val = floatval($hero_logo_mobile_width);
+                            $mobile_width_rem = ($mobile_width_val > 0) ? ($mobile_width_val / 10) . 'rem' : esc_attr($hero_logo_mobile_width);
+                            ?>
+                            width: <?php echo $mobile_width_rem; ?> !important;
+                        }
+                    }
+                </style>
+            <?php endif; ?>
             <section class="casestudydetail_hero">
                 <?php if ($hero_bg): ?>
                     <div class="casestudydetail_img img_full">
@@ -44,7 +59,7 @@ if (have_posts()):
                             </div>
                         <?php endif; ?>
                         <?php if ($hero_subtitle): ?>
-                            <div class="casestudydetail_hero_content_txt txt_16 txt_medium txt_uppercase txt_center">
+                            <div class="casestudydetail_hero_content_txt txt_24 txt_medium txt_uppercase txt_center cl_eb">
                                 <?php echo esc_html($hero_subtitle); ?>
                             </div>
                         <?php endif; ?>
@@ -54,9 +69,54 @@ if (have_posts()):
             <section class="casestudydetail_content">
                 <div class="casestudydetail_content_info">
                     <div class="container grid">
-                        <?php if (!empty($info_list)):
+                        <?php 
+                        $client_title = tr_posts_field('info_client_title') ?: 'Client';
+                        $client_content = tr_posts_field('info_client_content');
+                        
+                        $year_title = tr_posts_field('info_year_title') ?: 'Year';
+                        $year_content = tr_posts_field('info_year_content');
+                        
+                        $link_title = tr_posts_field('info_link_title') ?: 'Link';
+                        $link_content = tr_posts_field('info_link_content');
+
+                        // Fallback to old repeater data if new fields are empty
+                        if (empty($client_content) && empty($year_content) && empty($link_content)) {
+                            $old_info_list = tr_posts_field('info_list') ?: [];
+                            if (is_array($old_info_list)) {
+                                foreach ($old_info_list as $info) {
+                                    $t = strtolower(trim($info['title'] ?? ''));
+                                    if (strpos($t, 'client') !== false) {
+                                        $client_content = $info['content'] ?? '';
+                                    } elseif (strpos($t, 'year') !== false) {
+                                        $year_content = $info['content'] ?? '';
+                                    } elseif (strpos($t, 'link') !== false) {
+                                        $link_content = $info['content'] ?? '';
+                                    }
+                                }
+                            }
+                        }
+
+                        $categories = get_the_category();
+                        $category_name = !empty($categories) ? $categories[0]->name : '';
+                        $category_title = 'Category';
+
+                        $new_info_list = [];
+                        if ($client_content) {
+                            $new_info_list[] = ['title' => $client_title, 'content' => $client_content];
+                        }
+                        if ($year_content) {
+                            $new_info_list[] = ['title' => $year_title, 'content' => $year_content];
+                        }
+                        if ($category_name) {
+                            $new_info_list[] = ['title' => $category_title, 'content' => $category_name];
+                        }
+                        if ($link_content) {
+                            $new_info_list[] = ['title' => $link_title, 'content' => $link_content];
+                        }
+                        ?>
+                        <?php if (!empty($new_info_list)):
                             $info_count = 1;
-                            foreach ($info_list as $info): ?>
+                            foreach ($new_info_list as $info): ?>
                                 <div class="casestudydetail_content_info_item item<?php echo $info_count; ?>">
                                     <div class="casestudydetail_content_info_item_titlle txt_14 txt_uppercase">
                                         <?php echo esc_html($info['title'] ?? ''); ?>
@@ -170,6 +230,48 @@ if (have_posts()):
                                 </a>
                             </div>
                         </div>
+                        <div class="home_case_content_view">
+                            <a target="_blank" href="<?php echo esc_url(tr_posts_field('view_link') ?: '#'); ?>" class="home_case_content_view_logo img_full">
+                                <img src="<?php echo esc_url($hero_logo); ?>" alt="">
+                            </a>
+                            <a target="_blank" href="<?php echo esc_url(tr_posts_field('view_link') ?: '#'); ?>" class="home_case_content_view_link hover_txt txt_16 txt_medium txt_uppercase cl_eb">
+                                 <div class="hover_txt_grid">
+                                    <?php $hero_btn = esc_html(tr_posts_field('view_text'))?: 'VIEW LIVE WEBSITE'; ?>
+                                    <span class="init"><?php echo $hero_btn; ?></span>
+                                    <span class="active"><?php echo $hero_btn; ?></span>
+                                </div>
+                                <div class="service_hero_right_discover_icon_wrap">
+                                    <div class="service_hero_right_discover_icon svg_full">
+                                        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <g clip-path="url(#clip0_1164_690)">
+                                                <path d="M12 12H36.0003V36.0003" stroke="#929292" stroke-width="2" stroke-linejoin="round"></path>
+                                                <path d="M12 36.0003L36.0003 12" stroke="#929292" stroke-width="2" stroke-linejoin="round"></path>
+                                            </g>
+                                            <defs>
+                                                <clipPath id="clip0_1164_690">
+                                                    <rect width="48" height="48" fill="white"></rect>
+                                                </clipPath>
+                                            </defs>
+                                        </svg>
+
+                                    </div>
+                                    <div class="service_hero_right_discover_icon active svg_full">
+                                        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <g clip-path="url(#clip0_1164_690)">
+                                                        <path d="M12 12H36.0003V36.0003" stroke="#E62636" stroke-width="2" stroke-linejoin="round"></path>
+                                                        <path d="M12 36.0003L36.0003 12" stroke="#E62636" stroke-width="2" stroke-linejoin="round"></path>
+                                                    </g>
+                                                    <defs>
+                                                        <clipPath id="clip0_1164_690">
+                                                            <rect width="48" height="48" fill="white"></rect>
+                                                        </clipPath>
+                                                    </defs>
+                                                </svg>
+
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
                         <div class="home_case_content_list right_full left_full">
                             <?php
                             $prev_post = get_previous_post();
@@ -260,7 +362,7 @@ if (have_posts()):
                                 </a>
                             <?php endforeach; ?>
                         </div>
-                        <div class="casestudydetail_content_view">
+                        <a href="/work" class="casestudydetail_content_view">
                             <div class="casestudydetail_content_view_button button_hover txt_14 txt_medium hover_txt">
                                 <div class="hover_txt_grid">
                                     <span class="init"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"
@@ -281,9 +383,10 @@ if (have_posts()):
                                         ALL PROJECTS</span>
                                 </div>
                             </div>
-                        </div>
+                            </a>
                     </div>
                 </div>
+
             </section>
             <?php 
     $lang_suffix = (function_exists('pll_current_language') && pll_current_language() == 'vi') ? '_vi' : '';
@@ -371,7 +474,7 @@ if (have_posts()):
                         </svg>
                     </div>
                     <div class="about_cta_link_txt">
-                        <span class=" middle cl_linear">
+                        <span class="cl_linear">
                             <?php echo esc_html($cta_text2 ?? ''); ?>
                         </span>
                         <span class="cl_red middle">

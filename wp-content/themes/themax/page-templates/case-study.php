@@ -173,7 +173,7 @@ get_header();
                         </svg>
                     </div>
                     <div class="about_cta_link_txt">
-                        <span class=" middle cl_linear">
+                        <span class=" cl_linear">
                             <?php echo esc_html((tr_posts_field('cs_cta_text2') ?? '')); ?>
                         </span>
                         <span class="cl_red middle">

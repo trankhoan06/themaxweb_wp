@@ -173,7 +173,7 @@ function themax_register_clients_sidebar_menu() {
 function themax_render_clients_settings_page() {
     // Khởi tạo model WPOption và gắn vào form để lấy dữ liệu từ bảng options
     $model = new \TypeRocket\Models\WPOption();
-    $form = tr_form('option', 'create', null, $model)->useJson()->setGroup('tr_theme_options');
+    $form = tr_form('option', 'create', null, $model)->useJson()->setGroup('tr_client_options');
     
     echo '<div class="wrap"><div class="typerocket-container">';
     echo '<h1>Our Clients Settings</h1>';
@@ -212,8 +212,12 @@ function themax_render_clients_settings_page() {
     ]);
     
     echo $form->row(
-        $form->text('home_clients_btn_text')->setLabel("Text nút bấm"),
-        $form->text('home_clients_btn_link')->setLabel("Link nút bấm")
+        $form->text('home_clients_btn_text')->setLabel("Text nút bấm (EN)"),
+        $form->text('home_clients_btn_link')->setLabel("Link nút bấm (EN)")
+    );
+    echo $form->row(
+        $form->text('home_clients_btn_text_vi')->setLabel("Text nút bấm (VI)"),
+        $form->text('home_clients_btn_link_vi')->setLabel("Link nút bấm (VI)")
     );
 
     echo $form->submit('Save Options');

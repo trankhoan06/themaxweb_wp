@@ -1917,12 +1917,16 @@ const mainScript = () => {
             this.onHideDependent();
         }
         toggleScroll(inst) {
-            if (inst.scroll > this.height * 2)
+            const isMobile = window.innerWidth <= 991;
+            const threshold = isMobile ? 0 : this.height * 2;
+            if (inst.scroll > threshold)
                 this.$el.addClass("on-scroll");
             else this.$el.removeClass("on-scroll");
         }
         toggleHide(inst) {
-            if (inst.scroll < this.height * 3) {
+            const isMobile = window.innerWidth <= 991;
+            const threshold = isMobile ? 0 : this.height * 3;
+            if (inst.scroll <= threshold) {
                 this.$el.removeClass("on-hide");
             } else {
                 if (inst.direction == 1) {
@@ -2703,6 +2707,18 @@ const mainScript = () => {
 
                     let tabId = $(this).attr('data-tabs');
 
+                    let tabContainer = $('.home_clients_tab');
+                    if (tabContainer.length) {
+                        let itemRect = $(this)[0].getBoundingClientRect();
+                        let containerRect = tabContainer[0].getBoundingClientRect();
+                        let relativeLeft = itemRect.left - containerRect.left;
+                        let targetScroll = tabContainer[0].scrollLeft + relativeLeft;
+
+                        tabContainer.animate({
+                            scrollLeft: targetScroll
+                        }, 400);
+                    }
+
                     $('.home_clients_content_item').hide();
 
                     const $target = $('.home_clients_content_item[data-tabs="' + tabId + '"]');
@@ -3118,12 +3134,8 @@ const mainScript = () => {
                         this.splits.push(inactiveSplit);
                     }
 
-                    // Ensure the span itself is fully opaque now that GSAP handles overflow/visibility
-                    if (!this.splits[index].textSplit) {
-                        gsap.set(span, { opacity: index === 0 ? 1 : 0 });
-                    } else {
-                        gsap.set(span, { opacity: 1 });
-                    }
+                    // Hide inactive spans initially to prevent ghosting
+                    gsap.set(span, { opacity: index === 0 ? 1 : 0 });
                 });
 
                 // Query background decorative elements
@@ -3274,11 +3286,14 @@ const mainScript = () => {
                     if (idx !== oldIndex && idx !== targetIndex && split.textSplit) {
                         gsap.killTweensOf(split.textSplit.chars);
                         gsap.set(split.textSplit.chars, { yPercent: 100 });
+                        gsap.set(this.spans[idx], { opacity: 0 });
                     }
                 });
 
                 gsap.killTweensOf(currentSplit.textSplit.chars);
                 gsap.killTweensOf(nextSplit.textSplit.chars);
+                gsap.killTweensOf(this.spans[oldIndex]);
+                gsap.killTweensOf(this.spans[targetIndex]);
 
                 // Determine scroll direction for animation (handle wrap around for desktop auto-loop)
                 const isScrollingDown = targetIndex > oldIndex || (oldIndex === this.spans.length - 1 && targetIndex === 0);
@@ -3286,6 +3301,7 @@ const mainScript = () => {
                 const endY = isScrollingDown ? -100 : 100;
 
                 gsap.set(nextSplit.textSplit.chars, { yPercent: startY });
+                gsap.set(this.spans[targetIndex], { opacity: 1 });
 
                 const tl = gsap.timeline();
 
@@ -3301,7 +3317,10 @@ const mainScript = () => {
                     yPercent: endY,
                     duration: 0.6,
                     ease: 'power2.inOut',
-                    stagger: 0.01
+                    stagger: 0.01,
+                    onComplete: () => {
+                        gsap.set(this.spans[oldIndex], { opacity: 0 });
+                    }
                 }, 0);
 
                 tl.to(nextSplit.textSplit.chars, {
@@ -3818,6 +3837,20 @@ const mainScript = () => {
 
                     let tabId = clicked.attr('data-tabs');
                     $(_thisEl).find('.home_clients_tab_item[data-tabs="' + tabId + '"]').addClass('active');
+
+                    let tabContainer = $(_thisEl).find('.home_clients_tab');
+                    if (tabContainer.length) {
+                        let itemRect = clicked[0].getBoundingClientRect();
+                        let containerRect = tabContainer[0].getBoundingClientRect();
+                        let relativeLeft = itemRect.left - containerRect.left;
+                        // To account for any padding on the container, we can optionally subtract it, 
+                        // but usually aligning to the left edge of the bounding rect is exactly what is needed.
+                        let targetScroll = tabContainer[0].scrollLeft + relativeLeft;
+
+                        tabContainer.animate({
+                            scrollLeft: targetScroll
+                        }, 400);
+                    }
 
                     $(_thisEl).find('.home_clients_content_item').hide();
                     let targetContent = $(_thisEl).find('.home_clients_content_item[data-tabs="' + tabId + '"]');

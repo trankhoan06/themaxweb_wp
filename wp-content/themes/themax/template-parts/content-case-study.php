@@ -2,24 +2,28 @@
 // template-parts/content-case-study.php
 
 $item_link = get_permalink();
-$hero_subtitle = tr_posts_field('hero_subtitle', get_the_ID());
+$hero_subtitle = tr_posts_field('info_client_content', get_the_ID());
+
+// Fallback to old repeater data if new field is empty
+if (empty($hero_subtitle)) {
+    $old_info_list = tr_posts_field('info_list', get_the_ID()) ?: [];
+    if (is_array($old_info_list)) {
+        foreach ($old_info_list as $info) {
+            $t = strtolower(trim($info['title'] ?? ''));
+            if (strpos($t, 'client') !== false) {
+                $hero_subtitle = $info['content'] ?? '';
+                break;
+            }
+        }
+    }
+}
+
 if (empty($hero_subtitle)) {
     $hero_subtitle = get_the_title(); 
 }
 
-$info_list = tr_posts_field('info_list', get_the_ID());
-$type = 'WEBSITE';
-if (!empty($info_list) && is_array($info_list)) {
-    foreach ($info_list as $info) {
-        if (strtoupper($info['title'] ?? '') === 'CATEGORY') {
-            $type = $info['content'];
-            break;
-        }
-    }
-    if ($type === 'WEBSITE' && isset($info_list[0]['content'])) {
-        $type = $info_list[0]['content'];
-    }
-}
+$categories = get_the_category();
+$type = !empty($categories) ? $categories[0]->name : '';
 
 $hero_bg_id = tr_posts_field('hero_bg', get_the_ID());
 if ($hero_bg_id) {
@@ -30,7 +34,7 @@ if ($hero_bg_id) {
 ?>
 <a href="<?php echo esc_url($item_link); ?>" class="home_case_content_item" style="display:block; text-decoration:none;">
     <div class="home_case_content_item_des cl_be">
-        <div class="home_case_content_item_des_txt txt_15 txt_medium"><?php echo esc_html($hero_subtitle); ?></div>
+        <div class="home_case_content_item_des_txt txt_uppercase txt_15 txt_medium"><?php echo esc_html($hero_subtitle); ?></div>
         <div class="home_case_content_item_des_txt txt_15 txt_medium"><?php echo esc_html($type); ?></div>
     </div>
     <div class="home_case_content_item_img_outer">

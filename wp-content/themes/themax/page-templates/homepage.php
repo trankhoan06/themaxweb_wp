@@ -366,11 +366,28 @@ get_header();
                             $categories = get_the_category();
                             $category_name = !empty($categories) ? $categories[0]->name : '';
                             $img_url = get_the_post_thumbnail_url(get_the_ID(), 'full') ?: get_template_directory_uri() . '/images/case.webp';
-                            $post_subtitle = tr_posts_field('hero_subtitle', get_the_ID());
+                            $post_subtitle = tr_posts_field('info_client_content', get_the_ID());
+                            
+                            // Fallback to old repeater data if new field is empty
+                            if (empty($post_subtitle)) {
+                                $old_info_list = tr_posts_field('info_list', get_the_ID()) ?: [];
+                                if (is_array($old_info_list)) {
+                                    foreach ($old_info_list as $info) {
+                                        $t = strtolower(trim($info['title'] ?? ''));
+                                        if (strpos($t, 'client') !== false) {
+                                            $post_subtitle = $info['content'] ?? '';
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            if (empty($post_subtitle)) {
+                                $post_subtitle = get_the_title();
+                            }
                             ?>
                             <a href="<?php the_permalink(); ?>" class="home_case_content_item">
                                 <div class="home_case_content_item_des">
-                                    <div class="home_case_content_item_des_txt txt_15 txt_medium">
+                                    <div class="home_case_content_item_des_txt txt_uppercase txt_15 txt_medium">
                                         <?php echo esc_html($post_subtitle); ?>
                                     </div>
                                     <div class="home_case_content_item_des_txt txt_15 txt_medium">
@@ -452,11 +469,18 @@ get_header();
             <?php
             $home_clients_subtitle = tr_posts_field('home_clients_subtitle');
             $home_clients_title = tr_posts_field('home_clients_title');
-            $home_clients_tab1_name = tr_options_field('tr_theme_options.home_clients_tab1_name');
-            $home_clients_tab2_name = tr_options_field('tr_theme_options.home_clients_tab2_name');
-            $home_clients_tab3_name = tr_options_field('tr_theme_options.home_clients_tab3_name');
-            $home_clients_btn_text = tr_options_field('tr_theme_options.home_clients_btn_text');
-            $home_clients_btn_link = tr_options_field('tr_theme_options.home_clients_btn_link');
+            $home_clients_tab1_name = tr_options_field('tr_client_options.home_clients_tab1_name');
+            $home_clients_tab2_name = tr_options_field('tr_client_options.home_clients_tab2_name');
+            $home_clients_tab3_name = tr_options_field('tr_client_options.home_clients_tab3_name');
+            
+            $lang = function_exists('pll_current_language') ? pll_current_language() : 'en';
+            if ($lang === 'vi') {
+                $home_clients_btn_text = tr_options_field('tr_client_options.home_clients_btn_text_vi') ?: tr_options_field('tr_client_options.home_clients_btn_text');
+                $home_clients_btn_link = tr_options_field('tr_client_options.home_clients_btn_link_vi') ?: tr_options_field('tr_client_options.home_clients_btn_link');
+            } else {
+                $home_clients_btn_text = tr_options_field('tr_client_options.home_clients_btn_text');
+                $home_clients_btn_link = tr_options_field('tr_client_options.home_clients_btn_link');
+            }
             ?>
             <div class="home_clients_bg img_full">
                 <img src="./images/pattern-blur.svg" alt="" loading="lazy">
@@ -498,7 +522,7 @@ get_header();
                 <?php
                 $tabs = ['tab1' => 'home_clients_tab1', 'tab2' => 'home_clients_tab2', 'tab3' => 'home_clients_tab3'];
                 foreach ($tabs as $tab_id => $field_name):
-                    $clients = tr_options_field('tr_theme_options.' . $field_name);
+                    $clients = tr_options_field('tr_client_options.' . $field_name);
                     ?>
                     <div class="home_clients_content_item" data-tabs="<?php echo $tab_id; ?>">
                         <?php

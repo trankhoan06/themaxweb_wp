@@ -75,7 +75,7 @@ get_header();
             <div class="home_clients_tab">
                 <?php
                 for ($i = 1; $i <= 3; $i++) {
-                    $tab_name = tr_options_field('tr_theme_options.home_clients_tab' . $i . '_name');
+                    $tab_name = tr_options_field('tr_client_options.home_clients_tab' . $i . '_name');
                     if (!$tab_name)
                         continue;
 
@@ -93,11 +93,11 @@ get_header();
             <div class="home_clients_content">
                 <?php
                 for ($i = 1; $i <= 3; $i++) {
-                    $tab_name = tr_options_field('tr_theme_options.home_clients_tab' . $i . '_name');
+                    $tab_name = tr_options_field('tr_client_options.home_clients_tab' . $i . '_name');
                     if (!$tab_name)
                         continue;
 
-                    $tab_logos = tr_options_field('tr_theme_options.home_clients_tab' . $i);
+                    $tab_logos = tr_options_field('tr_client_options.home_clients_tab' . $i);
                     ?>
                     <div class="home_clients_content_item" data-tabs="tab<?php echo $i; ?>">
                         <?php
@@ -129,12 +129,12 @@ get_header();
             <?php } ?>
         </div>
 
-        <!-- <div class="home_clients_button button_hover txt_uppercase hover_txt txt_14 txt_medium">
+            <!-- <a href="<?php echo esc_url($home_clients_btn_link); ?>" class="home_clients_button button_hover txt_uppercase hover_txt txt_14 txt_medium">
                 <div class="hover_txt_grid">
-                    <span class="init">VIEW ALL CLIENTS</span>
-                    <span class="active">VIEW ALL CLIENTS</span>
+                    <span class="init"><?php echo esc_html($home_clients_btn_text); ?></span>
+                    <span class="active"><?php echo esc_html($home_clients_btn_text); ?></span>
                 </div>
-            </div> -->
+            </a> -->
         </div>
     </section>
 
@@ -215,7 +215,7 @@ get_header();
                         </svg>
                     </div>
                     <div class="about_cta_link_txt">
-                        <span class=" middle cl_linear">
+                        <span class=" cl_linear">
                             <?php echo esc_html((tr_posts_field('about_cta_text2') ?? '')); ?>
                         </span>
                         <span class="cl_red middle">

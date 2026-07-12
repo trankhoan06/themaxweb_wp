@@ -174,12 +174,14 @@
     width: max-content;
     height: max-content;
     overflow: hidden;
+    font-weight: 700;
 }
 
 .home_specialize_inner_txt.main span {
     grid-column: 1/2;
     grid-row: 1/2;
     opacity: 0;
+    transition: opacity .4s ease;
 }
 
 .home_specialize_inner_txt.main span:first-child {
@@ -1118,10 +1120,15 @@
 
 .home_clients_tab {
     display: flex;
-    width: max-content;
-    margin-inline: auto;
+    width: 100%;
+    justify-content: center;
     border-bottom: 1px solid #262626;
     margin-bottom: 6.3rem;
+    background: #0D0D0D;
+    position: sticky;
+    z-index: 10;
+    top: 0;
+    transition: top .4s ease;
 }
 
 .home_clients_content_item_inner {
@@ -1284,5 +1291,16 @@
 
     .home_clients_tab_item {
         font-size: 1.6rem;
+    }
+}
+
+/* Limit logos to 18 on PC and 12 on mobile */
+.home_clients_content_item_img:nth-child(n+19) {
+    display: none !important;
+}
+
+@media only screen and (max-width: 767px) {
+    .home_clients_content_item_img:nth-child(n+13) {
+        display: none !important;
     }
 }
