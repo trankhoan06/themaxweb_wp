@@ -41,7 +41,6 @@ function themax_enqueue_assets() {
 
     // Global CSS
     $style_version = filemtime(get_template_directory() . '/css/style.css') ?: '1.0.0';
-    wp_enqueue_style('swiper-css', $theme_dir . '/plugin/swiper/swiper-bundle.min.css');
     wp_enqueue_style('themax-style', $theme_dir . '/css/style.css', array(), $style_version);
 
     // Global JS
@@ -50,9 +49,8 @@ function themax_enqueue_assets() {
     wp_enqueue_script('scroll-trigger', $theme_dir . '/js/ScrollTrigger.min.js', array('gsap'), '1.0.0', true);
     wp_enqueue_script('split-text', $theme_dir . '/js/SplitText.min.js', array('gsap'), '1.0.0', true);
     wp_enqueue_script('lenis', $theme_dir . '/js/lenis.min.js', array(), '1.0.0', true);
-    wp_enqueue_script('swiper-js', $theme_dir . '/plugin/swiper/swiper-bundle.min.js', array(), '7.0.6', true);
     $index_js_version = filemtime(get_template_directory() . '/js/index.min.js') ?: '1.0.0';
-    wp_enqueue_script('themax-index-js', $theme_dir . '/js/index.min.js', array('jquery-3.7.1', 'gsap', 'swiper-js'), $index_js_version, true);
+    wp_enqueue_script('themax-index-js', $theme_dir . '/js/index.min.js', array('jquery-3.7.1', 'gsap'), $index_js_version, true);
 
     $recaptcha_site_key = tr_options_field('tr_theme_options.recaptcha_site_key') ?: '6LcQlD0tAAAAALN2ByRRGHnl9FO9EO7UvIBf99mR';
 
@@ -74,28 +72,36 @@ function themax_enqueue_assets() {
         wp_enqueue_style('themax-career-detail', $theme_dir . '/css/career-detail.css', array(), $career_detail_version);
     }
     elseif (is_page_template('page-templates/career.php')) {
-        wp_enqueue_style('themax-career', $theme_dir . '/css/career.css');
+        $career_version = filemtime(get_template_directory() . '/css/career.css') ?: '1.0.0';
+        wp_enqueue_style('themax-career', $theme_dir . '/css/career.css', array(), $career_version);
     }
     elseif (is_page_template('page-templates/case-study-detail.php') || is_singular('case-study-detail') || is_singular('work')) {
-        wp_enqueue_style('themax-case-study-detail', $theme_dir . '/css/case-study-detail.css');
+        $case_study_detail_version = filemtime(get_template_directory() . '/css/case-study-detail.css') ?: '1.0.0';
+        wp_enqueue_style('themax-case-study-detail', $theme_dir . '/css/case-study-detail.css', array(), $case_study_detail_version);
     }
     // elseif (is_singular('post')) {
-    //     wp_enqueue_style('themax-case-study-detail', $theme_dir . '/css/case-study-detail.css');
+    //     $case_study_detail_version = filemtime(get_template_directory() . '/css/case-study-detail.css') ?: '1.0.0';
+    //     wp_enqueue_style('themax-case-study-detail', $theme_dir . '/css/case-study-detail.css', array(), $case_study_detail_version);
     // }
     elseif (is_page_template('page-templates/case-study.php')) {
-        wp_enqueue_style('themax-case-study', $theme_dir . '/css/case-study.css');
+        $case_study_version = filemtime(get_template_directory() . '/css/case-study.css') ?: '1.0.0';
+        wp_enqueue_style('themax-case-study', $theme_dir . '/css/case-study.css', array(), $case_study_version);
     }
     elseif (is_page_template('page-templates/contact.php')) {
-        wp_enqueue_style('themax-contact', $theme_dir . '/css/contact.css');
+        $contact_version = filemtime(get_template_directory() . '/css/contact.css') ?: '1.0.0';
+        wp_enqueue_style('themax-contact', $theme_dir . '/css/contact.css', array(), $contact_version);
     }
     elseif (is_page_template('page-templates/homepage.php')) {
-        wp_enqueue_style('themax-home', $theme_dir . '/css/home.css');
+        $home_version = filemtime(get_template_directory() . '/css/home.css') ?: '1.0.0';
+        wp_enqueue_style('themax-home', $theme_dir . '/css/home.css', array(), $home_version);
     }
     elseif (is_page_template('page-templates/our-client.php')) {
-        wp_enqueue_style('themax-our-client', $theme_dir . '/css/our-client.css');
+        $our_client_version = filemtime(get_template_directory() . '/css/our-client.css') ?: '1.0.0';
+        wp_enqueue_style('themax-our-client', $theme_dir . '/css/our-client.css', array(), $our_client_version);
     }
     elseif (is_page_template('page-templates/service.php')) {
-        wp_enqueue_style('themax-service', $theme_dir . '/css/service.css');
+        $service_version = filemtime(get_template_directory() . '/css/service.css') ?: '1.0.0';
+        wp_enqueue_style('themax-service', $theme_dir . '/css/service.css', array(), $service_version);
     }
 }
 add_action('wp_enqueue_scripts', 'themax_enqueue_assets');
@@ -140,7 +146,6 @@ function themax_add_defer_to_scripts($tag, $handle) {
         'scroll-trigger',
         'split-text',
         'lenis',
-        'swiper-js',
         'themax-index-js'
     );
     
@@ -236,7 +241,6 @@ add_filter('script_loader_tag', function($tag, $handle) {
         'scroll-trigger',
         'split-text',
         'lenis',
-        'swiper-js',
         'themax-index-js',
         'google-recaptcha'
     );
@@ -246,3 +250,13 @@ add_filter('script_loader_tag', function($tag, $handle) {
     return $tag;
 }, 10, 2);
 
+// Prevent caching for requests coming from Zalo In-App Browser
+add_action('send_headers', 'themax_disable_cache_for_zalo');
+function themax_disable_cache_for_zalo() {
+    $user_agent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
+    if (stripos($user_agent, 'Zalo') !== false) {
+        header("Cache-Control: no-cache, no-store, must-revalidate");
+        header("Pragma: no-cache");
+        header("Expires: 0");
+    }
+}

@@ -23,7 +23,6 @@ get_header();
             $poster_url = $home_banner_poster ? wp_get_attachment_image_url($home_banner_poster, 'full') : '/wp-content/uploads/2026/07/poster.jpg';
             ?>
             <?php if ($video_url): ?>
-                <img src="<?php echo esc_url($poster_url); ?>" alt="" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1;">
                 <video data-src="<?php echo esc_url($video_url); ?>"
                     poster="<?php echo esc_url($poster_url); ?>" preload="auto"
                     autoplay loop muted playsinline class="lazy-home-video"
@@ -118,7 +117,7 @@ get_header();
                     echo '<div class="home_intro_img_list">';
                     foreach ($col_urls as $url) {
                         echo '<div class="home_intro_img_item img_fullfill">';
-                        echo '<img src="' . esc_url($url) . '" alt="" loading="lazy">';
+                        echo '<img src="data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 1 1\'></svg>" data-src="' . esc_url($url) . '" class="lazyload" alt="">';
                         echo '</div>';
                     }
                     echo '</div>';
@@ -141,7 +140,7 @@ get_header();
             $specialize_subtitle = tr_posts_field('specialize_subtitle');
             ?>
             <div class="home_specialize_bg img_full">
-                <img src="<?php echo esc_url($specialize_bg_url); ?>" alt="" loading="lazy">
+                <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'></svg>" data-src="<?php echo esc_url($specialize_bg_url); ?>" class="lazyload" alt="">
             </div>
             <div class="home_specialize_bg_color">
                 <div class="home_specialize_bg_color_inner"></div>
@@ -310,7 +309,7 @@ get_header();
                                             $img_id = $srv['image'] ?? 0;
                                             $img_url = wp_get_attachment_image_url($img_id, 'full');
                                             ?>
-                                            <img src="<?php echo esc_url($img_url); ?>" alt="" loading="lazy">
+                                            <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'></svg>" data-src="<?php echo esc_url($img_url); ?>" class="lazyload" alt="">
                                         </div>
                                     </div>
                                 </div>
@@ -397,7 +396,7 @@ get_header();
                                 <div class="home_case_content_item_img_outer">
                                     <div class="home_case_content_item_img img_full">
                                         <?php if ($img_url): ?>
-                                            <img src="<?php echo esc_url($img_url); ?>" alt="" loading="lazy">
+                                            <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'></svg>" data-src="<?php echo esc_url($img_url); ?>" class="lazyload" alt="">
                                         <?php endif; ?>
                                     </div>
                                 </div>
@@ -463,7 +462,7 @@ get_header();
     </section>
     <section class="home_clients pa_container">
         <div class="home_clients_pattern img_full">
-            <img src="<?php echo get_template_directory_uri(); ?>/images/partent_client.png" alt="" loading="lazy">
+            <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'></svg>" data-src="<?php echo get_template_directory_uri(); ?>/images/partent_client.png" class="lazyload" alt="">
         </div>
         <div class="container">
             <?php
@@ -483,7 +482,7 @@ get_header();
             }
             ?>
             <div class="home_clients_bg img_full">
-                <img src="./images/pattern-blur.svg" alt="" loading="lazy">
+                <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'></svg>" data-src="./images/pattern-blur.svg" class="lazyload" alt="">
             </div>
             <div class="home_clients_subtitle block_arrow"><?php echo esc_html($home_clients_subtitle); ?></div>
             <div class="home_clients_title heading h2 h4_mb cl_linear txt_center">
@@ -532,7 +531,7 @@ get_header();
                                 <div class="home_clients_content_item_img">
                                     <div class="home_clients_content_item_inner img_full">
                                         <?php $img_url = wp_get_attachment_image_url($c['logo'] ?? 0, 'full'); ?>
-                                        <img src="<?php echo esc_url($img_url); ?>" alt="" loading="lazy">
+                                        <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'></svg>" data-src="<?php echo esc_url($img_url); ?>" class="lazyload" alt="">
                                     </div>
                                 </div>
                                 <?php

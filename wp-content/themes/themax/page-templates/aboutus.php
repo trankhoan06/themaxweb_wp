@@ -261,22 +261,16 @@ get_header();
                         <!-- Shared content overlay box containing Swiper -->
                         <div class="about_team_card_item_content">
                             <!-- Swiper for text content -->
-                            <div class="swiper about_team_card_swiper">
-                                <div class="swiper-wrapper">
-                                    <?php foreach ($team_cards as $card):
-                                        $card_title = isset($card["title"]) ? $card["title"] : "";
-                                        $card_desc = isset($card["desc"]) ? $card["desc"] : "";
-                                        ?>
-                                        <div class="swiper-slide about_team_card_slide">
-                                            <div class="about_team_card_item_content_title heading h5 cl_linear">
-                                                <?php echo esc_html($card_title); ?>
-                                            </div>
-                                            <!-- <div class="about_team_card_item_content_des txt_14">
-                                                <?php echo nl2br(esc_html($card_desc)); ?>
-                                            </div> -->
+                            <div class="about_team_card_swiper">
+                                <?php foreach ($team_cards as $index => $card):
+                                    $card_title = isset($card["title"]) ? $card["title"] : "";
+                                    ?>
+                                    <div class="about_team_card_slide <?php echo $index === 0 ? 'active' : ''; ?>">
+                                        <div class="about_team_card_item_content_title heading h5 cl_linear">
+                                            <?php echo esc_html($card_title); ?>
                                         </div>
-                                    <?php endforeach; ?>
-                                </div>
+                                    </div>
+                                <?php endforeach; ?>
                             </div>
 
                             <!-- Shared Bot navigation -->

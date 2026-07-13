@@ -593,7 +593,13 @@
 }
 
 .about_team_card_slide {
+    display: none;
+    width: 100%;
     height: auto;
+}
+
+.about_team_card_slide.active {
+    display: block;
 }
 
 .about_team_card_item_content {

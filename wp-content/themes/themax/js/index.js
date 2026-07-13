@@ -3,6 +3,44 @@ const mainScript = () => {
     const parseRem = (input) => {
         return (input / 10) * parseFloat(getComputedStyle(document.querySelector('html')).fontSize)
     }
+    const playVideoSafely = (video) => {
+        if (!video) return;
+        const events = ['touchstart', 'mousedown', 'keydown', 'scroll'];
+        const tryPlay = () => {
+            const playPromise = video.play();
+            if (playPromise !== undefined && typeof playPromise.then === 'function') {
+                playPromise
+                    .then(() => {
+                        cleanup();
+                    })
+                    .catch(err => {
+                        console.log("Play failed on interaction:", err);
+                    });
+            } else {
+                cleanup();
+            }
+        };
+        const cleanup = () => {
+            events.forEach(event => {
+                document.removeEventListener(event, tryPlay, { passive: true });
+            });
+        };
+        const playPromise = video.play();
+        if (playPromise !== undefined && typeof playPromise.then === 'function') {
+            playPromise
+                .then(() => {
+                    // Play succeeded immediately
+                })
+                .catch(err => {
+                    console.log("Autoplay blocked, adding interaction listeners for video:", video);
+                    events.forEach(event => {
+                        document.addEventListener(event, tryPlay, { passive: true });
+                    });
+                });
+        } else {
+            console.log("Video play did not return a promise.");
+        }
+    };
     function getScreenType() {
         const width = window.innerWidth;
         let type = width > 991 ? 'dsk' : window.innerWidth > 767 ? 'tb' : 'mb';
@@ -74,6 +112,15 @@ const mainScript = () => {
         }
     }
     const useSplitPretext = ({ selector, type, isMask }) => {
+        if (selector) {
+            const elements = (typeof selector === 'string') ? document.querySelectorAll(selector) : (selector.jquery || typeof selector.length === 'number' ? Array.from(selector) : [selector]);
+            elements.forEach(el => {
+                if (el && el.innerHTML && !el.hasAttribute('data-nfc-normalized')) {
+                    el.innerHTML = el.innerHTML.normalize("NFC");
+                    el.setAttribute('data-nfc-normalized', 'true');
+                }
+            });
+        }
         const textSplit = SplitText.create(selector, { type: type });
         return {
             elements: textSplit[type] || textSplit.lines,
@@ -140,6 +187,10 @@ const mainScript = () => {
             this.isHighlight = isHighlight
             this.isFast = isFast;
 
+            if (this.DOM.el && this.DOM.el.innerHTML && !this.DOM.el.hasAttribute('data-nfc-normalized')) {
+                this.DOM.el.innerHTML = this.DOM.el.innerHTML.normalize("NFC");
+                this.DOM.el.setAttribute('data-nfc-normalized', 'true');
+            }
             this.textSplit = SplitText.create(this.DOM.el, { type: 'lines, words' });
             this.isColorDefault = this.color === 'white' || this.color === 'black';
             this.fromColor = !this.isColorDefault ? 'rgba(255,255,255, 0)' : this.color == 'white' ? 'rgba(255,255,255, 0)' : 'rgba(29,29,29, 0)';
@@ -306,6 +357,11 @@ const mainScript = () => {
                 return;
             }
 
+            if (this.DOM.el && this.DOM.el.innerHTML && !this.DOM.el.hasAttribute('data-nfc-normalized')) {
+                this.DOM.el.innerHTML = this.DOM.el.innerHTML.normalize("NFC");
+                this.DOM.el.setAttribute('data-nfc-normalized', 'true');
+            }
+
             if (this.animation) return; // avoid duplicate initialization
 
             let animation;
@@ -346,17 +402,17 @@ const mainScript = () => {
                         self.elements[0].style.webkitTextFillColor = 'initial';
                     }
                     if (this.isDisableAnim) {
-                        gsap.set(self[this.splitType], { autoAlpha: 1, yPercent: 100 });
+                        gsap.set(self[this.splitType], { autoAlpha: 1, yPercent: 105 });
                         return;
                     }
-                    gsap.set(self[this.splitType], { autoAlpha: 0, yPercent: 100 });
+                    gsap.set(self[this.splitType], { autoAlpha: 0, yPercent: 105 });
                     const hasTranslate = self.elements[0].classList.contains('item_translate');
                     if (hasTranslate) {
                         gsap.set(self.elements[0], { x: 0 });
                         const tl = gsap.timeline();
                         tl.to(self[this.splitType], {
                             autoAlpha: 1,
-                            yPercent: 0,
+                            yPercent: 2,
                             stagger: this.stagger,
                             duration: this.duration,
                             ease: 'power2.out',
@@ -377,7 +433,7 @@ const mainScript = () => {
                     } else {
                         animation = gsap.to(self[this.splitType], {
                             autoAlpha: 1,
-                            yPercent: 0,
+                            yPercent: 2,
                             stagger: this.stagger,
                             duration: this.duration,
                             ease: 'power2.out',
@@ -2105,7 +2161,7 @@ const mainScript = () => {
                                 if (dataSrc) {
                                     lazyVideo.setAttribute('src', dataSrc);
                                     lazyVideo.load();
-                                    lazyVideo.play().catch(e => console.log("Video play interrupted:", e));
+                                    playVideoSafely(lazyVideo);
                                 }
                                 observer.unobserve(lazyVideo);
                             }
@@ -2390,7 +2446,7 @@ const mainScript = () => {
                         if (!hasPlayed) {
                             hasPlayed = true;
                             if (this.tlFade) this.tlFade.play();
-                            lazyVideo.play().catch(e => console.log("Home video play interrupted:", e));
+                            playVideoSafely(lazyVideo);
                         }
                     };
 
@@ -3013,6 +3069,13 @@ const mainScript = () => {
                         this.servicesTl.to(item, {
                             width: '100vw',
                             ease: 'none',
+                            onStart: () => {
+                                const img = item.querySelector('img.lazyload');
+                                if (img && img.dataset.src) {
+                                    img.src = img.dataset.src;
+                                    img.classList.remove('lazyload');
+                                }
+                            }
                         });
                     }
                 });
@@ -3285,8 +3348,7 @@ const mainScript = () => {
                 this.splits.forEach((split, idx) => {
                     if (idx !== oldIndex && idx !== targetIndex && split.textSplit) {
                         gsap.killTweensOf(split.textSplit.chars);
-                        gsap.set(split.textSplit.chars, { yPercent: 100 });
-                        gsap.set(this.spans[idx], { opacity: 0 });
+                        gsap.set(split.textSplit.chars, { yPercent: 105 });
                     }
                 });
 
@@ -3297,8 +3359,8 @@ const mainScript = () => {
 
                 // Determine scroll direction for animation (handle wrap around for desktop auto-loop)
                 const isScrollingDown = targetIndex > oldIndex || (oldIndex === this.spans.length - 1 && targetIndex === 0);
-                const startY = isScrollingDown ? 100 : -100;
-                const endY = isScrollingDown ? -100 : 100;
+                const startY = isScrollingDown ? 105 : -105;
+                const endY = isScrollingDown ? -105 : 105;
 
                 gsap.set(nextSplit.textSplit.chars, { yPercent: startY });
                 gsap.set(this.spans[targetIndex], { opacity: 1 });
@@ -3324,7 +3386,7 @@ const mainScript = () => {
                 }, 0);
 
                 tl.to(nextSplit.textSplit.chars, {
-                    yPercent: 0,
+                    yPercent: 2,
                     duration: 0.6,
                     ease: 'power2.inOut',
                     stagger: 0.01
@@ -3423,8 +3485,8 @@ const mainScript = () => {
                     return;
                 }
 
-                // Ensure next characters are prepared at yPercent: 100 before animating
-                gsap.set(nextSplit.textSplit.chars, { yPercent: 100 });
+                // Ensure next characters are prepared at yPercent: 105 before animating
+                gsap.set(nextSplit.textSplit.chars, { yPercent: 105 });
 
                 const tl = gsap.timeline({
                     onComplete: () => {
@@ -3433,17 +3495,17 @@ const mainScript = () => {
                     }
                 });
 
-                // 1. Current active characters: animate to -100% (exit)
+                // 1. Current active characters: animate to -105% (exit)
                 tl.to(currentSplit.textSplit.chars, {
-                    yPercent: -100,
+                    yPercent: -105,
                     duration: 0.8,
                     ease: 'power2.inOut',
                     stagger: 0.02
                 }, 0);
 
-                // 2. Next active characters: animate to 0% (entrance)
+                // 2. Next active characters: animate to 2% (entrance)
                 tl.to(nextSplit.textSplit.chars, {
-                    yPercent: 0,
+                    yPercent: 2,
                     duration: 0.8,
                     ease: 'power2.inOut',
                     stagger: 0.02
@@ -3960,7 +4022,7 @@ const mainScript = () => {
                         if (dataSrc) {
                             lazyVideo.setAttribute('src', dataSrc);
                             lazyVideo.load();
-                            lazyVideo.play().catch(e => console.log("About video play interrupted:", e));
+                            playVideoSafely(lazyVideo);
                         }
                     }, 300);
                 }
@@ -4532,12 +4594,11 @@ const mainScript = () => {
                 }
                 if (cardContent) {
                     this.cardContentFade = new FadeIn({ el: cardContent, type: 'bottom', isDisableRevert: true, duration: 0.8 });
-                    this.cardTitleSplit = new FadeSplitText({
+                    this.cardTitleSplit = new FadeIn({
                         el: cardContent.querySelector('.about_team_card_item_content_title'),
-                        splitType: 'words',
+                        type: 'bottom',
                         isDisableRevert: true,
-                        duration: 0.9,
-                        stagger: 0.02,
+                        duration: 0.8
                     });
                     this.cardDesFade = new FadeSplitText({
                         el: cardContent.querySelector('.about_team_card_item_content_des'),
@@ -4558,6 +4619,8 @@ const mainScript = () => {
                 if (!swiperEl || !imgWrap) return;
 
                 const imgItems = Array.from(imgWrap.querySelectorAll('.about_team_card_img_item'));
+                const textItems = Array.from(swiperEl.querySelectorAll('.about_team_card_slide'));
+                if (textItems.length === 0) return;
 
                 // Measure and set fixed width on resize
                 const updateImgWidth = () => {
@@ -4570,7 +4633,7 @@ const mainScript = () => {
                     window.removeEventListener('resize', updateImgWidth);
                 };
 
-                // Initialize state
+                // Initialize image state
                 imgItems.forEach((item, idx) => {
                     if (idx === 0) {
                         gsap.set(item, { width: '100%', zIndex: 2 });
@@ -4579,26 +4642,38 @@ const mainScript = () => {
                     }
                 });
 
-                let lastIndex = 0;
-
-                // Initialize Swiper
-                this.cardSwiper = new Swiper(swiperEl, {
-                    effect: 'fade',
-                    fadeEffect: {
-                        crossFade: true
-                    },
-                    loop: false,
-                    speed: 600,
-                    allowTouchMove: true,
-                    navigation: {
-                        nextEl: this.card.querySelector('.about_team_btn_next'),
-                        prevEl: this.card.querySelector('.about_team_btn_prev')
+                // Initialize active class states for slides
+                textItems.forEach((item, idx) => {
+                    if (idx === 0) {
+                        item.classList.add('active');
+                    } else {
+                        item.classList.remove('active');
                     }
                 });
 
-                this.cardSwiper.on('slideChange', () => {
-                    const activeIndex = this.cardSwiper.activeIndex;
-                    if (activeIndex === lastIndex) return;
+                let lastIndex = 0;
+                this.currentIndex = 0;
+
+                const prevBtn = this.card.querySelector('.about_team_btn_prev');
+                const nextBtn = this.card.querySelector('.about_team_btn_next');
+
+                const updateButtons = (index) => {
+                    if (index === 0) {
+                        prevBtn?.classList.add('swiper-button-disabled');
+                    } else {
+                        prevBtn?.classList.remove('swiper-button-disabled');
+                    }
+                    if (index === textItems.length - 1) {
+                        nextBtn?.classList.add('swiper-button-disabled');
+                    } else {
+                        nextBtn?.classList.remove('swiper-button-disabled');
+                    }
+                };
+
+                updateButtons(0);
+
+                const goToSlide = (activeIndex) => {
+                    if (activeIndex === lastIndex || activeIndex < 0 || activeIndex >= textItems.length) return;
 
                     const isNext = activeIndex > lastIndex;
 
@@ -4607,6 +4682,54 @@ const mainScript = () => {
                     const curEl = this.card.querySelector('.about_team_card_item_content_bot_page_cur');
                     if (curEl) {
                         curEl.textContent = (curIdx < 10 ? '0' + curIdx : curIdx) + ' /';
+                    }
+
+                    // Kill previous timeline to prevent collision
+                    if (this.textTl) {
+                        this.textTl.kill();
+                        this.textTl = null;
+                    }
+
+                    const oldText = textItems[lastIndex];
+                    const newText = textItems[activeIndex];
+
+                    if (oldText && newText) {
+                        // Ensure oldText is absolute and newText is relative and active during transition
+                        gsap.set(oldText, { position: 'absolute', opacity: 1, zIndex: 1 });
+                        gsap.set(newText, { position: 'relative', opacity: 0, zIndex: 2 });
+                        oldText.classList.add('active');
+                        newText.classList.add('active');
+
+                        this.textTl = gsap.timeline({
+                            onComplete: () => {
+                                // Normalize classes and clear inline style overrides
+                                oldText.classList.remove('active');
+                                gsap.set(oldText, { clearProps: 'position,opacity,zIndex' });
+                                gsap.set(newText, { clearProps: 'position,opacity,zIndex' });
+                                this.textTl = null;
+                            }
+                        });
+
+                        // Fade out old, fade in new
+                        this.textTl.to(oldText, {
+                            opacity: 0,
+                            duration: 0.3,
+                            ease: 'power2.inOut'
+                        }, 0);
+
+                        this.textTl.to(newText, {
+                            opacity: 1,
+                            duration: 0.4,
+                            ease: 'power2.out'
+                        }, 0.1);
+                    } else {
+                        textItems.forEach((item, idx) => {
+                            if (idx === activeIndex) {
+                                item.classList.add('active');
+                            } else {
+                                item.classList.remove('active');
+                            }
+                        });
                     }
 
                     // Trigger image reveal
@@ -4662,8 +4785,30 @@ const mainScript = () => {
                         );
                     }
 
+                    updateButtons(activeIndex);
                     lastIndex = activeIndex;
-                });
+                    this.currentIndex = activeIndex;
+                };
+
+                this._nextHandler = () => {
+                    if (this.currentIndex < textItems.length - 1) {
+                        goToSlide(this.currentIndex + 1);
+                    }
+                };
+
+                this._prevHandler = () => {
+                    if (this.currentIndex > 0) {
+                        goToSlide(this.currentIndex - 1);
+                    }
+                };
+
+                nextBtn?.addEventListener('click', this._nextHandler);
+                prevBtn?.addEventListener('click', this._prevHandler);
+
+                this._destroySliderListeners = () => {
+                    nextBtn?.removeEventListener('click', this._nextHandler);
+                    prevBtn?.removeEventListener('click', this._prevHandler);
+                };
             }
             animHeader() {
                 this.headerTl = gsap.timeline({
@@ -4834,9 +4979,19 @@ const mainScript = () => {
                     this.bgResetTrigger.kill();
                     this.bgResetTrigger = null;
                 }
-                if (this.cardSwiper) {
-                    this.cardSwiper.destroy(true, true);
-                    this.cardSwiper = null;
+                if (this._destroySliderListeners) {
+                    this._destroySliderListeners();
+                    this._destroySliderListeners = null;
+                }
+                if (this.textTl) {
+                    this.textTl.kill();
+                    this.textTl = null;
+                }
+                if (this.splits) {
+                    this.splits.forEach(split => {
+                        if (split) split.revert();
+                    });
+                    this.splits = [];
                 }
                 if (this._destroyWidthListener) {
                     this._destroyWidthListener();
@@ -6596,6 +6751,36 @@ const mainScript = () => {
 
     // Direct initialization on DOM Ready without Barba.js
     $(document).ready(() => {
+        // 0. Initialize custom lazy loading for images
+        const lazyImageObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    if (img.dataset.src) {
+                        img.src = img.dataset.src;
+                        img.classList.remove('lazyload');
+                    }
+                    observer.unobserve(img);
+                }
+            });
+        }, {
+            rootMargin: '300px 0px',
+        });
+
+        document.querySelectorAll('img.lazyload').forEach((img) => {
+            // For service slider images (except the first one), let's NOT observe them here
+            // because we want them to load specifically when their slide transition begins.
+            const isSlideImage = img.closest('.home_services_item');
+            if (isSlideImage) {
+                const serviceItems = Array.from(document.querySelectorAll('.home_services_item'));
+                const itemIndex = serviceItems.indexOf(isSlideImage);
+                if (itemIndex > 0) {
+                    return;
+                }
+            }
+            lazyImageObserver.observe(img);
+        });
+
         const namespace = getNamespace();
         const data = {
             next: {
