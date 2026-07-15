@@ -2475,6 +2475,48 @@ const mainScript = () => {
                 }
             }
             setup() {
+                const video = this.el.querySelector('.lazy-home-video');
+                const muteBtn = this.el.querySelector('.home_hero_mute_btn');
+                if (video && muteBtn) {
+                    const newMuteBtn = muteBtn.cloneNode(true);
+                    muteBtn.parentNode.replaceChild(newMuteBtn, muteBtn);
+                    
+                    let userUnmuted = !video.muted;
+                    
+                    const toggleMute = (mute) => {
+                        video.muted = mute;
+                        if (mute) {
+                            newMuteBtn.querySelector('.icon-unmute').style.display = 'none';
+                            newMuteBtn.querySelector('.icon-mute').style.display = 'block';
+                        } else {
+                            newMuteBtn.querySelector('.icon-mute').style.display = 'none';
+                            newMuteBtn.querySelector('.icon-unmute').style.display = 'block';
+                        }
+                    };
+
+                    newMuteBtn.addEventListener('click', () => {
+                        userUnmuted = video.muted;
+                        toggleMute(!userUnmuted);
+                    });
+
+                    ScrollTrigger.create({
+                        trigger: this.el,
+                        start: "top bottom",
+                        end: "bottom top",
+                        onLeave: () => {
+                            if (userUnmuted) toggleMute(true);
+                        },
+                        onEnterBack: () => {
+                            if (userUnmuted) toggleMute(false);
+                        },
+                        onLeaveBack: () => {
+                            if (userUnmuted) toggleMute(true);
+                        },
+                        onEnter: () => {
+                            if (userUnmuted) toggleMute(false);
+                        }
+                    });
+                }
             }
             animFade() {
                 this.tlFade = gsap.timeline({ paused: true });

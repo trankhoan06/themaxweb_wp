@@ -65,12 +65,12 @@
                         } elseif (is_singular('work')) {
                             $lang = function_exists('pll_current_language') ? pll_current_language() : 'en';
                             $works_label = ($lang === 'vi') ? 'Tác phẩm' : 'Works';
-                            $works_link = ($lang === 'vi') ? '/vi/works' : '/works';
+                            $works_link = ($lang === 'vi') ? '/vi/tac-pham' : '/works';
                             echo '<a href="' . esc_url($works_link) . '" class="header_works_link">' . esc_html($works_label) . '</a> &nbsp;/&nbsp; ' . esc_html(get_the_title());
                         } elseif (is_singular('career')) {
                             $lang = function_exists('pll_current_language') ? pll_current_language() : 'en';
                             $career_label = ($lang === 'vi') ? 'Tuyển dụng' : 'Careers';
-                            $career_link = ($lang === 'vi') ? '/vi/career' : '/career';
+                            $career_link = ($lang === 'vi') ? '/vi/tuyen-dung' : '/career';
                             echo '<a href="' . esc_url($career_link) . '" class="header_works_link">' . esc_html($career_label) . '</a> &nbsp;/&nbsp; ' . esc_html(get_the_title());
                         } else {
                             echo esc_html(get_the_title());
@@ -169,12 +169,12 @@
                         if (is_singular('work')) {
                             $lang = function_exists('pll_current_language') ? pll_current_language() : 'en';
                             $works_label = ($lang === 'vi') ? 'Tác phẩm' : 'Works';
-                            $works_link = ($lang === 'vi') ? '/vi/works' : '/works';
+                            $works_link = ($lang === 'vi') ? '/vi/tac-pham' : '/works';
                             echo '<a href="' . esc_url($works_link) . '" class="header_works_link">' . esc_html($works_label) . '</a>/ ' . esc_html(get_the_title());
                         } elseif (is_singular('career')) {
                             $lang = function_exists('pll_current_language') ? pll_current_language() : 'en';
                             $career_label = ($lang === 'vi') ? 'Tuyển dụng' : 'Careers';
-                            $career_link = ($lang === 'vi') ? '/vi/career' : '/career';
+                            $career_link = ($lang === 'vi') ? '/vi/tuyen-dung' : '/career';
                             echo '<a href="' . esc_url($career_link) . '" class="header_works_link">' . esc_html($career_label) . '</a>/ ' . esc_html(get_the_title());
                         } else {
                             echo esc_html(get_the_title());

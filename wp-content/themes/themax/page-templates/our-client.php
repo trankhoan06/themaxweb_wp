@@ -74,8 +74,9 @@ get_header();
             </div> -->
             <div class="home_clients_tab">
                 <?php
-                for ($i = 1; $i <= 3; $i++) {
-                    $tab_name = tr_options_field('tr_client_options.home_clients_tab' . $i . '_name');
+                $lang_suffix = (function_exists('pll_current_language') && pll_current_language() == 'vi') ? '_vi' : '';
+                for ($i = 1; $i <= 6; $i++) {
+                    $tab_name = tr_options_field('tr_client_options.home_clients_tab' . $i . '_name' . $lang_suffix) ?: tr_options_field('tr_client_options.home_clients_tab' . $i . '_name');
                     if (!$tab_name)
                         continue;
 
@@ -92,8 +93,9 @@ get_header();
             </div>
             <div class="home_clients_content">
                 <?php
-                for ($i = 1; $i <= 3; $i++) {
-                    $tab_name = tr_options_field('tr_client_options.home_clients_tab' . $i . '_name');
+                $lang_suffix = (function_exists('pll_current_language') && pll_current_language() == 'vi') ? '_vi' : '';
+                for ($i = 1; $i <= 6; $i++) {
+                    $tab_name = tr_options_field('tr_client_options.home_clients_tab' . $i . '_name' . $lang_suffix) ?: tr_options_field('tr_client_options.home_clients_tab' . $i . '_name');
                     if (!$tab_name)
                         continue;
 

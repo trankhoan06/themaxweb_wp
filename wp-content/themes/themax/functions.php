@@ -198,20 +198,56 @@ function themax_render_clients_settings_page() {
     
     echo $form->open();
 
-    echo $form->text('home_clients_tab1_name')->setLabel("Tên Tab 1 (VD: Real Estate Developers)");
+    echo $form->row(
+        $form->text('home_clients_tab1_name')->setLabel("Tên Tab 1 (EN)"),
+        $form->text('home_clients_tab1_name_vi')->setLabel("Tên Tab 1 (VI)")
+    );
     echo $form->repeater('home_clients_tab1')->setLabel("Logo Tab 1")->setFields([
         $form->image('logo')->setLabel("Logo đối tác"),
         $form->text('link')->setLabel("Link (Optional)")
     ]);
     
-    echo $form->text('home_clients_tab2_name')->setLabel("Tên Tab 2 (VD: Real Estate Projects)");
+    echo $form->row(
+        $form->text('home_clients_tab2_name')->setLabel("Tên Tab 2 (EN)"),
+        $form->text('home_clients_tab2_name_vi')->setLabel("Tên Tab 2 (VI)")
+    );
     echo $form->repeater('home_clients_tab2')->setLabel("Logo Tab 2")->setFields([
         $form->image('logo')->setLabel("Logo đối tác"),
         $form->text('link')->setLabel("Link (Optional)")
     ]);
     
-    echo $form->text('home_clients_tab3_name')->setLabel("Tên Tab 3 (VD: Others Industry)");
+    echo $form->row(
+        $form->text('home_clients_tab3_name')->setLabel("Tên Tab 3 (EN)"),
+        $form->text('home_clients_tab3_name_vi')->setLabel("Tên Tab 3 (VI)")
+    );
     echo $form->repeater('home_clients_tab3')->setLabel("Logo Tab 3")->setFields([
+        $form->image('logo')->setLabel("Logo đối tác"),
+        $form->text('link')->setLabel("Link (Optional)")
+    ]);
+    
+    echo $form->row(
+        $form->text('home_clients_tab4_name')->setLabel("Tên Tab 4 (EN)"),
+        $form->text('home_clients_tab4_name_vi')->setLabel("Tên Tab 4 (VI)")
+    );
+    echo $form->repeater('home_clients_tab4')->setLabel("Logo Tab 4")->setFields([
+        $form->image('logo')->setLabel("Logo đối tác"),
+        $form->text('link')->setLabel("Link (Optional)")
+    ]);
+    
+    echo $form->row(
+        $form->text('home_clients_tab5_name')->setLabel("Tên Tab 5 (EN)"),
+        $form->text('home_clients_tab5_name_vi')->setLabel("Tên Tab 5 (VI)")
+    );
+    echo $form->repeater('home_clients_tab5')->setLabel("Logo Tab 5")->setFields([
+        $form->image('logo')->setLabel("Logo đối tác"),
+        $form->text('link')->setLabel("Link (Optional)")
+    ]);
+    
+    echo $form->row(
+        $form->text('home_clients_tab6_name')->setLabel("Tên Tab 6 (EN)"),
+        $form->text('home_clients_tab6_name_vi')->setLabel("Tên Tab 6 (VI)")
+    );
+    echo $form->repeater('home_clients_tab6')->setLabel("Logo Tab 6")->setFields([
         $form->image('logo')->setLabel("Logo đối tác"),
         $form->text('link')->setLabel("Link (Optional)")
     ]);

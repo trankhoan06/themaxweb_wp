@@ -29,6 +29,23 @@ get_header();
                     style="position: relative; z-index: 1;"
                     ></video>
                 <!-- <video src="<?php echo get_template_directory_uri(); ?>/images/video_button.mp4" autoplay loop muted playsinline preload="auto" style="max-width: 100%; height: auto;"></video> -->
+                <button class="home_hero_mute_btn" type="button" aria-label="Mute/Unmute Video" style="pointer-events: auto;">
+                    <span class="icon-unmute" style="display: none;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M15.3015 7.3606C15.9898 7.87684 16.5485 8.54626 16.9332 9.31584C17.318 10.0854 17.5184 10.934 17.5184 11.7944C17.5184 12.6548 17.318 13.5034 16.9332 14.273C16.5485 15.0426 15.9898 15.712 15.3015 16.2283" stroke="#EBEBEB" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M18.2943 4.03516C19.4515 4.97031 20.3848 6.15245 21.026 7.49501C21.6672 8.83757 22 10.3065 22 11.7944C22 13.2822 21.6672 14.7511 21.026 16.0937C20.3848 17.4363 19.4515 18.6184 18.2943 19.5536" stroke="#EBEBEB" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M5.32536 15.1197H3.10845C2.81447 15.1197 2.53253 15.0029 2.32466 14.795C2.11678 14.5871 2 14.3052 2 14.0112V9.57738C2 9.28339 2.11678 9.00145 2.32466 8.79358C2.53253 8.5857 2.81447 8.46892 3.10845 8.46892H5.32536L9.20495 3.48086C9.30184 3.29268 9.46283 3.14536 9.65885 3.06551C9.85487 2.98567 10.073 2.97857 10.2738 3.04551C10.4746 3.11244 10.6448 3.24898 10.7537 3.43047C10.8626 3.61196 10.903 3.82641 10.8676 4.03509V19.5535C10.903 19.7622 10.8626 19.9766 10.7537 20.1581C10.6448 20.3396 10.4746 20.4761 10.2738 20.5431C10.073 20.61 9.85487 20.6029 9.65885 20.5231C9.46283 20.4432 9.30184 20.2959 9.20495 20.1077L5.32536 15.1197Z" stroke="#EBEBEB" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </span>
+                    <span class="icon-mute">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M15.3015 7.54224C16.131 8.16435 16.7694 9.00667 17.144 9.97347C17.5187 10.9403 17.6146 11.9928 17.4209 13.0114M15.8946 15.8956C15.7093 16.0809 15.5111 16.2527 15.3015 16.4099" stroke="#EBEBEB" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M18.2944 4.21704C20.0734 5.65476 21.3043 7.66016 21.781 9.89731C22.2576 12.1344 21.951 14.4674 20.9125 16.5055M19.0548 19.0538C18.8131 19.2939 18.5593 19.5214 18.2944 19.7355" stroke="#EBEBEB" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M8.72726 4.27684L9.205 3.66275C9.30189 3.47456 9.46288 3.32724 9.65891 3.2474C9.85493 3.16755 10.073 3.16046 10.2738 3.22739C10.4746 3.29432 10.6449 3.43087 10.7538 3.61236C10.8627 3.79384 10.9031 4.0083 10.8677 4.21698V6.43391M10.8677 10.8678V19.7355C10.9031 19.9441 10.8627 20.1586 10.7538 20.3401C10.6449 20.5216 10.4746 20.6581 10.2738 20.7251C10.073 20.792 9.85493 20.7849 9.65891 20.705C9.46288 20.6252 9.30189 20.4779 9.205 20.2897L5.32539 15.3016H3.10846C2.81448 15.3016 2.53254 15.1848 2.32466 14.977C2.11678 14.7691 2 14.4871 2 14.1931V9.7593C2 9.46531 2.11678 9.18337 2.32466 8.9755C2.53254 8.76762 2.81448 8.65083 3.10846 8.65083H5.32539L6.75974 6.80635" stroke="#EBEBEB" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M2 2L21.9523 21.9523" stroke="#EBEBEB" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </span>
+                </button>
             <?php endif; ?>
 
         </div>
@@ -468,11 +485,17 @@ get_header();
             <?php
             $home_clients_subtitle = tr_posts_field('home_clients_subtitle');
             $home_clients_title = tr_posts_field('home_clients_title');
-            $home_clients_tab1_name = tr_options_field('tr_client_options.home_clients_tab1_name');
-            $home_clients_tab2_name = tr_options_field('tr_client_options.home_clients_tab2_name');
-            $home_clients_tab3_name = tr_options_field('tr_client_options.home_clients_tab3_name');
             
             $lang = function_exists('pll_current_language') ? pll_current_language() : 'en';
+            $lang_suffix = ($lang === 'vi') ? '_vi' : '';
+            
+            $home_clients_tab1_name = tr_options_field('tr_client_options.home_clients_tab1_name' . $lang_suffix) ?: tr_options_field('tr_client_options.home_clients_tab1_name');
+            $home_clients_tab2_name = tr_options_field('tr_client_options.home_clients_tab2_name' . $lang_suffix) ?: tr_options_field('tr_client_options.home_clients_tab2_name');
+            $home_clients_tab3_name = tr_options_field('tr_client_options.home_clients_tab3_name' . $lang_suffix) ?: tr_options_field('tr_client_options.home_clients_tab3_name');
+            $home_clients_tab4_name = tr_options_field('tr_client_options.home_clients_tab4_name' . $lang_suffix) ?: tr_options_field('tr_client_options.home_clients_tab4_name');
+            $home_clients_tab5_name = tr_options_field('tr_client_options.home_clients_tab5_name' . $lang_suffix) ?: tr_options_field('tr_client_options.home_clients_tab5_name');
+            $home_clients_tab6_name = tr_options_field('tr_client_options.home_clients_tab6_name' . $lang_suffix) ?: tr_options_field('tr_client_options.home_clients_tab6_name');
+
             if ($lang === 'vi') {
                 $home_clients_btn_text = tr_options_field('tr_client_options.home_clients_btn_text_vi') ?: tr_options_field('tr_client_options.home_clients_btn_text');
                 $home_clients_btn_link = tr_options_field('tr_client_options.home_clients_btn_link_vi') ?: tr_options_field('tr_client_options.home_clients_btn_link');
@@ -489,7 +512,7 @@ get_header();
                 <?php echo wp_kses_post(nl2br($home_clients_title)); ?>
             </div>
 
-            <?php if ($home_clients_tab1_name || $home_clients_tab2_name || $home_clients_tab3_name): ?>
+            <?php if ($home_clients_tab1_name || $home_clients_tab2_name || $home_clients_tab3_name || $home_clients_tab4_name || $home_clients_tab5_name || $home_clients_tab6_name): ?>
                 <div class="home_clients_tab">
                     <?php if ($home_clients_tab1_name): ?>
                         <div class="home_clients_tab_item hover_txt txt_16 txt_medium active" data-tabs="tab1">
@@ -515,11 +538,35 @@ get_header();
                             </div>
                         </div>
                     <?php endif; ?>
+                    <?php if ($home_clients_tab4_name): ?>
+                        <div class="home_clients_tab_item hover_txt txt_16 txt_medium" data-tabs="tab4">
+                            <div class="hover_txt_grid">
+                                <span class="init"><?php echo esc_html($home_clients_tab4_name); ?></span>
+                                <span class="active"><?php echo esc_html($home_clients_tab4_name); ?></span>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                    <?php if ($home_clients_tab5_name): ?>
+                        <div class="home_clients_tab_item hover_txt txt_16 txt_medium" data-tabs="tab5">
+                            <div class="hover_txt_grid">
+                                <span class="init"><?php echo esc_html($home_clients_tab5_name); ?></span>
+                                <span class="active"><?php echo esc_html($home_clients_tab5_name); ?></span>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                    <?php if ($home_clients_tab6_name): ?>
+                        <div class="home_clients_tab_item hover_txt txt_16 txt_medium" data-tabs="tab6">
+                            <div class="hover_txt_grid">
+                                <span class="init"><?php echo esc_html($home_clients_tab6_name); ?></span>
+                                <span class="active"><?php echo esc_html($home_clients_tab6_name); ?></span>
+                            </div>
+                        </div>
+                    <?php endif; ?>
                 </div>
             <?php endif; ?>
             <div class="home_clients_content">
                 <?php
-                $tabs = ['tab1' => 'home_clients_tab1', 'tab2' => 'home_clients_tab2', 'tab3' => 'home_clients_tab3'];
+                $tabs = ['tab1' => 'home_clients_tab1', 'tab2' => 'home_clients_tab2', 'tab3' => 'home_clients_tab3', 'tab4' => 'home_clients_tab4', 'tab5' => 'home_clients_tab5', 'tab6' => 'home_clients_tab6'];
                 foreach ($tabs as $tab_id => $field_name):
                     $clients = tr_options_field('tr_client_options.' . $field_name);
                     ?>

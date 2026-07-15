@@ -15,13 +15,18 @@ $form = tr_form()->useJson()->setGroup( $this->getName() );
 
     // CTA Single Case Study
     $cta_single = function() use ($form) {
-        echo "<h3>CTA Section (Global for Single Case Studies)</h3>";
+        echo "<h3>CTA Section (Global for Single work)</h3>";
         echo "<p>Set the global CTA content here. This will appear at the bottom of all Case Study single pages.</p>";
         echo $form->image('about_cta_img')->setLabel('CTA Image');
         echo $form->text('about_cta_link')->setLabel('CTA Link URL');
         echo $form->textarea('about_cta_text1')->setLabel('CTA Text Line 1');
         echo $form->text('about_cta_text2')->setLabel('CTA Text Line 2 (White)');
         echo $form->text('about_cta_text3')->setLabel('CTA Text Line 3 (Red)');
+
+        echo "<hr><h4>Vietnamese Translation</h4>";
+        echo $form->textarea('about_cta_text1_vi')->setLabel('CTA Text Line 1 (VI)');
+        echo $form->text('about_cta_text2_vi')->setLabel('CTA Text Line 2 (White) (VI)');
+        echo $form->text('about_cta_text3_vi')->setLabel('CTA Text Line 3 (Red) (VI)');
     };
 
     // CTA Single Career
@@ -33,6 +38,11 @@ $form = tr_form()->useJson()->setGroup( $this->getName() );
         echo $form->text('career_cta_btn_text')->setLabel('CTA Button Text');
         echo $form->textarea('career_cta_title')->setLabel('CTA Title');
         echo $form->textarea('career_cta_des')->setLabel('CTA Description');
+
+        echo "<hr><h4>Vietnamese Translation</h4>";
+        echo $form->text('career_cta_btn_text_vi')->setLabel('CTA Button Text (VI)');
+        echo $form->textarea('career_cta_title_vi')->setLabel('CTA Title (VI)');
+        echo $form->textarea('career_cta_des_vi')->setLabel('CTA Description (VI)');
 
         echo "<hr><h4>Popup Form Text (English)</h4>";
         echo $form->text('career_popup_title_text')->setLabel('Title')->setDefault('Submit Your Resume');
